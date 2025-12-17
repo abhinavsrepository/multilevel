@@ -113,7 +113,7 @@ const Portfolio: React.FC = () => {
           </Grid>
           <Skeleton variant="rectangular" height={400} sx={{ mt: 3, borderRadius: 2 }} />
         </Box>
-      </>
+      </DashboardLayout>
     );
   }
 
@@ -124,7 +124,7 @@ const Portfolio: React.FC = () => {
         <Button startIcon={<Refresh />} onClick={handleRefresh} sx={{ mt: 2 }}>
           Retry
         </Button>
-      </>
+      </DashboardLayout>
     );
   }
 
@@ -517,7 +517,7 @@ const Portfolio: React.FC = () => {
           </CardContent>
         </Card>
       </Box>
-    </>
+    </DashboardLayout>
   );
 };
 

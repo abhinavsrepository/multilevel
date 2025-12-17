@@ -140,7 +140,7 @@ const FAQ: React.FC = () => {
           </Grid>
           <Skeleton variant="rectangular" height={400} sx={{ borderRadius: 2 }} />
         </Box>
-      </>
+      </DashboardLayout>
     );
   }
 
@@ -402,7 +402,7 @@ const FAQ: React.FC = () => {
           </CardContent>
         </Card>
       </Box>
-    </>
+    </DashboardLayout>
   );
 };
 

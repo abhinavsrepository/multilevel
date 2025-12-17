@@ -546,7 +546,7 @@ const CommissionHistory: React.FC = () => {
           </MenuItem>
         </Menu>
       </Box>
-    </>
+    </DashboardLayout>
   );
 };
 

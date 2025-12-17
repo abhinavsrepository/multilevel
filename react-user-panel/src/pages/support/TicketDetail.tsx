@@ -192,7 +192,7 @@ const TicketDetail: React.FC = () => {
             </Grid>
           </Grid>
         </Box>
-      </>
+      </DashboardLayout>
     );
   }
 
@@ -205,7 +205,7 @@ const TicketDetail: React.FC = () => {
         <Button onClick={() => navigate('/support/tickets')} startIcon={<ArrowBack />}>
           Back to Tickets
         </Button>
-      </>
+      </DashboardLayout>
     );
   }
 
@@ -565,7 +565,7 @@ const TicketDetail: React.FC = () => {
           </DialogActions>
         </Dialog>
       </Box>
-    </>
+    </DashboardLayout>
   );
 };
 

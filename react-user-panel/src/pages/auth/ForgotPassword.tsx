@@ -242,7 +242,7 @@ const ForgotPassword: React.FC = () => {
           </form>
         </>
       )}
-    </>
+    </AuthLayout>
   );
 };
 

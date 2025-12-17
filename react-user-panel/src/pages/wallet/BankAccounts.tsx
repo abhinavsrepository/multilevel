@@ -628,7 +628,7 @@ const BankAccounts: React.FC = () => {
           </DialogActions>
         </Dialog>
       </Box>
-    </>
+    </DashboardLayout>
   );
 };
 

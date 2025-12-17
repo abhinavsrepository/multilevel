@@ -456,7 +456,7 @@ const UnilevelTreePage: React.FC = () => {
           )}
         </Dialog>
       </Box>
-    </>
+    </DashboardLayout>
   );
 };
 

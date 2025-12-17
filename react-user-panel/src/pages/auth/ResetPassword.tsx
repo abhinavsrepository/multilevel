@@ -172,7 +172,7 @@ const ResetPassword: React.FC = () => {
             Please wait...
           </Typography>
         </Box>
-      </>
+      </AuthLayout>
     );
   }
 
@@ -255,7 +255,7 @@ const ResetPassword: React.FC = () => {
             </Button>
           </Stack>
         </Box>
-      </>
+      </AuthLayout>
     );
   }
 
@@ -408,7 +408,7 @@ const ResetPassword: React.FC = () => {
           </form>
         </>
       )}
-    </>
+    </AuthLayout>
   );
 };
 

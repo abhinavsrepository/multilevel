@@ -131,7 +131,7 @@ const TeamReport: React.FC = () => {
             ))}
           </Grid>
         </Box>
-      </>
+      </DashboardLayout>
     );
   }
 
@@ -144,7 +144,7 @@ const TeamReport: React.FC = () => {
         <Alert severity="error" sx={{ borderRadius: 2 }}>
           {error || 'Failed to load team report'}
         </Alert>
-      </>
+      </DashboardLayout>
     );
   }
 
@@ -601,7 +601,7 @@ const TeamReport: React.FC = () => {
           </MenuItem>
         </Menu>
       </Box>
-    </>
+    </DashboardLayout>
   );
 };
 

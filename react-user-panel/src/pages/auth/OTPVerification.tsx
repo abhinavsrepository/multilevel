@@ -377,7 +377,7 @@ const OTPVerification: React.FC = () => {
           </Button>
         </Box>
       </Stack>
-    </>
+    </AuthLayout>
   );
 };
 

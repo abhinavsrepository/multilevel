@@ -190,7 +190,7 @@ const DigitalIDCard: React.FC = () => {
     return (
       <DashboardLayout title="Digital ID Card">
         <LoadingSpinner />
-      </>
+      </DashboardLayout>
     );
   }
 
@@ -202,7 +202,7 @@ const DigitalIDCard: React.FC = () => {
           description={error || 'Please try again later'}
           icon={<FiUser className="w-16 h-16" />}
         />
-      </>
+      </DashboardLayout>
     );
   }
 
@@ -444,7 +444,7 @@ const DigitalIDCard: React.FC = () => {
           </div>
         </div>
       </div>
-    </>
+    </DashboardLayout>
   );
 };
 

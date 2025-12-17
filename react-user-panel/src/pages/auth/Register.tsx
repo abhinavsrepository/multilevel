@@ -714,7 +714,7 @@ const Register: React.FC = () => {
           </MuiLink>
         </Typography>
       </Box>
-    </>
+    </AuthLayout>
   );
 };
 

@@ -25,7 +25,7 @@ import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import { getUserProfile } from '@/api/user.api';
 import { useAuth } from '@/hooks/useAuth';
-import { register } from '@/api/auth.api';
+import { register, validateSponsor } from '@/api/auth.api';
 
 interface ReferralRegistrationFormProps {
     onSuccess?: () => void;
@@ -36,6 +36,8 @@ const ReferralRegistrationForm: React.FC<ReferralRegistrationFormProps> = ({ onS
     const [loading, setLoading] = useState(false);
     const [success, setSuccess] = useState<string | null>(null);
     const [error, setError] = useState<string | null>(null);
+    const [validatingSponsor, setValidatingSponsor] = useState(false);
+    const [sponsorError, setSponsorError] = useState<string | null>(null);
 
     const [formData, setFormData] = useState({
         sponsorId: '',
@@ -79,6 +81,39 @@ const ReferralRegistrationForm: React.FC<ReferralRegistrationFormProps> = ({ onS
 
     const handleDateChange = (date: Date | null) => {
         setFormData(prev => ({ ...prev, dob: date }));
+    };
+
+    const handleSponsorIdChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+        const sponsorId = e.target.value.trim();
+        setFormData(prev => ({ ...prev, sponsorId, sponsorName: '' }));
+        setSponsorError(null);
+
+        if (!sponsorId) {
+            return;
+        }
+
+        // Validate sponsor after 500ms delay (debounce)
+        setValidatingSponsor(true);
+        setTimeout(async () => {
+            try {
+                const response = await validateSponsor(sponsorId);
+                if (response.success && response.data?.valid) {
+                    setFormData(prev => ({
+                        ...prev,
+                        sponsorName: response.data.sponsor?.name || ''
+                    }));
+                    setSponsorError(null);
+                } else {
+                    setSponsorError('Invalid sponsor ID');
+                    setFormData(prev => ({ ...prev, sponsorName: '' }));
+                }
+            } catch (err: any) {
+                setSponsorError(err.response?.data?.message || 'Failed to validate sponsor');
+                setFormData(prev => ({ ...prev, sponsorName: '' }));
+            } finally {
+                setValidatingSponsor(false);
+            }
+        }, 500);
     };
 
     const handleSelectChange = (e: any) => { // SelectChangeEvent is generic, using any for simplicity if types not handy
@@ -190,20 +225,25 @@ const ReferralRegistrationForm: React.FC<ReferralRegistrationFormProps> = ({ onS
                                 name="sponsorId"
                                 value={formData.sponsorId}
                                 required
-                                InputProps={{ readOnly: !!formData.sponsorId }}
-                                onChange={handleChange}
+                                onChange={handleSponsorIdChange}
                                 variant="filled"
+                                error={!!sponsorError}
+                                helperText={sponsorError || "Enter sponsor's referral code or user ID"}
+                                InputProps={{
+                                    endAdornment: validatingSponsor ? <CircularProgress size={20} /> : null
+                                }}
                             />
                         </Grid>
                         <Grid item xs={12} md={6}>
                             <TextField
                                 fullWidth
-                                label="Name"
+                                label="Sponsor Name"
                                 name="sponsorName"
                                 value={formData.sponsorName}
-                                InputProps={{ readOnly: !!formData.sponsorName }}
                                 onChange={handleChange}
                                 variant="filled"
+                                InputProps={{ readOnly: true }}
+                                helperText="Sponsor name will be fetched automatically"
                             />
                         </Grid>
                         <Grid item xs={12} md={6}>

@@ -5,6 +5,18 @@ export interface ApiResponse<T = any> {
   data?: T;
   error?: string;
   errors?: Record<string, string[]>;
+  pagination?: {
+    currentPage: number;
+    totalPages: number;
+    totalItems: number;
+    itemsPerPage: number;
+  };
+  stats?: any;
+  total?: number;
+  token?: string;
+  refreshToken?: string;
+  user?: any;
+  requires2FA?: boolean;
 }
 
 // Pagination

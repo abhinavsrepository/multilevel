@@ -95,13 +95,13 @@ exports.getMatchingBonusHistory = async (req, res) => {
             attributes: [
                 [sequelize.fn('SUM', sequelize.col('amount')), 'totalMatchingBonus'],
                 [sequelize.fn('SUM', sequelize.literal(
-                    "CASE WHEN status = 'APPROVED' AND \"isWithdrawn\" = false THEN amount ELSE 0 END"
+                    "CASE WHEN status = 'APPROVED' AND \"is_withdrawn\" = false THEN amount ELSE 0 END"
                 )), 'totalPayable'],
                 [sequelize.fn('SUM', sequelize.literal(
                     "CASE WHEN status = 'PENDING' THEN amount ELSE 0 END"
                 )), 'totalPending'],
                 [sequelize.fn('SUM', sequelize.literal(
-                    "CASE WHEN \"isWithdrawn\" = true THEN amount ELSE 0 END"
+                    "CASE WHEN \"is_withdrawn\" = true THEN amount ELSE 0 END"
                 )), 'totalWithdrawn']
             ],
             raw: true

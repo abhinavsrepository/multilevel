@@ -1,6 +1,8 @@
 {
   "name": "mlm-real-estate-user-panel",
   "version": "1.0.0",
+  "private": true,
+  "license": "UNLICENSED",
   "description": "Complete Production-Ready React User Panel for MLM Real Estate Platform",
   "type": "module",
   "scripts": {

@@ -237,50 +237,6 @@ class _LoginScreenState extends State<LoginScreen> {
     );
   }
 
-  /// Dev bypass login - directly navigate to dashboard without authentication
-  /// Note: This saves a mock token for development purposes
-  Future<void> _handleDevBypass() async {
-    final authProvider = Provider.of<AuthProvider>(context, listen: false);
-
-    // Save mock authentication token for dev purposes
-    await SecureStorageService.instance.saveSession(
-      token: 'dev_mock_token_for_testing_only',
-      refreshToken: 'dev_mock_refresh_token',
-      userData: {
-        'id': 'dev_user_123',
-        'email': 'dev@test.com',
-        'fullName': 'Dev User',
-        'mobile': '1234567890',
-      },
-    );
-
-    // Set the mock token in the API client
-    final apiClient = ApiClient.instance;
-    await apiClient.interceptor.setToken('dev_mock_token_for_testing_only');
-
-    if (!mounted) return;
-
-    Navigator.of(context).pushReplacement(
-      MaterialPageRoute(
-        builder: (context) => const DashboardScreen(),
-      ),
-    );
-  }
-
-  /// Dev auto-fill login - fills in test credentials and logs in
-  Future<void> _handleDevAutoLogin() async {
-    setState(() {
-      _emailController.text = 'user_lvl1_1764498371024@test.com';
-      _passwordController.text = 'password123';
-    });
-
-    // Wait a bit for UI to update
-    await Future.delayed(const Duration(milliseconds: 300));
-
-    // Trigger login
-    await _handleLogin();
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -334,11 +290,6 @@ class _LoginScreenState extends State<LoginScreen> {
 
                   // Register link
                   _buildRegisterLink(),
-
-                  const SizedBox(height: 24),
-
-                  // Dev bypass button (always visible in debug mode)
-                  _buildDevBypassButton(),
 
                   const SizedBox(height: 24),
                 ],
@@ -570,96 +521,6 @@ class _LoginScreenState extends State<LoginScreen> {
           ),
         ),
       ],
-    );
-  }
-
-  /// Build dev bypass button (visible in debug mode only)
-  Widget _buildDevBypassButton() {
-    // Only show in debug mode
-    bool isDebugMode = false;
-    assert(() {
-      isDebugMode = true;
-      return true;
-    }());
-
-    if (!isDebugMode) {
-      return const SizedBox.shrink();
-    }
-
-    return Container(
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: Colors.orange.withOpacity(0.1),
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(
-          color: Colors.orange,
-          width: 2,
-        ),
-      ),
-      child: Column(
-        children: [
-          const Row(
-            children: [
-              Icon(
-                Icons.developer_mode,
-                color: Colors.orange,
-              ),
-              SizedBox(width: 8),
-              Text(
-                'Developer Mode',
-                style: TextStyle(
-                  color: Colors.orange,
-                  fontWeight: FontWeight.bold,
-                  fontSize: 16,
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 12),
-          SizedBox(
-            width: double.infinity,
-            height: 48,
-            child: ElevatedButton.icon(
-              onPressed: _isLoading ? null : _handleDevAutoLogin,
-              icon: const Icon(Icons.login),
-              label: const Text(
-                'Dev Login (Level 1 User)',
-                style: TextStyle(fontWeight: FontWeight.bold),
-              ),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.orange,
-                foregroundColor: Colors.white,
-              ),
-            ),
-          ),
-          const SizedBox(height: 8),
-          SizedBox(
-            width: double.infinity,
-            height: 48,
-            child: ElevatedButton.icon(
-              onPressed: _handleDevBypass,
-              icon: const Icon(Icons.skip_next),
-              label: const Text(
-                'Skip Login (No Auth)',
-                style: TextStyle(fontWeight: FontWeight.bold),
-              ),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.deepOrange,
-                foregroundColor: Colors.white,
-              ),
-            ),
-          ),
-          const SizedBox(height: 8),
-          const Text(
-            'Auto-fill test credentials or bypass authentication',
-            style: TextStyle(
-              fontSize: 12,
-              color: Colors.grey,
-              fontStyle: FontStyle.italic,
-            ),
-          ),
-        ],
-      ),
     );
   }
 }

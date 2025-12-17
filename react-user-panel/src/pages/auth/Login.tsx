@@ -234,51 +234,6 @@ const Login: React.FC = () => {
             {loading ? 'Signing in...' : 'Sign In'}
           </Button>
 
-          <Button
-            type="button"
-            variant="outlined"
-            size="large"
-            fullWidth
-            onClick={() => {
-              const dummyUser = {
-                id: 1,
-                userId: 'MLM123456',
-                fullName: 'Test User',
-                email: 'user@example.com',
-                mobile: '1234567890',
-                rank: 'Member',
-                kycStatus: 'VERIFIED',
-              };
-              const dummyToken = 'dummy-user-token';
-
-              localStorage.setItem('token', dummyToken);
-              localStorage.setItem('refreshToken', dummyToken);
-              localStorage.setItem('user', JSON.stringify(dummyUser));
-
-              // We need to reload to let the auth slice pick up the initial state from localStorage
-              // or we can try to dispatch an action if available.
-              // Since login is async thunk, let's just reload for simplicity or try to use setUser if exported.
-              // Actually, we can just navigate to dashboard and let the app handle it if we update the state.
-              // But authSlice initializes from localStorage, so a reload is safest or we need to dispatch setUser.
-              // Let's try to dispatch setUser if we can import it, otherwise reload.
-
-              // We can't easily import setUser here without changing imports significantly if it wasn't already.
-              // It is exported in authSlice.ts. Let's check imports.
-              // It is not imported. Let's just reload the page for now as it's a dev bypass.
-              window.location.reload();
-            }}
-            sx={{
-              py: 1.5,
-              fontSize: '1rem',
-              fontWeight: 600,
-              textTransform: 'none',
-              borderRadius: 2,
-              mt: 2
-            }}
-          >
-            Bypass Login (Dev Only)
-          </Button>
-
           {/* Social Login (Optional) */}
           {showSocialLogin && (
             <>

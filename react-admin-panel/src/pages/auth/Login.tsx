@@ -46,24 +46,6 @@ const Login: React.FC = () => {
     }
   };
 
-  const bypassLogin = () => {
-    const dummyUser = {
-      id: 1,
-      fullName: 'Admin User',
-      email: 'admin@example.com',
-      role: 'SUPER_ADMIN',
-      permissions: ['ALL'],
-    };
-    const dummyToken = 'dummy-admin-token';
-
-    localStorage.setItem('adminToken', dummyToken);
-    localStorage.setItem('adminRefreshToken', dummyToken);
-
-    dispatch(login({ user: dummyUser as any, token: dummyToken }));
-    message.success('Bypass Login successful!');
-    navigate('/dashboard');
-  };
-
   return (
     <Card className="login-card" variant="borderless">
       <div className="login-header">
@@ -106,14 +88,6 @@ const Login: React.FC = () => {
         <Form.Item>
           <Button type="primary" htmlType="submit" loading={loading} block>
             Login
-          </Button>
-          <Button
-            type="default"
-            onClick={bypassLogin}
-            block
-            style={{ marginTop: '10px', backgroundColor: '#f0f2f5' }}
-          >
-            Bypass Login (Dev Only)
           </Button>
         </Form.Item>
       </Form>

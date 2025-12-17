@@ -1,0 +1,166 @@
+.tree-view-page {
+  .binary-tree-wrapper {
+    overflow-x: auto;
+    padding: 40px 20px;
+    min-height: 500px;
+  }
+
+  .tree-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: relative;
+  }
+
+  .tree-level {
+    margin-bottom: 60px;
+  }
+
+  .tree-node {
+    display: inline-block;
+    position: relative;
+
+    .node-card {
+      background: #fff;
+      border: 2px solid #e8e8e8;
+      border-radius: 12px;
+      padding: 16px;
+      min-width: 180px;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+
+      &:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+        border-color: #1890ff;
+      }
+
+      &.empty-slot {
+        border-style: dashed;
+        background: #fafafa;
+        cursor: default;
+
+        &:hover {
+          transform: none;
+          border-color: #e8e8e8;
+        }
+      }
+
+      .node-name {
+        font-weight: 600;
+        font-size: 14px;
+        color: #1e293b;
+        margin-top: 8px;
+      }
+
+      .node-username {
+        font-size: 12px;
+        color: #64748b;
+        margin: 4px 0;
+      }
+
+      .node-stats {
+        margin-top: 12px;
+        font-size: 11px;
+        color: #475569;
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+
+        div {
+          display: flex;
+          justify-content: space-between;
+          padding: 2px 0;
+        }
+      }
+
+      .node-legs {
+        display: flex;
+        gap: 8px;
+        margin-top: 12px;
+        justify-content: center;
+
+        .leg-stat {
+          background: #f0f9ff;
+          padding: 4px 12px;
+          border-radius: 6px;
+          font-size: 11px;
+          font-weight: 600;
+          color: #0369a1;
+        }
+      }
+
+      .empty-indicator {
+        color: #ccc;
+        padding: 20px 0;
+
+        div {
+          margin-top: 8px;
+          font-size: 12px;
+        }
+      }
+    }
+  }
+
+  .tree-branches {
+    position: relative;
+    margin-top: -40px;
+
+    .branch-line {
+      width: 2px;
+      height: 40px;
+      background: #d1d5db;
+      margin: 0 auto;
+    }
+  }
+
+  .tree-children {
+    display: flex;
+    gap: 100px;
+    justify-content: center;
+    position: relative;
+
+    &::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: calc(50% - 50px);
+      right: calc(50% - 50px);
+      height: 2px;
+      background: #d1d5db;
+    }
+
+    .child-wrapper {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      position: relative;
+
+      &::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 50%;
+        width: 2px;
+        height: 40px;
+        background: #d1d5db;
+        transform: translateX(-50%);
+      }
+
+      &.left {
+        align-items: flex-end;
+      }
+
+      &.right {
+        align-items: flex-start;
+      }
+    }
+  }
+
+  .sub-tree {
+    margin-top: 20px;
+    transform: scale(0.85);
+  }
+}

@@ -1,0 +1,267 @@
+# Miscellaneous
+*.class
+*.log
+*.pyc
+*.swp
+.DS_Store
+.atom/
+.buildlog/
+.history
+.svn/
+migrate_working_dir/
+
+# IntelliJ related
+*.iml
+*.ipr
+*.iws
+.idea/
+
+# The .vscode folder contains launch configuration and tasks you configure in
+# VS Code which you may wish to be included in version control, so this line
+# is commented out by default.
+.vscode/
+
+# Flutter/Dart/Pub related
+**/doc/api/
+**/ios/Flutter/.last_build_id
+.dart_tool/
+.flutter-plugins
+.flutter-plugins-dependencies
+.packages
+.pub-cache/
+.pub/
+/build/
+
+# Symbolication related
+app.*.symbols
+
+# Obfuscation related
+app.*.map.json
+
+# Android Studio will place build artifacts here
+/android/app/debug
+/android/app/profile
+/android/app/release
+/android/.gradle
+/android/captures/
+/android/gradlew
+/android/gradlew.bat
+/android/local.properties
+/android/**/GeneratedPluginRegistrant.java
+/android/**/GeneratedPluginRegistrant.kt
+/android/key.properties
+/android/keystore.properties
+/android/app/google-services.json
+
+# Android build files
+android/.gradle/
+android/gradle/
+android/build/
+android/app/build/
+android/local.properties
+android/**/*.iml
+
+# iOS/XCode related
+**/ios/**/*.mode1v3
+**/ios/**/*.mode2v3
+**/ios/**/*.moved-aside
+**/ios/**/*.pbxuser
+**/ios/**/*.perspectivev3
+**/ios/**/*sync/
+**/ios/**/.sconsign.dblite
+**/ios/**/.tags*
+**/ios/**/.vagrant/
+**/ios/**/DerivedData/
+**/ios/**/Icon?
+**/ios/**/Pods/
+**/ios/**/.symlinks/
+**/ios/**/profile
+**/ios/**/xcuserdata
+**/ios/.generated/
+**/ios/Flutter/.last_build_id
+**/ios/Flutter/App.framework
+**/ios/Flutter/Flutter.framework
+**/ios/Flutter/Flutter.podspec
+**/ios/Flutter/Generated.xcconfig
+**/ios/Flutter/ephemeral
+**/ios/Flutter/app.flx
+**/ios/Flutter/app.zip
+**/ios/Flutter/flutter_assets/
+**/ios/Flutter/flutter_export_environment.sh
+**/ios/ServiceDefinitions.json
+**/ios/Runner/GeneratedPluginRegistrant.*
+**/ios/GoogleService-Info.plist
+
+# iOS Podfile.lock
+ios/Podfile.lock
+ios/.symlinks/
+ios/Runner.xcworkspace/
+
+# Xcode
+*.xcodeproj/*
+!*.xcodeproj/project.pbxproj
+!*.xcodeproj/xcshareddata/
+!*.xcworkspace/contents.xcworkspacedata
+*.xcworkspace/*
+!*.xcworkspace/xcshareddata/
+*.xcuserdata
+*.xcuserdatad
+
+# Exceptions to above rules.
+!**/ios/**/default.mode1v3
+!**/ios/**/default.mode2v3
+!**/ios/**/default.pbxuser
+!**/ios/**/default.perspectivev3
+
+# Firebase
+*.firebaserc
+.firebase/
+firebase-debug.log
+firestore-debug.log
+firestore.rules
+firestore.indexes.json
+functions/node_modules/
+
+# Environment variables
+.env
+.env.local
+.env.*.local
+*.env
+
+# Secrets and API keys
+secrets.json
+credentials.json
+api_keys.dart
+secrets.dart
+config.local.dart
+
+# Testing
+coverage/
+test/.test_coverage.dart
+.test_coverage.dart
+
+# Build artifacts
+*.app
+*.ipa
+*.apk
+*.aab
+*.dSYM.zip
+*.dSYM
+
+# Hive
+*.hive
+*.lock
+
+# Generated files
+*.g.dart
+*.freezed.dart
+*.gr.dart
+*.config.dart
+*.pb.dart
+*.pbenum.dart
+*.pbgrpc.dart
+*.pbjson.dart
+
+# Localization
+l10n/intl_*.arb
+*.arb.json
+
+# Web
+web/manifest.json
+
+# Firebase Hosting
+.firebase/
+firebase-debug.log*
+firebase-debug.*.log*
+
+# Fastlane
+**/fastlane/report.xml
+**/fastlane/Preview.html
+**/fastlane/screenshots
+**/fastlane/test_output
+**/fastlane/readme.md
+
+# Database files
+*.db
+*.sqlite
+*.sqlite3
+*.realm
+
+# Temporary files
+*.tmp
+*.temp
+tmp/
+temp/
+
+# Logs
+logs/
+*.log
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+._*
+
+# Linux
+*~
+.fuse_hidden*
+.directory
+.Trash-*
+
+# Windows
+Thumbs.db
+Thumbs.db:encryptable
+ehthumbs.db
+ehthumbs_vista.db
+*.stackdump
+[Dd]esktop.ini
+$RECYCLE.BIN/
+*.lnk
+
+# Application specific
+lib/config/api_keys.dart
+lib/config/secrets.dart
+assets/config/
+
+# Backup files
+*.backup
+*.bak
+*~
+
+# IDE
+.vscode/
+.idea/
+*.iml
+*.swp
+*.swo
+*~
+
+# Documentation build
+doc/api/
+
+# Package management
+pubspec.lock
+.packages
+.flutter-plugins
+.flutter-plugins-dependencies
+
+# Build directories
+build/
+out/
+
+# Coverage
+coverage/
+*.lcov
+
+# Crashlytics
+com_crashlytics_export_strings.xml
+crashlytics-build.properties
+crashlytics.properties
+
+# App specific generated files
+android/app/src/main/java/io/flutter/plugins/GeneratedPluginRegistrant.java
+ios/Runner/GeneratedPluginRegistrant.m
+
+# Melos
+.melos_tool/

@@ -1,0 +1,149 @@
+server:
+  port: 8081
+  servlet:
+    context-path: /api
+
+spring:
+  application:
+    name: Ecogram Real Estate MLM Platform
+
+  datasource:
+    url: jdbc:postgresql://localhost:5433/mlm_platform
+    username: ${DB_USERNAME:root}
+    password: ${DB_PASSWORD:root}
+    driver-class-name: org.postgresql.Driver
+    hikari:
+      maximum-pool-size: 10
+      minimum-idle: 5
+      connection-timeout: 30000
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: false
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        format_sql: true
+        use_sql_comments: true
+    open-in-view: false
+
+  data:
+    redis:
+      host: ${REDIS_HOST:localhost}
+      port: ${REDIS_PORT:6379}
+      password: ${REDIS_PASSWORD:}
+      timeout: 60000ms
+      jedis:
+        pool:
+          max-active: 8
+          max-idle: 8
+          min-idle: 0
+          max-wait: -1ms
+
+  mail:
+    host: ${MAIL_HOST:smtp.gmail.com}
+    port: ${MAIL_PORT:587}
+    username: ${MAIL_USERNAME:}
+    password: ${MAIL_PASSWORD:}
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+            required: true
+        transport:
+          protocol: smtp
+
+  servlet:
+    multipart:
+      enabled: true
+      max-file-size: 10MB
+      max-request-size: 10MB
+
+  cache:
+    type: redis
+    redis:
+      time-to-live: 600000
+
+# JWT Configuration
+jwt:
+  secret: ${JWT_SECRET:404E635266556A586E3272357538782F413F4428472B4B6250645367566B5970}
+  expiration: 604800000  # 7 days in milliseconds
+  refresh-expiration: 2592000000  # 30 days
+
+# Application Settings
+app:
+  company:
+    name: Real Estate MLM Platform
+    email: support@mlmplatform.com
+    phone: +91-1234567890
+
+  commission:
+    binary-pairing-bonus: 100
+    binary-daily-cap: 25000
+    binary-weekly-cap: 150000
+    direct-referral-percent: 2.0
+    level-percentages: 3.0,2.0,1.5,1.0,1.0,0.5,0.5,0.5,0.5,0.5
+    max-roi-cap-percent: 300
+
+  payout:
+    min-withdrawal: 1000
+    max-daily-withdrawal: 100000
+    tds-percent: 10.0
+    admin-charge-percent: 2.0
+
+  investment:
+    min-amount: 50000
+    lock-in-period-months: 12
+
+  otp:
+    expiry-minutes: 10
+    length: 6
+
+# AWS S3 Configuration
+aws:
+  s3:
+    access-key: ${AWS_ACCESS_KEY:}
+    secret-key: ${AWS_SECRET_KEY:}
+    bucket-name: ${AWS_S3_BUCKET:mlm-platform-files}
+    region: ${AWS_REGION:us-east-1}
+
+# Razorpay Configuration
+razorpay:
+  key-id: ${RAZORPAY_KEY_ID:}
+  key-secret: ${RAZORPAY_KEY_SECRET:}
+  webhook-secret: ${RAZORPAY_WEBHOOK_SECRET:}
+
+# Logging
+logging:
+  level:
+    root: INFO
+    com.realestate.mlm: DEBUG
+    org.springframework.security: DEBUG
+    org.hibernate.SQL: DEBUG
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss} - %msg%n"
+  file:
+    name: logs/mlm-platform.log
+    max-size: 10MB
+    max-history: 30
+
+# Actuator
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics
+  endpoint:
+    health:
+      show-details: always
+
+# Swagger/OpenAPI
+springdoc:
+  api-docs:
+    path: /api-docs
+  swagger-ui:
+    path: /swagger-ui.html
+    enabled: true

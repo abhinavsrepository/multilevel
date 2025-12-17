@@ -1,0 +1,250 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<!-- App Information -->
+	<key>CFBundleDevelopmentRegion</key>
+	<string>$(DEVELOPMENT_LANGUAGE)</string>
+	<key>CFBundleDisplayName</key>
+	<string>MLM Real Estate</string>
+	<key>CFBundleExecutable</key>
+	<string>$(EXECUTABLE_NAME)</string>
+	<key>CFBundleIdentifier</key>
+	<string>$(PRODUCT_BUNDLE_IDENTIFIER)</string>
+	<key>CFBundleInfoDictionaryVersion</key>
+	<string>6.0</string>
+	<key>CFBundleName</key>
+	<string>mlm_real_estate_app</string>
+	<key>CFBundlePackageType</key>
+	<string>APPL</string>
+	<key>CFBundleShortVersionString</key>
+	<string>$(FLUTTER_BUILD_NAME)</string>
+	<key>CFBundleSignature</key>
+	<string>????</string>
+	<key>CFBundleVersion</key>
+	<string>$(FLUTTER_BUILD_NUMBER)</string>
+	<key>LSRequiresIPhoneOS</key>
+	<true/>
+
+	<!-- App Transport Security -->
+	<key>NSAppTransportSecurity</key>
+	<dict>
+		<!-- Allow insecure HTTP loads for local development -->
+		<key>NSAllowsArbitraryLoads</key>
+		<false/>
+		<key>NSAllowsLocalNetworking</key>
+		<true/>
+		<!-- Add specific exceptions if needed -->
+		<!--
+		<key>NSExceptionDomains</key>
+		<dict>
+			<key>example.com</key>
+			<dict>
+				<key>NSExceptionAllowsInsecureHTTPLoads</key>
+				<true/>
+				<key>NSIncludesSubdomains</key>
+				<true/>
+			</dict>
+		</dict>
+		-->
+	</dict>
+
+	<!-- Privacy Permissions -->
+
+	<!-- Camera Permission -->
+	<key>NSCameraUsageDescription</key>
+	<string>We need access to your camera to take photos of properties, upload profile pictures, and scan QR codes for referrals.</string>
+
+	<!-- Photo Library Permission -->
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>We need access to your photo library to select and upload property images and documents.</string>
+	<key>NSPhotoLibraryAddUsageDescription</key>
+	<string>We need permission to save property images and documents to your photo library.</string>
+
+	<!-- Location Permissions -->
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>We need your location to show nearby properties and verify property locations.</string>
+	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
+	<string>We need your location to show nearby properties and send location-based notifications about new properties in your area.</string>
+	<key>NSLocationAlwaysUsageDescription</key>
+	<string>We need your location to send notifications about new properties in your area.</string>
+
+	<!-- Microphone Permission (for video recording) -->
+	<key>NSMicrophoneUsageDescription</key>
+	<string>We need access to your microphone to record property videos with audio.</string>
+
+	<!-- Contacts Permission (optional - if you add contact import) -->
+	<key>NSContactsUsageDescription</key>
+	<string>We need access to your contacts to help you invite friends to join your network.</string>
+
+	<!-- Calendar Permission (for scheduling property visits) -->
+	<key>NSCalendarsUsageDescription</key>
+	<string>We need access to your calendar to schedule property visits and meetings.</string>
+
+	<!-- Face ID / Touch ID Permission -->
+	<key>NSFaceIDUsageDescription</key>
+	<string>We use Face ID to secure your account and provide quick authentication.</string>
+
+	<!-- Motion & Fitness (if tracking activities) -->
+	<key>NSMotionUsageDescription</key>
+	<string>We use motion data to improve your app experience.</string>
+
+	<!-- Bluetooth (if needed for specific features) -->
+	<key>NSBluetoothAlwaysUsageDescription</key>
+	<string>We use Bluetooth to connect with nearby devices.</string>
+	<key>NSBluetoothPeripheralUsageDescription</key>
+	<string>We use Bluetooth to connect with nearby devices.</string>
+
+	<!-- Speech Recognition (if needed) -->
+	<key>NSSpeechRecognitionUsageDescription</key>
+	<string>We use speech recognition to help you search for properties using voice commands.</string>
+
+	<!-- Apple Sign In -->
+	<key>CFBundleURLTypes</key>
+	<array>
+		<!-- Deep Linking - Custom URL Scheme -->
+		<dict>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+			<key>CFBundleURLName</key>
+			<string>com.mlm.realestate.app</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>mlmrealestate</string>
+			</array>
+		</dict>
+		<!-- Universal Links -->
+		<dict>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+			<key>CFBundleURLName</key>
+			<string>com.mlm.realestate.app.universal</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>https</string>
+			</array>
+		</dict>
+	</array>
+
+	<!-- Associated Domains for Universal Links -->
+	<key>com.apple.developer.associated-domains</key>
+	<array>
+		<string>applinks:mlmrealestate.com</string>
+		<string>applinks:www.mlmrealestate.com</string>
+	</array>
+
+	<!-- Background Modes -->
+	<key>UIBackgroundModes</key>
+	<array>
+		<string>fetch</string>
+		<string>remote-notification</string>
+		<string>location</string>
+		<string>processing</string>
+	</array>
+
+	<!-- Supported Interface Orientations -->
+	<key>UISupportedInterfaceOrientations</key>
+	<array>
+		<string>UIInterfaceOrientationPortrait</string>
+		<string>UIInterfaceOrientationLandscapeLeft</string>
+		<string>UIInterfaceOrientationLandscapeRight</string>
+	</array>
+
+	<key>UISupportedInterfaceOrientations~ipad</key>
+	<array>
+		<string>UIInterfaceOrientationPortrait</string>
+		<string>UIInterfaceOrientationPortraitUpsideDown</string>
+		<string>UIInterfaceOrientationLandscapeLeft</string>
+		<string>UIInterfaceOrientationLandscapeRight</string>
+	</array>
+
+	<!-- Status Bar -->
+	<key>UIStatusBarHidden</key>
+	<false/>
+	<key>UIViewControllerBasedStatusBarAppearance</key>
+	<true/>
+
+	<!-- Launch Screen -->
+	<key>UILaunchStoryboardName</key>
+	<string>LaunchScreen</string>
+	<key>UIMainStoryboardFile</key>
+	<string>Main</string>
+
+	<!-- Firebase Configuration -->
+	<key>FirebaseAppDelegateProxyEnabled</key>
+	<true/>
+
+	<!-- Google Maps API Key -->
+	<key>GMSApiKey</key>
+	<string>$(MAPS_API_KEY)</string>
+
+	<!-- Query Schemes (for URL Launcher) -->
+	<key>LSApplicationQueriesSchemes</key>
+	<array>
+		<string>https</string>
+		<string>http</string>
+		<string>tel</string>
+		<string>mailto</string>
+		<string>sms</string>
+		<string>whatsapp</string>
+		<string>instagram</string>
+		<string>facebook</string>
+		<string>twitter</string>
+		<string>maps</string>
+		<string>comgooglemaps</string>
+		<string>waze</string>
+	</array>
+
+	<!-- File Sharing -->
+	<key>UIFileSharingEnabled</key>
+	<true/>
+	<key>LSSupportsOpeningDocumentsInPlace</key>
+	<true/>
+
+	<!-- Prevent backup to iCloud -->
+	<key>NSSupportsAutomaticTermination</key>
+	<true/>
+	<key>NSSupportsSuddenTermination</key>
+	<true/>
+
+	<!-- App requires full screen -->
+	<key>UIRequiresFullScreen</key>
+	<false/>
+
+	<!-- Supported Document Types -->
+	<key>CFBundleDocumentTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleTypeName</key>
+			<string>PDF</string>
+			<key>LSHandlerRank</key>
+			<string>Owner</string>
+			<key>LSItemContentTypes</key>
+			<array>
+				<string>com.adobe.pdf</string>
+			</array>
+		</dict>
+		<dict>
+			<key>CFBundleTypeName</key>
+			<string>Images</string>
+			<key>LSHandlerRank</key>
+			<string>Owner</string>
+			<key>LSItemContentTypes</key>
+			<array>
+				<string>public.image</string>
+				<string>public.jpeg</string>
+				<string>public.png</string>
+			</array>
+		</dict>
+	</array>
+
+	<!-- iTunes File Sharing -->
+	<key>UISupportsDocumentBrowser</key>
+	<true/>
+
+	<!-- Capabilities -->
+	<key>com.apple.developer.usernotifications.filtering</key>
+	<true/>
+
+</dict>
+</plist>

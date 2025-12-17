@@ -1,0 +1,21 @@
+.auth-layout {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  padding: 20px;
+
+  .auth-container {
+    width: 100%;
+    max-width: 450px;
+  }
+
+  .auth-footer {
+    margin-top: 30px;
+    text-align: center;
+    color: #fff;
+    opacity: 0.8;
+  }
+}

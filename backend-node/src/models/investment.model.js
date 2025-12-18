@@ -173,7 +173,7 @@ module.exports = (sequelize, DataTypes) => {
             type: DataTypes.TEXT
         }
     }, {
-        tableName: 'property_investments', // Matches schema.sql
+        tableName: 'investments',
         underscored: true,
         timestamps: true
     });

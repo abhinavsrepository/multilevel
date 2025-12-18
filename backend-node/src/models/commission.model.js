@@ -73,6 +73,10 @@ module.exports = (sequelize, DataTypes) => {
         updatedBy: {
             type: DataTypes.STRING
         }
+    }, {
+        tableName: 'commissions',
+        underscored: true,
+        timestamps: true
     });
 
     Commission.associate = function (models) {

@@ -1,7 +1,10 @@
 import axios, { AxiosInstance, InternalAxiosRequestConfig, AxiosResponse, AxiosError } from 'axios';
 
 
-const API_BASE_URL = import.meta.env.VITE_API_URL || '/api/v1';
+// Production backend URL (fallback if env var not set)
+const PRODUCTION_API_URL = 'https://mlm-backend-ljan.onrender.com/api/v1';
+
+const API_BASE_URL = import.meta.env.VITE_API_URL || (import.meta.env.PROD ? PRODUCTION_API_URL : '/api/v1');
 
 const axiosInstance: AxiosInstance = axios.create({
   baseURL: API_BASE_URL,

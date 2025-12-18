@@ -3,7 +3,16 @@ import { toast } from 'react-toastify';
 
 // Determine base URL - prefer relative path to allow proxying from any device
 const getBaseUrl = () => {
-  const envUrl = import.meta.env.VITE_API_BASE_URL;
+  // Production backend URL
+  const PRODUCTION_API_URL = 'https://mlm-backend-ljan.onrender.com/api/v1';
+
+  const envUrl = import.meta.env.VITE_API_URL || import.meta.env.VITE_API_BASE_URL;
+
+  // In production, always use the production API URL
+  if (import.meta.env.PROD) {
+    return envUrl || PRODUCTION_API_URL;
+  }
+
   // If env URL is defined and NOT localhost, use it (e.g. production domain)
   // Otherwise use relative path to allow Vite proxy to handle it
   if (envUrl && !envUrl.includes('localhost') && !envUrl.includes('127.0.0.1')) {

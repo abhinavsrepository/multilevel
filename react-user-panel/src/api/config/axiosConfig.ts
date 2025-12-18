@@ -1,24 +1,15 @@
 import axios, { AxiosError, AxiosInstance, InternalAxiosRequestConfig, AxiosResponse, AxiosRequestConfig } from 'axios';
 import { toast } from 'react-toastify';
 
-// Determine base URL - prefer relative path to allow proxying from any device
+// Determine base URL
 const getBaseUrl = () => {
-  // Production backend URL
-  const PRODUCTION_API_URL = 'https://mlm-backend-ljan.onrender.com/api/v1';
-
-  const envUrl = import.meta.env.VITE_API_URL || import.meta.env.VITE_API_BASE_URL;
-
-  // In production, always use the production API URL
-  if (import.meta.env.PROD) {
-    return envUrl || PRODUCTION_API_URL;
+  // For local development, use proxy
+  if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+    return '/api/v1';
   }
 
-  // If env URL is defined and NOT localhost, use it (e.g. production domain)
-  // Otherwise use relative path to allow Vite proxy to handle it
-  if (envUrl && !envUrl.includes('localhost') && !envUrl.includes('127.0.0.1')) {
-    return envUrl;
-  }
-  return '/api/v1';
+  // For production, always use the backend URL
+  return 'https://mlm-backend-ljan.onrender.com/api/v1';
 };
 
 // Create axios instance

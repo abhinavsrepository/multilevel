@@ -1,10 +1,18 @@
 import axios, { AxiosInstance, InternalAxiosRequestConfig, AxiosResponse, AxiosError } from 'axios';
 
 
-// Production backend URL (fallback if env var not set)
-const PRODUCTION_API_URL = 'https://mlm-backend-ljan.onrender.com/api/v1';
+// Determine base URL
+const getBaseUrl = () => {
+  // For local development, use proxy
+  if (typeof window !== 'undefined' && (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')) {
+    return '/api/v1';
+  }
 
-const API_BASE_URL = import.meta.env.VITE_API_URL || (import.meta.env.PROD ? PRODUCTION_API_URL : '/api/v1');
+  // For production, always use the backend URL
+  return 'https://mlm-backend-ljan.onrender.com/api/v1';
+};
+
+const API_BASE_URL = getBaseUrl();
 
 const axiosInstance: AxiosInstance = axios.create({
   baseURL: API_BASE_URL,

@@ -76,3 +76,7 @@ export {
   confirmNotification,
 } from './useNotification';
 export type { NotificationType, NotificationOptions, UseNotificationReturn } from './useNotification';
+
+// Snackbar Hook
+export { useSnackbar } from './useSnackbar';
+export type { SnackbarOptions, UseSnackbarReturn } from './useSnackbar';

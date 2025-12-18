@@ -172,7 +172,7 @@ const BankAccounts: React.FC = () => {
     }
   };
 
-  const onSubmit = async (data: BankAccountFormData) => {
+  const onSubmit = async (_data: BankAccountFormData) => {
     try {
       setSaving(true);
       // API call here

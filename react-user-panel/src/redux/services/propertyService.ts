@@ -44,7 +44,7 @@ export const propertyService = createApi({
     // Get property by ID
     getPropertyById: builder.query<{ data: Property }, string | number>({
       query: (id) => `/properties/${id}`,
-      providesTags: (result, error, id) => [{ type: 'Property', id }],
+      providesTags: (_result, _error, id) => [{ type: 'Property', id }],
     }),
 
     // Get featured properties
@@ -104,7 +104,7 @@ export const propertyService = createApi({
       string | number
     >({
       query: (propertyId) => `/properties/${propertyId}/documents`,
-      providesTags: (result, error, id) => [{ type: 'Property', id }],
+      providesTags: (_result, _error, id) => [{ type: 'Property', id }],
     }),
 
     // Get property investments
@@ -190,7 +190,7 @@ export const propertyService = createApi({
       string | number
     >({
       query: (propertyId) => `/properties/${propertyId}/price-history`,
-      providesTags: (result, error, id) => [{ type: 'Property', id }],
+      providesTags: (_result, _error, id) => [{ type: 'Property', id }],
     }),
   }),
 });

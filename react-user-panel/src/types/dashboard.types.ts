@@ -10,7 +10,7 @@ export interface DashboardData {
   stats: DashboardStats;
   charts: DashboardCharts;
   recentActivities: Activity[];
-  announcements: Announcement[];
+  announcements: DashboardAnnouncement[];
 }
 
 export interface DashboardStats {
@@ -82,7 +82,7 @@ export type ActivityType =
   | 'PROPERTY_LAUNCH'
   | 'INSTALLMENT_PAID';
 
-export interface Announcement {
+export interface DashboardAnnouncement {
   id: number;
   title: string;
   description: string;

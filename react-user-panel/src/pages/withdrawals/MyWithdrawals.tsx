@@ -25,9 +25,6 @@ import {
   FormControl,
   InputLabel,
   Alert,
-  Stepper,
-  Step,
-  StepLabel,
 } from '@mui/material';
 import {
   Add,
@@ -87,8 +84,8 @@ const MyWithdrawals: React.FC = () => {
         getMyWithdrawals({ page: 1, limit: 100 }),
         getWithdrawalLimits(),
       ]);
-      setWithdrawals(withdrawalsRes.data.data);
-      setLimits(limitsRes.data);
+      setWithdrawals(withdrawalsRes.data?.data || []);
+      setLimits(limitsRes.data || null);
     } catch (error: any) {
       showSnackbar(error?.response?.data?.message || 'Failed to fetch withdrawals', 'error');
     } finally {
@@ -99,7 +96,7 @@ const MyWithdrawals: React.FC = () => {
   const calculateWithdrawalCharges = async () => {
     try {
       const response = await calculateCharges(parseFloat(formData.amount));
-      setCalculatedCharges(response.data);
+      setCalculatedCharges(response.data || null);
     } catch (error) {
       setCalculatedCharges(null);
     }
@@ -186,7 +183,7 @@ const MyWithdrawals: React.FC = () => {
     }
   };
 
-  const getStatusStep = (status: string): number => {
+  const _getStatusStep = (status: string): number => {
     switch (status) {
       case 'PENDING':
         return 0;
@@ -371,7 +368,7 @@ const MyWithdrawals: React.FC = () => {
                     </TableCell>
                     <TableCell>
                       <Chip
-                        icon={getStatusIcon(withdrawal.status)}
+                        {...(getStatusIcon(withdrawal.status) && { icon: getStatusIcon(withdrawal.status) })}
                         label={withdrawal.status}
                         color={getStatusColor(withdrawal.status)}
                         size="small"

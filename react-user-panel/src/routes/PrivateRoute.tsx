@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { Navigate, useLocation } from 'react-router-dom';
 import { Box, CircularProgress, Typography } from '@mui/material';
 import { useAuthContext } from '@/context/AuthContext';
@@ -37,7 +37,6 @@ const PrivateRoute: React.FC<PrivateRouteProps> = ({
   const location = useLocation();
   const {
     isAuthenticated,
-    user,
     loading,
     isKYCVerified,
     isEmailVerified,

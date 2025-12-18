@@ -13,10 +13,7 @@ import {
   Stack,
   IconButton,
   Collapse,
-  Divider,
-  Alert,
   useTheme,
-  useMediaQuery,
 } from '@mui/material';
 import {
   Search,
@@ -26,7 +23,6 @@ import {
   ExpandMore,
   TrendingUp,
   TrendingDown,
-  CalendarToday,
   Receipt,
 } from '@mui/icons-material';
 import { DataGrid, GridColDef, GridPaginationModel } from '@mui/x-data-grid';
@@ -42,7 +38,6 @@ import { toast } from 'react-toastify';
 
 const Transactions: React.FC = () => {
   const theme = useTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
 
   // State
   const [transactions, setTransactions] = useState<Transaction[]>([]);
@@ -262,7 +257,7 @@ const Transactions: React.FC = () => {
       headerName: 'Actions',
       width: 100,
       sortable: false,
-      renderCell: (params) => (
+      renderCell: () => (
         <IconButton size="small" title="View Receipt">
           <Receipt fontSize="small" />
         </IconButton>

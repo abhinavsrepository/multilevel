@@ -7,7 +7,6 @@ import {
   CardContent,
   Button,
   TextField,
-  MenuItem,
   Stack,
   Divider,
   Alert,
@@ -32,7 +31,6 @@ import {
   MonetizationOn,
 } from '@mui/icons-material';
 import DashboardLayout from '../../layouts/DashboardLayout';
-import { WithdrawalModal } from '../../components/modals/WithdrawalModal';
 import { getWalletBalance } from '../../api/wallet.api';
 import {
   getWithdrawalRules,
@@ -40,7 +38,7 @@ import {
   calculateWithdrawalCharges,
   createWithdrawalRequest,
 } from '../../api/payout.api';
-import { WalletBalance, WithdrawalRules, BankAccount } from '../../types';
+import { WalletBalance, WithdrawalRules } from '../../types';
 import { toast } from 'react-toastify';
 import { useNavigate } from 'react-router-dom';
 

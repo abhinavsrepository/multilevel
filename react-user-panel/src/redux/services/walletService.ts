@@ -60,7 +60,7 @@ export const walletService = createApi({
     // Get transaction by ID
     getTransactionById: builder.query<{ data: Transaction }, string | number>({
       query: (id) => `/wallet/transactions/${id}`,
-      providesTags: (result, error, id) => [{ type: 'Transaction', id }],
+      providesTags: (_result, _error, id) => [{ type: 'Transaction', id }],
     }),
 
     // Get recent transactions
@@ -92,7 +92,7 @@ export const walletService = createApi({
     // Get withdrawal by ID
     getWithdrawalById: builder.query<{ data: Withdrawal }, string | number>({
       query: (id) => `/wallet/withdrawals/${id}`,
-      providesTags: (result, error, id) => [{ type: 'Withdrawal', id }],
+      providesTags: (_result, _error, id) => [{ type: 'Withdrawal', id }],
     }),
 
     // Get withdrawal rules

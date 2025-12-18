@@ -14,7 +14,6 @@ import {
   Step,
   StepLabel,
   StepContent,
-  IconButton,
   Dialog,
   DialogTitle,
   DialogContent,
@@ -22,7 +21,6 @@ import {
   Skeleton,
   Alert,
   useTheme,
-  useMediaQuery,
 } from '@mui/material';
 import {
   Refresh,
@@ -46,7 +44,6 @@ import { toast } from 'react-toastify';
 
 const WithdrawalHistory: React.FC = () => {
   const theme = useTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
 
   // State
   const [withdrawals, setWithdrawals] = useState<Withdrawal[]>([]);

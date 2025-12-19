@@ -40,14 +40,14 @@ async function syncDatabase() {
             'Wallet',
             'BankAccount',
             'Kyc',
+            'Epin',           // Must be before Deposit (Deposit references Epin)
             'Investment',
             'Commission',
             'Income',
             'Topup',
-            'Deposit',
+            'Deposit',        // References Epin
             'Withdrawal',
             'Transaction',
-            'Epin',
             'Notification',
             'SupportTicket',
             'Inquiry',

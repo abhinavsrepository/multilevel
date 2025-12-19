@@ -9,7 +9,7 @@ module.exports = (sequelize, DataTypes) => {
             type: DataTypes.BIGINT,
             allowNull: false,
             references: {
-                model: 'Bonanzas',
+                model: 'bonanzas',
                 key: 'id'
             },
             onDelete: 'CASCADE'
@@ -18,7 +18,7 @@ module.exports = (sequelize, DataTypes) => {
             type: DataTypes.BIGINT,
             allowNull: false,
             references: {
-                model: 'Users',
+                model: 'users',
                 key: 'id'
             },
             onDelete: 'CASCADE'

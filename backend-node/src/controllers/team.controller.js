@@ -229,7 +229,7 @@ const buildUnilevelTree = async (userId, currentDepth, maxDepth) => {
     const user = await User.findByPk(userId, {
         attributes: [
             'id', 'username', 'firstName', 'lastName', 'rank', 'status', 'createdAt', 'personalBv', 'teamBv',
-            [sequelize.literal('(SELECT COALESCE(SUM("investmentAmount"), 0) FROM "investments" WHERE "investments"."userId" = "User"."id")'), 'totalInvestment']
+            [sequelize.literal('(SELECT COALESCE(SUM("investment_amount"), 0) FROM "investments" WHERE "investments"."user_id" = "User"."id")'), 'totalInvestment']
         ]
     });
 
@@ -403,7 +403,7 @@ exports.getTeamReport = async (req, res) => {
             where: { id: { [Op.in]: descendantIds } },
             attributes: [
                 'id', 'username', 'firstName', 'lastName',
-                [sequelize.literal('(SELECT COALESCE(SUM("investmentAmount"), 0) FROM "investments" WHERE "investments"."userId" = "User"."id")'), 'totalInvestment']
+                [sequelize.literal('(SELECT COALESCE(SUM("investment_amount"), 0) FROM "investments" WHERE "investments"."user_id" = "User"."id")'), 'totalInvestment']
             ],
             order: [[sequelize.literal('"totalInvestment"'), 'DESC']],
             limit: 5

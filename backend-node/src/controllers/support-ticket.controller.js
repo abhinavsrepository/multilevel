@@ -172,3 +172,34 @@ exports.getTicketById = async (req, res) => {
         res.status(500).json({ success: false, message: 'Server Error', error: error.message });
     }
 };
+
+exports.getTicketStats = async (req, res) => {
+    try {
+        const userId = req.user.id;
+
+        const where = {};
+        if (req.user.role !== 'ADMIN') {
+            where.userId = userId;
+        }
+
+        const total = await SupportTicket.count({ where });
+        const open = await SupportTicket.count({ where: { ...where, status: 'OPEN' } });
+        const inProgress = await SupportTicket.count({ where: { ...where, status: 'IN_PROGRESS' } });
+        const resolved = await SupportTicket.count({ where: { ...where, status: 'RESOLVED' } });
+        const closed = await SupportTicket.count({ where: { ...where, status: 'CLOSED' } });
+
+        res.json({
+            success: true,
+            data: {
+                total,
+                open,
+                inProgress,
+                resolved,
+                closed
+            }
+        });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ success: false, message: 'Server Error', error: error.message });
+    }
+};

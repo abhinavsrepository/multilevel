@@ -5,12 +5,16 @@ const { protect, authorize } = require('../middleware/auth.middleware');
 
 router.use(protect);
 
-router.post('/', supportTicketController.createTicket);
-router.get('/', supportTicketController.getTickets);
-router.get('/:ticketId', supportTicketController.getTicketById);
-router.post('/:ticketId/reply', supportTicketController.replyToTicket);
+// Stats endpoint
+router.get('/tickets/stats', supportTicketController.getTicketStats);
+
+// Ticket CRUD
+router.post('/tickets', supportTicketController.createTicket);
+router.get('/tickets', supportTicketController.getTickets);
+router.get('/tickets/:ticketId', supportTicketController.getTicketById);
+router.post('/tickets/:ticketId/reply', supportTicketController.replyToTicket);
 
 // Admin only
-router.put('/:ticketId/status', authorize('ADMIN'), supportTicketController.updateTicketStatus);
+router.put('/tickets/:ticketId/status', authorize('ADMIN'), supportTicketController.updateTicketStatus);
 
 module.exports = router;

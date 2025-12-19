@@ -95,7 +95,7 @@ app.use('/api/v1/tree', treeRoutes);
 app.use('/api/v1/team', teamRoutes);
 app.use('/api/v1/kyc', kycRoutes);
 app.use('/api/v1/admin', adminRoutes);
-app.use('/api/v1/support-tickets', supportTicketRoutes);
+app.use('/api/v1/support', supportTicketRoutes);
 app.use('/api/v1/bank-accounts', bankAccountRoutes);
 app.use('/api/v1/notifications', notificationRoutes);
 app.use('/api/v1/installments', installmentRoutes);

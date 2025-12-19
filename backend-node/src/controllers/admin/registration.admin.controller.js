@@ -238,6 +238,7 @@ exports.createRegistration = async (req, res) => {
             password, // Will be hashed by beforeCreate hook
             firstName,
             lastName,
+            fullName: `${firstName} ${lastName}`,
             phoneNumber,
             sponsorId: sponsorId || null,
             placementUserId: placementUserId || null,

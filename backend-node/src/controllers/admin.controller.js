@@ -93,6 +93,7 @@ exports.createUser = async (req, res) => {
             password,
             firstName,
             lastName,
+            fullName: `${firstName} ${lastName}`,
             phoneNumber,
             referralCode,
             sponsorId: sponsor ? sponsor.id : null,

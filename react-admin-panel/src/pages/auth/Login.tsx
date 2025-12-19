@@ -49,8 +49,8 @@ const Login: React.FC = () => {
   return (
     <Card className="login-card" variant="borderless">
       <div className="login-header">
-        <Title level={2}>Admin Panel</Title>
-        <Text type="secondary">MLM Real Estate Platform</Text>
+        <Title level={2} style={{ color: '#10b981' }}>Admin Panel</Title>
+        <Text type="secondary" style={{ color: '#10b981', fontWeight: 600 }}>Ecogram</Text>
       </div>
 
       <Form

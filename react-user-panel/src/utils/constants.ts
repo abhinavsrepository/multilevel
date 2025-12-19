@@ -564,11 +564,11 @@ export const USER_RANK_COLORS = {
 
 // App Info
 export const APP_INFO = {
-  NAME: 'MLM Real Estate',
+  NAME: 'Ecogram',
   VERSION: '1.0.0',
-  DESCRIPTION: 'MLM Real Estate User Panel',
-  COMPANY: 'MLM Real Estate',
-  COPYRIGHT: `© ${new Date().getFullYear()} MLM Real Estate. All rights reserved.`,
-  SUPPORT_EMAIL: 'support@mlmrealestate.com',
+  DESCRIPTION: 'Ecogram User Panel',
+  COMPANY: 'Ecogram',
+  COPYRIGHT: `© ${new Date().getFullYear()} Ecogram. All rights reserved.`,
+  SUPPORT_EMAIL: 'support@ecogram.com',
   SUPPORT_PHONE: '+91 9876543210',
 } as const;

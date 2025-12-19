@@ -23,7 +23,7 @@ function App() {
       .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
       .join(' ');
 
-    document.title = `${formattedPageName} | MLM Real Estate User Panel`;
+    document.title = `${formattedPageName} | Ecogram User Panel`;
   }, [location.pathname]);
 
   return (

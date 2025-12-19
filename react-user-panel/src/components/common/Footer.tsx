@@ -98,10 +98,10 @@ const Footer: React.FC<FooterProps> = ({ minimal = false }) => {
               sx={{
                 fontWeight: 700,
                 mb: 2,
-                color: '#ffffff',
+                color: '#10b981',
               }}
             >
-              RealEstate MLM
+              Ecogram
             </Typography>
             <Typography
               variant="body2"
@@ -111,7 +111,7 @@ const Footer: React.FC<FooterProps> = ({ minimal = false }) => {
                 lineHeight: 1.7,
               }}
             >
-              Your trusted partner in real estate investment. Build wealth through our innovative MLM
+              Your trusted partner in real estate investment. Build wealth through our innovative
               platform.
             </Typography>
 
@@ -377,7 +377,7 @@ const Footer: React.FC<FooterProps> = ({ minimal = false }) => {
               <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
                 <Email sx={{ fontSize: '1.25rem', color: '#cbd5e1' }} />
                 <Typography variant="body2" sx={{ color: '#cbd5e1', fontSize: '0.875rem' }}>
-                  support@realestate-mlm.com
+                  support@ecogram.com
                 </Typography>
               </Box>
 
@@ -429,8 +429,8 @@ const Footer: React.FC<FooterProps> = ({ minimal = false }) => {
             gap: 2,
           }}
         >
-          <Typography variant="body2" sx={{ color: '#94a3b8', fontSize: '0.875rem' }}>
-            &copy; {currentYear} RealEstate MLM Platform. All rights reserved.
+          <Typography variant="body2" sx={{ color: '#10b981', fontSize: '0.875rem', fontWeight: 600 }}>
+            &copy; {currentYear} Ecogram. All rights reserved.
           </Typography>
 
           <Box sx={{ display: 'flex', gap: 2, alignItems: 'center' }}>
@@ -441,7 +441,7 @@ const Footer: React.FC<FooterProps> = ({ minimal = false }) => {
               |
             </Typography>
             <Typography variant="caption" sx={{ color: '#64748b', fontSize: '0.75rem' }}>
-              Made with ❤️ by RealEstate Team
+              Made with ❤️ by Ecogram Team
             </Typography>
           </Box>
         </Box>

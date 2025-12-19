@@ -16,7 +16,7 @@ const AuthLayout: React.FC = () => {
         <Outlet />
       </div>
       <div className="auth-footer">
-        <p>&copy; 2024 MLM Real Estate Platform. All rights reserved.</p>
+        <p style={{ color: '#10b981' }}>&copy; 2025 Ecogram. All rights reserved.</p>
       </div>
     </div>
   );

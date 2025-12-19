@@ -1,8 +1,8 @@
 {
-  "name": "MLM Real Estate User Panel",
-  "short_name": "MLM Panel",
-  "description": "Complete User Dashboard for MLM Real Estate Platform",
-  "theme_color": "#1976d2",
+  "name": "Ecogram User Panel",
+  "short_name": "Ecogram",
+  "description": "Complete User Dashboard for Ecogram Platform",
+  "theme_color": "#10b981",
   "background_color": "#ffffff",
   "display": "standalone",
   "scope": "/",

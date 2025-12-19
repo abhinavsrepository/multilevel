@@ -283,8 +283,8 @@ const DashboardLayout: React.FC = () => {
         className="sidebar"
       >
         <div className="logo">
-          {!collapsed && <span className="logo-text">MLM Admin</span>}
-          {collapsed && <span className="logo-icon">M</span>}
+          {!collapsed && <span className="logo-text" style={{ color: '#10b981', fontWeight: 'bold' }}>Ecogram</span>}
+          {collapsed && <span className="logo-icon" style={{ color: '#10b981', fontWeight: 'bold' }}>E</span>}
         </div>
         <Menu
           theme={isDark ? 'dark' : 'light'}

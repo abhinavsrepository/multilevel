@@ -1,0 +1,10 @@
+services:
+  - type: web
+    name: mlm-admin-panel
+    env: static
+    buildCommand: npm run render-build
+    staticPublishPath: dist
+    routes:
+      - type: rewrite
+        source: /*
+        destination: /index.html

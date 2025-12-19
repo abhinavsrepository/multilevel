@@ -8,7 +8,6 @@ import {
   FiMapPin,
   FiDollarSign,
   FiTrendingUp,
-  FiCalendar,
   FiUsers,
   FiHome,
   FiFileText,
@@ -28,7 +27,6 @@ import LoadingSpinner from '../../components/common/LoadingSpinner';
 import EmptyState from '../../components/common/EmptyState';
 import PropertyCard from '../../components/cards/PropertyCard';
 import { InvestmentModal } from '../../components/modals/InvestmentModal';
-import { Property } from '../../types';
 import {
   useGetPropertyByIdQuery,
   useLazyGetSimilarPropertiesQuery,
@@ -105,14 +103,6 @@ const PropertyDetail: React.FC = () => {
   const handlePropertyView = (propertyId: number) => {
     navigate(`/properties/${propertyId}`);
     window.scrollTo(0, 0);
-  };
-
-  const handlePropertyFavorite = async (propertyId: number) => {
-    try {
-      await addToWishlist(propertyId.toString()).unwrap();
-    } catch (error) {
-      console.error('Error adding to wishlist:', error);
-    }
   };
 
   const handleToggleFavorite = async () => {
@@ -1012,6 +1002,7 @@ const PropertyDetail: React.FC = () => {
             >
               <FiX className="w-8 h-8" />
             </button>
+            
 
             <button
               onClick={(e) => {

@@ -21,7 +21,6 @@ import PropertyCard from '../../components/cards/PropertyCard';
 import LoadingSpinner from '../../components/common/LoadingSpinner';
 import EmptyState from '../../components/common/EmptyState';
 import {
-  Property,
   PropertyFilters,
   PropertyType,
   PropertyStatus,

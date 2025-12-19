@@ -332,8 +332,9 @@ const AddEditProperty: React.FC = () => {
               >
                 <InputNumber
                   style={{ width: '100%' }}
-                  formatter={(value) => ` ₹ {value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
-                  parser={(value) => value!.replace(/\$\s?|(,*)/g, '')}
+                  formatter={(value) => `₹ ${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
+                  parser={(value) => value!.replace(/₹\s?|(,*)/g, '')}
+                  placeholder="Enter base price"
                 />
               </Form.Item>
             </Col>
@@ -341,8 +342,9 @@ const AddEditProperty: React.FC = () => {
               <Form.Item name="investmentPrice" label="Investment Price">
                 <InputNumber
                   style={{ width: '100%' }}
-                  formatter={(value) => `₹ {value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
-                  parser={(value) => value!.replace(/\$\s?|(,*)/g, '')}
+                  formatter={(value) => `₹ ${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
+                  parser={(value) => value!.replace(/₹\s?|(,*)/g, '')}
+                  placeholder="Enter investment price"
                 />
               </Form.Item>
             </Col>
@@ -354,29 +356,29 @@ const AddEditProperty: React.FC = () => {
                 label="Total Slots"
                 rules={[{ required: true, message: 'Please enter total slots' }]}
               >
-                <InputNumber style={{ width: '100%' }} />
+                <InputNumber style={{ width: '100%' }} placeholder="123" />
               </Form.Item>
             </Col>
             <Col span={8}>
               <Form.Item name="minimumInvestment" label="Min Investment">
-                <InputNumber style={{ width: '100%' }} />
+                <InputNumber style={{ width: '100%' }} placeholder="123" />
               </Form.Item>
             </Col>
             <Col span={8}>
               <Form.Item name="expectedRoiPercent" label="Expected ROI (%)">
-                <InputNumber style={{ width: '100%' }} />
+                <InputNumber style={{ width: '100%' }} placeholder="123" />
               </Form.Item>
             </Col>
           </Row>
           <Row gutter={16}>
             <Col span={12}>
               <Form.Item name="roiTenureMonths" label="ROI Tenure (Months)">
-                <InputNumber style={{ width: '100%' }} />
+                <InputNumber style={{ width: '100%' }} placeholder="12" />
               </Form.Item>
             </Col>
             <Col span={12}>
               <Form.Item name="appreciationRateAnnual" label="Annual Appreciation (%)">
-                <InputNumber style={{ width: '100%' }} />
+                <InputNumber style={{ width: '100%' }} placeholder="123" />
               </Form.Item>
             </Col>
           </Row>

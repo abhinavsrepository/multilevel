@@ -454,14 +454,14 @@ exports.getRegistrationStats = async (req, res) => {
 
             monthlyRegistrations = await User.findAll({
                 attributes: [
-                    [sequelize.fn('DATE_TRUNC', 'month', sequelize.col('createdAt')), 'month'],
+                    [sequelize.fn('DATE_TRUNC', 'month', sequelize.col('created_at')), 'month'],
                     [sequelize.fn('COUNT', sequelize.col('id')), 'count']
                 ],
                 where: {
                     createdAt: { [Op.gte]: sixMonthsAgo }
                 },
-                group: [sequelize.fn('DATE_TRUNC', 'month', sequelize.col('createdAt'))],
-                order: [[sequelize.fn('DATE_TRUNC', 'month', sequelize.col('createdAt')), 'ASC']],
+                group: [sequelize.fn('DATE_TRUNC', 'month', sequelize.col('created_at'))],
+                order: [[sequelize.fn('DATE_TRUNC', 'month', sequelize.col('created_at')), 'ASC']],
                 raw: true
             });
         } catch (monthlyError) {

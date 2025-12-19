@@ -55,12 +55,31 @@ exports.register = async (req, res) => {
             return res.status(400).json({ success: false, message: 'Mobile number already exists' });
         }
 
-        // Generate User ID (MLM + Random)
+        // Generate User ID (EG + Sequential)
         let userId;
         let isUniqueId = false;
         while (!isUniqueId) {
-            const randomId = Math.floor(100000 + Math.random() * 900000); // 6 digit
-            userId = `MLM${randomId}`;
+            // Find the last user to get the next sequential number
+            const lastUser = await User.findOne({
+                where: {
+                    username: {
+                        [require('sequelize').Op.like]: 'EG%'
+                    }
+                },
+                order: [['id', 'DESC']]
+            });
+
+            let nextNumber = 1;
+            if (lastUser && lastUser.username) {
+                // Extract number from last username (EG0000001 -> 1)
+                const lastNumber = parseInt(lastUser.username.replace('EG', ''), 10);
+                nextNumber = lastNumber + 1;
+            }
+
+            // Format as EG + 7 digits with leading zeros (EG0000001)
+            userId = `EG${nextNumber.toString().padStart(7, '0')}`;
+
+            // Double check uniqueness
             const existing = await User.findOne({ where: { username: userId } });
             if (!existing) isUniqueId = true;
         }

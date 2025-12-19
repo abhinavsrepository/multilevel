@@ -121,6 +121,7 @@ module.exports = (sequelize, DataTypes) => {
             comment: 'Internal admin notes'
         }
     }, {
+        tableName: 'bonanzas',
         timestamps: true,
         indexes: [
             { fields: ['status'] },

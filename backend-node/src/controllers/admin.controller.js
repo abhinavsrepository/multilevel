@@ -44,16 +44,65 @@ exports.getAllUsers = async (req, res) => {
 exports.createUser = async (req, res) => {
     try {
         console.log('createUser body:', req.body);
-        let { username, email, password, firstName, lastName, phoneNumber, sponsorCode, placement, role, status } = req.body;
+        let { username, email, password, firstName, lastName, fullName, phoneNumber, mobile, sponsorCode, placement, role, status } = req.body;
         console.log('Sponsor Code received:', sponsorCode, 'Type:', typeof sponsorCode);
 
-        // Generate username from email if not provided
-        if (!username && email) {
-            username = email.split('@')[0];
-            // Ensure uniqueness by appending random number if needed (simplified for now)
-            const existingUser = await User.findOne({ where: { username } });
-            if (existingUser) {
-                username = `${username}${Math.floor(Math.random() * 1000)}`;
+        // Handle fullName: combine firstName + lastName if fullName not provided
+        if (!fullName) {
+            if (firstName && lastName) {
+                fullName = `${firstName.trim()} ${lastName.trim()}`;
+            } else if (firstName) {
+                fullName = firstName.trim();
+            } else if (lastName) {
+                fullName = lastName.trim();
+            } else {
+                return res.status(400).json({ success: false, message: 'Either fullName or firstName/lastName is required' });
+            }
+        }
+
+        // Handle mobile: use phoneNumber as fallback
+        if (!mobile && phoneNumber) {
+            mobile = phoneNumber;
+        }
+
+        // Validate required fields
+        if (!email) {
+            return res.status(400).json({ success: false, message: 'Email is required' });
+        }
+        if (!password) {
+            return res.status(400).json({ success: false, message: 'Password is required' });
+        }
+        if (!mobile) {
+            return res.status(400).json({ success: false, message: 'Mobile number is required' });
+        }
+
+        // Generate User ID (EG + Sequential) if not provided
+        if (!username) {
+            let isUniqueId = false;
+            while (!isUniqueId) {
+                // Find the last user to get the next sequential number
+                const lastUser = await User.findOne({
+                    where: {
+                        username: {
+                            [Op.like]: 'EG%'
+                        }
+                    },
+                    order: [['id', 'DESC']]
+                });
+
+                let nextNumber = 1;
+                if (lastUser && lastUser.username) {
+                    // Extract number from last username (EG0000001 -> 1)
+                    const lastNumber = parseInt(lastUser.username.replace('EG', ''), 10);
+                    nextNumber = lastNumber + 1;
+                }
+
+                // Format as EG + 7 digits with leading zeros (EG0000001)
+                username = `EG${nextNumber.toString().padStart(7, '0')}`;
+
+                // Double check uniqueness
+                const existing = await User.findOne({ where: { username } });
+                if (!existing) isUniqueId = true;
             }
         }
 
@@ -61,6 +110,11 @@ exports.createUser = async (req, res) => {
         const emailExists = await User.findOne({ where: { email } });
         if (emailExists) {
             return res.status(400).json({ success: false, message: 'Email already exists' });
+        }
+
+        const mobileExists = await User.findOne({ where: { mobile } });
+        if (mobileExists) {
+            return res.status(400).json({ success: false, message: 'Mobile number already exists' });
         }
 
         const usernameExists = await User.findOne({ where: { username } });
@@ -71,7 +125,14 @@ exports.createUser = async (req, res) => {
         // Validate sponsor if provided
         let sponsor = null;
         if (sponsorCode && sponsorCode.trim() !== '') {
-            sponsor = await User.findOne({ where: { referralCode: sponsorCode.trim() } });
+            sponsor = await User.findOne({
+                where: {
+                    [Op.or]: [
+                        { referralCode: sponsorCode.trim() },
+                        { username: sponsorCode.trim() }
+                    ]
+                }
+            });
             if (!sponsor) {
                 return res.status(400).json({ success: false, message: 'Invalid sponsor code' });
             }
@@ -91,15 +152,14 @@ exports.createUser = async (req, res) => {
             username,
             email,
             password,
-            firstName,
-            lastName,
-            fullName: `${firstName} ${lastName}`,
-            phoneNumber,
+            fullName,
+            mobile,
             referralCode,
-            sponsorId: sponsor ? sponsor.id : null,
+            sponsorId: sponsor ? sponsor.username : null,
+            sponsorUserId: sponsor ? sponsor.id : null,
             placementUserId: sponsor ? sponsor.id : null,
-            placement: placement || 'AUTO',
-            role: role || 'USER',
+            placement: placement ? placement.toUpperCase() : 'AUTO',
+            role: role || 'MEMBER',
             status: status || 'ACTIVE',
             emailVerified: true, // Admin created users are verified by default
             phoneVerified: true

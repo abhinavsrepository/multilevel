@@ -32,12 +32,29 @@ const { Header, Sider, Content } = Layout;
 
 const DashboardLayout: React.FC = () => {
   const [collapsed, setCollapsed] = useState(false);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
   const dispatch = useDispatch();
   const { user } = useSelector((state: RootState) => state.auth);
   const { isDark } = useSelector((state: RootState) => state.theme);
   const { unreadCount } = useSelector((state: RootState) => state.notification);
+
+  // Detect mobile screen size
+  React.useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth <= 768);
+      if (window.innerWidth > 768) {
+        setMobileMenuOpen(false);
+      }
+    };
+
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
 
   const menuItems: MenuProps['items'] = [
     {
@@ -236,6 +253,21 @@ const DashboardLayout: React.FC = () => {
     ],
   };
 
+  const handleMenuToggle = () => {
+    if (isMobile) {
+      setMobileMenuOpen(!mobileMenuOpen);
+    } else {
+      setCollapsed(!collapsed);
+    }
+  };
+
+  const handleMenuClick = ({ key }: { key: string }) => {
+    navigate(key);
+    if (isMobile) {
+      setMobileMenuOpen(false);
+    }
+  };
+
   const getSelectedKey = () => {
     const path = location.pathname;
 
@@ -274,13 +306,30 @@ const DashboardLayout: React.FC = () => {
 
   return (
     <Layout className={`dashboard-layout ${isDark ? 'dark-theme' : 'light-theme'}`}>
+      {/* Mobile Overlay */}
+      {isMobile && mobileMenuOpen && (
+        <div
+          className="mobile-overlay"
+          onClick={() => setMobileMenuOpen(false)}
+          style={{
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            backgroundColor: 'rgba(0, 0, 0, 0.5)',
+            zIndex: 1000,
+          }}
+        />
+      )}
+
       <Sider
         trigger={null}
         collapsible
         collapsed={collapsed}
         theme={isDark ? 'dark' : 'light'}
         width={250}
-        className="sidebar"
+        className={`sidebar ${isMobile && mobileMenuOpen ? 'mobile-open' : ''}`}
       >
         <div className="logo">
           {!collapsed && <span className="logo-text" style={{ color: '#10b981', fontWeight: 'bold' }}>Ecogram</span>}
@@ -291,7 +340,7 @@ const DashboardLayout: React.FC = () => {
           mode="inline"
           selectedKeys={getSelectedKey()}
           items={menuItems}
-          onClick={({ key }) => navigate(key)}
+          onClick={handleMenuClick}
         />
       </Sider>
 
@@ -300,7 +349,7 @@ const DashboardLayout: React.FC = () => {
           <div className="header-left">
             {React.createElement(collapsed ? MenuUnfoldOutlined : MenuFoldOutlined, {
               className: 'trigger',
-              onClick: () => setCollapsed(!collapsed),
+              onClick: handleMenuToggle,
             })}
           </div>
 

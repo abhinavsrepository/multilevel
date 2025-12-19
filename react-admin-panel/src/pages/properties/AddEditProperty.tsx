@@ -73,6 +73,28 @@ const AddEditProperty: React.FC = () => {
   const onFinish = async (values: any) => {
     try {
       setLoading(true);
+
+      // Validate all required fields before submission
+      const requiredFields = [
+        'propertyId',
+        'title',
+        'propertyType',
+        'propertyCategory',
+        'address',
+        'city',
+        'state',
+        'basePrice',
+        'totalInvestmentSlots',
+      ];
+
+      const missingFields = requiredFields.filter((field) => !values[field]);
+
+      if (missingFields.length > 0) {
+        message.error(`Missing required fields: ${missingFields.join(', ')}`);
+        setLoading(false);
+        return;
+      }
+
       const formData = {
         ...values,
         images: fileList.map((file) => file.url || file.response?.data?.url).filter(Boolean),
@@ -416,14 +438,35 @@ const AddEditProperty: React.FC = () => {
   ];
 
   const next = () => {
+    // Get the field names for the current step
+    const currentStepFields = getCurrentStepFields(currentStep);
+
     form
-      .validateFields()
+      .validateFields(currentStepFields)
       .then(() => {
         setCurrentStep(currentStep + 1);
       })
       .catch((error) => {
-        message.error('Please complete the required fields');
+        message.error('Please complete the required fields in this step');
       });
+  };
+
+  // Helper function to get field names for each step
+  const getCurrentStepFields = (step: number): string[] => {
+    switch (step) {
+      case 0: // Basic Info
+        return ['title', 'propertyId', 'propertyType', 'propertyCategory', 'description'];
+      case 1: // Location
+        return ['address', 'city', 'state', 'pincode'];
+      case 2: // Specifications
+        return []; // No required fields in this step
+      case 3: // Financials
+        return ['basePrice', 'totalInvestmentSlots'];
+      case 4: // Media
+        return []; // No required fields in this step
+      default:
+        return [];
+    }
   };
 
   const prev = () => {

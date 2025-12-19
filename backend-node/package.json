@@ -8,7 +8,8 @@
     "start": "node src/server.js",
     "dev": "nodemon src/server.js",
     "seed:user": "node seed_user_v2.js",
-    "sync:db": "node sync-database.js"
+    "sync:db": "node sync-database.js",
+    "sync:db:ordered": "node sync-database-ordered.js"
   },
   "keywords": [],
   "author": "",

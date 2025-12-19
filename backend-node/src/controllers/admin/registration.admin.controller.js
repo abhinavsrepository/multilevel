@@ -459,7 +459,7 @@ exports.getRegistrationStats = async (req, res) => {
                     [sequelize.fn('COUNT', sequelize.col('id')), 'count']
                 ],
                 where: {
-                    createdAt: { [Op.gte]: sixMonthsAgo }
+                    created_at: { [Op.gte]: sixMonthsAgo }
                 },
                 group: [sequelize.fn('DATE_TRUNC', 'month', sequelize.col('created_at'))],
                 order: [[sequelize.fn('DATE_TRUNC', 'month', sequelize.col('created_at')), 'ASC']],

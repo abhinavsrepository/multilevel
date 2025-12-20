@@ -1,4 +1,26 @@
 const { KycDocument, User } = require('../models');
+const cloudinary = require('../config/cloudinary');
+const streamifier = require('streamifier');
+
+// Helper function to upload buffer to Cloudinary
+const uploadToCloudinary = (buffer, folder) => {
+    return new Promise((resolve, reject) => {
+        const uploadStream = cloudinary.uploader.upload_stream(
+            {
+                folder: folder,
+                resource_type: 'auto'
+            },
+            (error, result) => {
+                if (error) {
+                    reject(error);
+                } else {
+                    resolve(result.secure_url);
+                }
+            }
+        );
+        streamifier.createReadStream(buffer).pipe(uploadStream);
+    });
+};
 
 exports.uploadDocument = async (req, res) => {
     try {
@@ -12,13 +34,17 @@ exports.uploadDocument = async (req, res) => {
         const frontImage = req.files['file'][0];
         const backImage = req.files['backImage'] ? req.files['backImage'][0] : null;
 
+        // Upload to Cloudinary
+        const frontImageUrl = await uploadToCloudinary(frontImage.buffer, `kyc/${userId}/${documentType}`);
+        const backImageUrl = backImage ? await uploadToCloudinary(backImage.buffer, `kyc/${userId}/${documentType}`) : null;
+
         // Create KYC document record
         const document = await KycDocument.create({
             userId,
             documentType,
             documentNumber,
-            documentUrl: frontImage.path,
-            backDocumentUrl: backImage ? backImage.path : null,
+            documentUrl: frontImageUrl,
+            backDocumentUrl: backImageUrl,
             status: 'PENDING'
         });
 
@@ -31,7 +57,7 @@ exports.uploadDocument = async (req, res) => {
             data: document
         });
     } catch (error) {
-        console.error(error);
+        console.error('KYC Upload Error:', error);
         res.status(500).json({ success: false, message: 'Server Error', error: error.message });
     }
 };

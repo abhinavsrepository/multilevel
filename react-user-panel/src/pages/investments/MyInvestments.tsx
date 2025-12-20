@@ -172,7 +172,7 @@ const MyInvestments: React.FC = () => {
   };
 
   return (
-    
+      
       <Box>
         {/* Header */}
         <Box sx={{ mb: 4 }}>

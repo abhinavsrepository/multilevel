@@ -299,7 +299,7 @@ const CommissionHistory: React.FC = () => {
   ];
 
   return (
-    
+    <Box>
       <Box>
         {/* Page Header */}
         <Box sx={{ mb: 3 }}>
@@ -546,7 +546,7 @@ const CommissionHistory: React.FC = () => {
           </MenuItem>
         </Menu>
       </Box>
-    
+    </Box>
   );
 };
 

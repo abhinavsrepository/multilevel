@@ -224,9 +224,8 @@ const BankAccounts: React.FC = () => {
   };
 
   return (
-    
-      <Box>
-        {/* Header */}
+    <Box>
+      {/* Header */}
         <Stack
           direction={{ xs: 'column', sm: 'row' }}
           justifyContent="space-between"
@@ -626,8 +625,7 @@ const BankAccounts: React.FC = () => {
             </Button>
           </DialogActions>
         </Dialog>
-      </Box>
-    
+    </Box>
   );
 };
 

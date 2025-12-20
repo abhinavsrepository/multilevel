@@ -213,325 +213,323 @@ const WithdrawalHistory: React.FC = () => {
   };
 
   return (
-    
-      <Box>
-        {/* Header */}
-        <Stack
-          direction={{ xs: 'column', sm: 'row' }}
-          justifyContent="space-between"
-          alignItems={{ xs: 'flex-start', sm: 'center' }}
-          spacing={2}
-          sx={{ mb: 4 }}
-        >
-          <div>
-            <Typography variant="h4" fontWeight={700} gutterBottom>
-              Withdrawal History
-            </Typography>
-            <Typography variant="body2" color="text.secondary">
-              Track and manage your withdrawal requests
-            </Typography>
-          </div>
-          <Button variant="outlined" startIcon={<Refresh />} onClick={handleRefresh}>
-            Refresh
-          </Button>
-        </Stack>
+    <Box>
+      {/* Header */}
+      <Stack
+        direction={{ xs: 'column', sm: 'row' }}
+        justifyContent="space-between"
+        alignItems={{ xs: 'flex-start', sm: 'center' }}
+        spacing={2}
+        sx={{ mb: 4 }}
+      >
+        <div>
+          <Typography variant="h4" fontWeight={700} gutterBottom>
+            Withdrawal History
+          </Typography>
+          <Typography variant="body2" color="text.secondary">
+            Track and manage your withdrawal requests
+          </Typography>
+        </div>
+        <Button variant="outlined" startIcon={<Refresh />} onClick={handleRefresh}>
+          Refresh
+        </Button>
+      </Stack>
 
-        {/* Filters */}
-        <Card sx={{ mb: 3 }}>
-          <CardContent>
-            <Grid container spacing={2}>
-              <Grid item xs={12} sm={6} md={3}>
-                <TextField
-                  select
-                  fullWidth
-                  size="small"
-                  label="Status"
-                  value={status}
-                  onChange={(e) => setStatus(e.target.value as WithdrawalStatus | 'ALL')}
-                >
-                  <MenuItem value="ALL">All Status</MenuItem>
-                  <MenuItem value="REQUESTED">Requested</MenuItem>
-                  <MenuItem value="APPROVED">Approved</MenuItem>
-                  <MenuItem value="PROCESSING">Processing</MenuItem>
-                  <MenuItem value="COMPLETED">Completed</MenuItem>
-                  <MenuItem value="REJECTED">Rejected</MenuItem>
-                  <MenuItem value="CANCELLED">Cancelled</MenuItem>
-                </TextField>
-              </Grid>
-              <Grid item xs={12} sm={6} md={4}>
-                <LocalizationProvider dateAdapter={AdapterDayjs}>
-                  <DatePicker
-                    label="Start Date"
-                    value={startDate}
-                    onChange={(newValue) => setStartDate(newValue)}
-                    slotProps={{
-                      textField: {
-                        size: 'small',
-                        fullWidth: true,
-                      },
-                    }}
-                  />
-                </LocalizationProvider>
-              </Grid>
-              <Grid item xs={12} sm={6} md={4}>
-                <LocalizationProvider dateAdapter={AdapterDayjs}>
-                  <DatePicker
-                    label="End Date"
-                    value={endDate}
-                    onChange={(newValue) => setEndDate(newValue)}
-                    slotProps={{
-                      textField: {
-                        size: 'small',
-                        fullWidth: true,
-                      },
-                    }}
-                  />
-                </LocalizationProvider>
-              </Grid>
+      {/* Filters */}
+      <Card sx={{ mb: 3 }}>
+        <CardContent>
+          <Grid container spacing={2}>
+            <Grid item xs={12} sm={6} md={3}>
+              <TextField
+                select
+                fullWidth
+                size="small"
+                label="Status"
+                value={status}
+                onChange={(e) => setStatus(e.target.value as WithdrawalStatus | 'ALL')}
+              >
+                <MenuItem value="ALL">All Status</MenuItem>
+                <MenuItem value="REQUESTED">Requested</MenuItem>
+                <MenuItem value="APPROVED">Approved</MenuItem>
+                <MenuItem value="PROCESSING">Processing</MenuItem>
+                <MenuItem value="COMPLETED">Completed</MenuItem>
+                <MenuItem value="REJECTED">Rejected</MenuItem>
+                <MenuItem value="CANCELLED">Cancelled</MenuItem>
+              </TextField>
             </Grid>
-          </CardContent>
-        </Card>
-
-        {/* Withdrawals List */}
-        {loading ? (
-          <Grid container spacing={3}>
-            {[1, 2, 3].map((item) => (
-              <Grid item xs={12} key={item}>
-                <Skeleton variant="rectangular" height={300} sx={{ borderRadius: 2 }} />
-              </Grid>
-            ))}
+            <Grid item xs={12} sm={6} md={4}>
+              <LocalizationProvider dateAdapter={AdapterDayjs}>
+                <DatePicker
+                  label="Start Date"
+                  value={startDate}
+                  onChange={(newValue) => setStartDate(newValue)}
+                  slotProps={{
+                    textField: {
+                      size: 'small',
+                      fullWidth: true,
+                    },
+                  }}
+                />
+              </LocalizationProvider>
+            </Grid>
+            <Grid item xs={12} sm={6} md={4}>
+              <LocalizationProvider dateAdapter={AdapterDayjs}>
+                <DatePicker
+                  label="End Date"
+                  value={endDate}
+                  onChange={(newValue) => setEndDate(newValue)}
+                  slotProps={{
+                    textField: {
+                      size: 'small',
+                      fullWidth: true,
+                    },
+                  }}
+                />
+              </LocalizationProvider>
+            </Grid>
           </Grid>
-        ) : withdrawals.length > 0 ? (
-          <Grid container spacing={3}>
-            {withdrawals.map((withdrawal) => {
-              const statusConfig = getStatusConfig(withdrawal.status);
-              const StatusIcon = statusConfig.icon;
+        </CardContent>
+      </Card>
 
-              return (
-                <Grid item xs={12} key={withdrawal.id}>
-                  <Card>
-                    <CardContent>
-                      {/* Header */}
-                      <Stack
-                        direction={{ xs: 'column', sm: 'row' }}
-                        justifyContent="space-between"
-                        alignItems={{ xs: 'flex-start', sm: 'center' }}
-                        spacing={2}
-                        sx={{ mb: 3 }}
-                      >
-                        <Box>
-                          <Typography variant="h6" fontWeight={700} gutterBottom>
-                            {withdrawal.withdrawalId}
+      {/* Withdrawals List */}
+      {loading ? (
+        <Grid container spacing={3}>
+          {[1, 2, 3].map((item) => (
+            <Grid item xs={12} key={item}>
+              <Skeleton variant="rectangular" height={300} sx={{ borderRadius: 2 }} />
+            </Grid>
+          ))}
+        </Grid>
+      ) : withdrawals.length > 0 ? (
+        <Grid container spacing={3}>
+          {withdrawals.map((withdrawal) => {
+            const statusConfig = getStatusConfig(withdrawal.status);
+            const StatusIcon = statusConfig.icon;
+
+            return (
+              <Grid item xs={12} key={withdrawal.id}>
+                <Card>
+                  <CardContent>
+                    {/* Header */}
+                    <Stack
+                      direction={{ xs: 'column', sm: 'row' }}
+                      justifyContent="space-between"
+                      alignItems={{ xs: 'flex-start', sm: 'center' }}
+                      spacing={2}
+                      sx={{ mb: 3 }}
+                    >
+                      <Box>
+                        <Typography variant="h6" fontWeight={700} gutterBottom>
+                          {withdrawal.withdrawalId}
+                        </Typography>
+                        <Stack direction="row" spacing={1} alignItems="center">
+                          <CalendarToday sx={{ fontSize: 16, color: 'text.secondary' }} />
+                          <Typography variant="body2" color="text.secondary">
+                            Requested on {formatDate(withdrawal.requestDate)}
                           </Typography>
-                          <Stack direction="row" spacing={1} alignItems="center">
-                            <CalendarToday sx={{ fontSize: 16, color: 'text.secondary' }} />
-                            <Typography variant="body2" color="text.secondary">
-                              Requested on {formatDate(withdrawal.requestDate)}
-                            </Typography>
-                          </Stack>
-                        </Box>
-                        <Chip
-                          icon={<StatusIcon />}
-                          label={statusConfig.label}
-                          color={statusConfig.color as any}
-                          sx={{ fontWeight: 600 }}
-                        />
-                      </Stack>
+                        </Stack>
+                      </Box>
+                      <Chip
+                        icon={<StatusIcon />}
+                        label={statusConfig.label}
+                        color={statusConfig.color as any}
+                        sx={{ fontWeight: 600 }}
+                      />
+                    </Stack>
 
-                      <Grid container spacing={3}>
-                        {/* Left: Amount Details */}
-                        <Grid item xs={12} md={5}>
-                          <Card variant="outlined">
-                            <CardContent>
-                              <Stack spacing={2}>
-                                <Stack direction="row" justifyContent="space-between">
-                                  <Typography variant="body2" color="text.secondary">
-                                    Requested Amount
-                                  </Typography>
-                                  <Typography variant="body2" fontWeight={600}>
-                                    {formatCurrency(withdrawal.requestedAmount)}
-                                  </Typography>
-                                </Stack>
-                                <Stack direction="row" justifyContent="space-between">
-                                  <Typography variant="body2" color="text.secondary">
-                                    TDS
-                                  </Typography>
-                                  <Typography variant="body2" fontWeight={600} color="error.main">
-                                    -{formatCurrency(withdrawal.tds)}
-                                  </Typography>
-                                </Stack>
-                                <Stack direction="row" justifyContent="space-between">
-                                  <Typography variant="body2" color="text.secondary">
-                                    Admin Charge
-                                  </Typography>
-                                  <Typography variant="body2" fontWeight={600} color="error.main">
-                                    -{formatCurrency(withdrawal.adminCharge)}
-                                  </Typography>
-                                </Stack>
-                                <Box
-                                  sx={{
-                                    p: 2,
-                                    borderRadius: 1,
-                                    bgcolor: 'success.main',
-                                    color: 'success.contrastText',
-                                  }}
-                                >
-                                  <Typography variant="caption">Net Amount</Typography>
-                                  <Typography variant="h6" fontWeight={700}>
-                                    {formatCurrency(withdrawal.netAmount)}
-                                  </Typography>
-                                </Box>
+                    <Grid container spacing={3}>
+                      {/* Left: Amount Details */}
+                      <Grid item xs={12} md={5}>
+                        <Card variant="outlined">
+                          <CardContent>
+                            <Stack spacing={2}>
+                              <Stack direction="row" justifyContent="space-between">
+                                <Typography variant="body2" color="text.secondary">
+                                  Requested Amount
+                                </Typography>
+                                <Typography variant="body2" fontWeight={600}>
+                                  {formatCurrency(withdrawal.requestedAmount)}
+                                </Typography>
                               </Stack>
-
-                              {/* Payment Details */}
-                              <Box sx={{ mt: 2, pt: 2, borderTop: 1, borderColor: 'divider' }}>
-                                <Stack direction="row" alignItems="center" spacing={1} sx={{ mb: 1 }}>
-                                  <AccountBalance fontSize="small" color="primary" />
-                                  <Typography variant="caption" fontWeight={600}>
-                                    Payment Method: {withdrawal.paymentMethod.replace('_', ' ')}
-                                  </Typography>
-                                </Stack>
-                                {withdrawal.bankDetails && (
-                                  <Box>
-                                    <Typography variant="caption" color="text.secondary">
-                                      {withdrawal.bankDetails.accountHolderName}
-                                    </Typography>
-                                    <Typography variant="caption" display="block" color="text.secondary">
-                                      {withdrawal.bankDetails.bankName} - {withdrawal.bankDetails.accountNumber.slice(-4).padStart(withdrawal.bankDetails.accountNumber.length, '*')}
-                                    </Typography>
-                                  </Box>
-                                )}
-                                {withdrawal.upiId && (
-                                  <Typography variant="caption" color="text.secondary">
-                                    UPI: {withdrawal.upiId}
-                                  </Typography>
-                                )}
-                              </Box>
-
-                              {/* UTR Number */}
-                              {withdrawal.utrNumber && (
-                                <Alert severity="success" sx={{ mt: 2 }}>
-                                  <Typography variant="caption" fontWeight={600}>
-                                    UTR Number: {withdrawal.utrNumber}
-                                  </Typography>
-                                </Alert>
-                              )}
-
-                              {/* Rejection Reason */}
-                              {withdrawal.rejectionReason && (
-                                <Alert severity="error" sx={{ mt: 2 }}>
-                                  <Typography variant="caption" fontWeight={600}>
-                                    Reason: {withdrawal.rejectionReason}
-                                  </Typography>
-                                </Alert>
-                              )}
-                            </CardContent>
-                          </Card>
-                        </Grid>
-
-                        {/* Right: Timeline */}
-                        <Grid item xs={12} md={7}>
-                          <Stepper orientation="vertical" activeStep={getStatusSteps(withdrawal).length - 1}>
-                            {getStatusSteps(withdrawal).map((step, index) => (
-                              <Step key={index} completed={true}>
-                                <StepLabel>
-                                  <Typography variant="body2" fontWeight={600}>
-                                    {step.label}
-                                  </Typography>
-                                </StepLabel>
-                                <StepContent>
-                                  <Typography variant="caption" color="text.secondary">
-                                    {step.date ? formatDate(step.date) : 'Pending'}
-                                  </Typography>
-                                </StepContent>
-                              </Step>
-                            ))}
-                          </Stepper>
-
-                          {/* Actions */}
-                          <Stack direction="row" spacing={2} sx={{ mt: 3 }}>
-                            {withdrawal.status === 'REQUESTED' && (
-                              <Button
-                                variant="outlined"
-                                color="error"
-                                size="small"
-                                startIcon={<Cancel />}
-                                onClick={() => {
-                                  setSelectedWithdrawal(withdrawal);
-                                  setCancelDialogOpen(true);
+                              <Stack direction="row" justifyContent="space-between">
+                                <Typography variant="body2" color="text.secondary">
+                                  TDS
+                                </Typography>
+                                <Typography variant="body2" fontWeight={600} color="error.main">
+                                  -{formatCurrency(withdrawal.tds)}
+                                </Typography>
+                              </Stack>
+                              <Stack direction="row" justifyContent="space-between">
+                                <Typography variant="body2" color="text.secondary">
+                                  Admin Charge
+                                </Typography>
+                                <Typography variant="body2" fontWeight={600} color="error.main">
+                                  -{formatCurrency(withdrawal.adminCharge)}
+                                </Typography>
+                              </Stack>
+                              <Box
+                                sx={{
+                                  p: 2,
+                                  borderRadius: 1,
+                                  bgcolor: 'success.main',
+                                  color: 'success.contrastText',
                                 }}
                               >
-                                Cancel Request
-                              </Button>
-                            )}
-                            {withdrawal.status === 'COMPLETED' && (
-                              <Button
-                                variant="outlined"
-                                size="small"
-                                startIcon={<Download />}
-                                onClick={() => handleDownloadReceipt(withdrawal)}
-                              >
-                                Download Receipt
-                              </Button>
-                            )}
-                          </Stack>
-                        </Grid>
-                      </Grid>
-                    </CardContent>
-                  </Card>
-                </Grid>
-              );
-            })}
-          </Grid>
-        ) : (
-          <Card>
-            <CardContent>
-              <Box sx={{ textAlign: 'center', py: 8 }}>
-                <Info sx={{ fontSize: 64, color: 'text.disabled', mb: 2 }} />
-                <Typography variant="h6" gutterBottom>
-                  No Withdrawal History
-                </Typography>
-                <Typography variant="body2" color="text.secondary">
-                  {status !== 'ALL'
-                    ? 'No withdrawals found with this status'
-                    : "You haven't made any withdrawal requests yet"}
-                </Typography>
-              </Box>
-            </CardContent>
-          </Card>
-        )}
+                                <Typography variant="caption">Net Amount</Typography>
+                                <Typography variant="h6" fontWeight={700}>
+                                  {formatCurrency(withdrawal.netAmount)}
+                                </Typography>
+                              </Box>
+                            </Stack>
 
-        {/* Cancel Dialog */}
-        <Dialog open={cancelDialogOpen} onClose={() => setCancelDialogOpen(false)} maxWidth="sm" fullWidth>
-          <DialogTitle>Cancel Withdrawal Request</DialogTitle>
-          <DialogContent>
-            <Alert severity="warning" sx={{ mb: 2 }}>
-              Are you sure you want to cancel this withdrawal request?
-            </Alert>
-            <TextField
-              fullWidth
-              multiline
-              rows={3}
-              label="Reason for Cancellation"
-              value={cancelReason}
-              onChange={(e) => setCancelReason(e.target.value)}
-              placeholder="Please provide a reason for cancelling this request"
-            />
-          </DialogContent>
-          <DialogActions>
-            <Button onClick={() => setCancelDialogOpen(false)}>Keep Request</Button>
-            <Button
-              variant="contained"
-              color="error"
-              onClick={handleCancelWithdrawal}
-              disabled={cancelling || !cancelReason}
-            >
-              {cancelling ? 'Cancelling...' : 'Cancel Request'}
-            </Button>
-          </DialogActions>
-        </Dialog>
-      </Box>
-    
+                            {/* Payment Details */}
+                            <Box sx={{ mt: 2, pt: 2, borderTop: 1, borderColor: 'divider' }}>
+                              <Stack direction="row" alignItems="center" spacing={1} sx={{ mb: 1 }}>
+                                <AccountBalance fontSize="small" color="primary" />
+                                <Typography variant="caption" fontWeight={600}>
+                                  Payment Method: {withdrawal.paymentMethod.replace('_', ' ')}
+                                </Typography>
+                              </Stack>
+                              {withdrawal.bankDetails && (
+                                <Box>
+                                  <Typography variant="caption" color="text.secondary">
+                                    {withdrawal.bankDetails.accountHolderName}
+                                  </Typography>
+                                  <Typography variant="caption" display="block" color="text.secondary">
+                                    {withdrawal.bankDetails.bankName} - {withdrawal.bankDetails.accountNumber.slice(-4).padStart(withdrawal.bankDetails.accountNumber.length, '*')}
+                                  </Typography>
+                                </Box>
+                              )}
+                              {withdrawal.upiId && (
+                                <Typography variant="caption" color="text.secondary">
+                                  UPI: {withdrawal.upiId}
+                                </Typography>
+                              )}
+                            </Box>
+
+                            {/* UTR Number */}
+                            {withdrawal.utrNumber && (
+                              <Alert severity="success" sx={{ mt: 2 }}>
+                                <Typography variant="caption" fontWeight={600}>
+                                  UTR Number: {withdrawal.utrNumber}
+                                </Typography>
+                              </Alert>
+                            )}
+
+                            {/* Rejection Reason */}
+                            {withdrawal.rejectionReason && (
+                              <Alert severity="error" sx={{ mt: 2 }}>
+                                <Typography variant="caption" fontWeight={600}>
+                                  Reason: {withdrawal.rejectionReason}
+                                </Typography>
+                              </Alert>
+                            )}
+                          </CardContent>
+                        </Card>
+                      </Grid>
+
+                      {/* Right: Timeline */}
+                      <Grid item xs={12} md={7}>
+                        <Stepper orientation="vertical" activeStep={getStatusSteps(withdrawal).length - 1}>
+                          {getStatusSteps(withdrawal).map((step, index) => (
+                            <Step key={index} completed={true}>
+                              <StepLabel>
+                                <Typography variant="body2" fontWeight={600}>
+                                  {step.label}
+                                </Typography>
+                              </StepLabel>
+                              <StepContent>
+                                <Typography variant="caption" color="text.secondary">
+                                  {step.date ? formatDate(step.date) : 'Pending'}
+                                </Typography>
+                              </StepContent>
+                            </Step>
+                          ))}
+                        </Stepper>
+
+                        {/* Actions */}
+                        <Stack direction="row" spacing={2} sx={{ mt: 3 }}>
+                          {withdrawal.status === 'REQUESTED' && (
+                            <Button
+                              variant="outlined"
+                              color="error"
+                              size="small"
+                              startIcon={<Cancel />}
+                              onClick={() => {
+                                setSelectedWithdrawal(withdrawal);
+                                setCancelDialogOpen(true);
+                              }}
+                            >
+                              Cancel Request
+                            </Button>
+                          )}
+                          {withdrawal.status === 'COMPLETED' && (
+                            <Button
+                              variant="outlined"
+                              size="small"
+                              startIcon={<Download />}
+                              onClick={() => handleDownloadReceipt(withdrawal)}
+                            >
+                              Download Receipt
+                            </Button>
+                          )}
+                        </Stack>
+                      </Grid>
+                    </Grid>
+                  </CardContent>
+                </Card>
+              </Grid>
+            );
+          })}
+        </Grid>
+      ) : (
+        <Card>
+          <CardContent>
+            <Box sx={{ textAlign: 'center', py: 8 }}>
+              <Info sx={{ fontSize: 64, color: 'text.disabled', mb: 2 }} />
+              <Typography variant="h6" gutterBottom>
+                No Withdrawal History
+              </Typography>
+              <Typography variant="body2" color="text.secondary">
+                {status !== 'ALL'
+                  ? 'No withdrawals found with this status'
+                  : "You haven't made any withdrawal requests yet"}
+              </Typography>
+            </Box>
+          </CardContent>
+        </Card>
+      )}
+
+      {/* Cancel Dialog */}
+      <Dialog open={cancelDialogOpen} onClose={() => setCancelDialogOpen(false)} maxWidth="sm" fullWidth>
+        <DialogTitle>Cancel Withdrawal Request</DialogTitle>
+        <DialogContent>
+          <Alert severity="warning" sx={{ mb: 2 }}>
+            Are you sure you want to cancel this withdrawal request?
+          </Alert>
+          <TextField
+            fullWidth
+            multiline
+            rows={3}
+            label="Reason for Cancellation"
+            value={cancelReason}
+            onChange={(e) => setCancelReason(e.target.value)}
+            placeholder="Please provide a reason for cancelling this request"
+          />
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setCancelDialogOpen(false)}>Keep Request</Button>
+          <Button
+            variant="contained"
+            color="error"
+            onClick={handleCancelWithdrawal}
+            disabled={cancelling || !cancelReason}
+          >
+            {cancelling ? 'Cancelling...' : 'Cancel Request'}
+          </Button>
+        </DialogActions>
+      </Dialog>
+    </Box>
   );
 };
 

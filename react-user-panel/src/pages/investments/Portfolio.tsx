@@ -101,7 +101,7 @@ const Portfolio: React.FC = () => {
 
   if (loading) {
     return (
-      
+      <Box>
         <Box>
           <Grid container spacing={3}>
             {[1, 2, 3, 4].map((item) => (
@@ -112,23 +112,23 @@ const Portfolio: React.FC = () => {
           </Grid>
           <Skeleton variant="rectangular" height={400} sx={{ mt: 3, borderRadius: 2 }} />
         </Box>
-      
+      </Box>
     );
   }
 
   if (error || !portfolio) {
     return (
-      
+      <Box>
         <Alert severity="error">{error || 'Failed to load portfolio'}</Alert>
         <Button startIcon={<Refresh />} onClick={handleRefresh} sx={{ mt: 2 }}>
           Retry
         </Button>
-      
+      </Box>
     );
   }
 
   return (
-    
+    <Box>
       <Box>
         {/* Header */}
         <Stack
@@ -516,7 +516,7 @@ const Portfolio: React.FC = () => {
           </CardContent>
         </Card>
       </Box>
-    
+    </Box>
   );
 };
 

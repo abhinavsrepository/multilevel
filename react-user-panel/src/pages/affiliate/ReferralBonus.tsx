@@ -59,7 +59,7 @@ const ReferralBonus: React.FC = () => {
 
     if (loading) {
         return (
-            
+      <Box>
                 <Box display="flex" justifyContent="center" alignItems="center" minHeight="60vh">
                     <CircularProgress />
                 </Box>
@@ -68,7 +68,7 @@ const ReferralBonus: React.FC = () => {
     }
 
     return (
-        
+      <Box>
             <Box sx={{ mb: 4 }}>
                 <Typography variant="h4" gutterBottom fontWeight="bold">
                     Direct Referral Bonus

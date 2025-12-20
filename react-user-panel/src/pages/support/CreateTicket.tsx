@@ -123,7 +123,7 @@ const CreateTicket: React.FC = () => {
   }
 
   return (
-    
+      
       <Box>
         {/* Header */}
         <Paper sx={{ p: 3, mb: 3 }}>

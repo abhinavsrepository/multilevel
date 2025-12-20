@@ -173,7 +173,7 @@ const Tickets: React.FC = () => {
   }
 
   return (
-    
+      
       <Box>
         {/* Stats Overview */}
         {stats && (

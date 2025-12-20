@@ -188,28 +188,26 @@ const ReferralTools: React.FC = () => {
 
   if (loading) {
     return (
-      
-        <Box>
-          <Skeleton variant="rectangular" height={300} sx={{ borderRadius: 2, mb: 3 }} />
-          <Grid container spacing={3}>
-            {[1, 2, 3, 4].map((i) => (
-              <Grid item xs={12} md={6} lg={3} key={i}>
-                <Skeleton variant="rectangular" height={120} sx={{ borderRadius: 2 }} />
-              </Grid>
-            ))}
-          </Grid>
-        </Box>
-      
+      <Box>
+        <Skeleton variant="rectangular" height={300} sx={{ borderRadius: 2, mb: 3 }} />
+        <Grid container spacing={3}>
+          {[1, 2, 3, 4].map((i) => (
+            <Grid item xs={12} md={6} lg={3} key={i}>
+              <Skeleton variant="rectangular" height={120} sx={{ borderRadius: 2 }} />
+            </Grid>
+          ))}
+        </Grid>
+      </Box>
     );
   }
 
   if (error) {
     return (
-      
+      <Box>
         <Alert severity="error" sx={{ mb: 3 }}>
           {error}
         </Alert>
-      
+      </Box>
     );
   }
 
@@ -220,9 +218,8 @@ const ReferralTools: React.FC = () => {
   const { stats } = referralData;
 
   return (
-    
-      <Box>
-        {/* Stats Overview */}
+    <Box>
+      {/* Stats Overview */}
         <Grid container spacing={3} sx={{ mb: 3 }}>
           <Grid item xs={12} sm={6} md={4} lg={2}>
             <Card>
@@ -952,8 +949,7 @@ const ReferralTools: React.FC = () => {
             </TableContainer>
           </TabPanel>
         </Card>
-      </Box >
-    
+    </Box>
   );
 };
 

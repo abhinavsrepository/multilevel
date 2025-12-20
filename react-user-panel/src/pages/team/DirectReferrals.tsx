@@ -144,7 +144,7 @@ const DirectReferrals: React.FC = () => {
   };
 
   return (
-    
+    <Box>
       <Box>
         {/* Page Header */}
         <Box sx={{ mb: 3 }}>
@@ -350,7 +350,7 @@ const DirectReferrals: React.FC = () => {
           </Box>
         )}
       </Box>
-    
+    </Box>
   );
 };
 

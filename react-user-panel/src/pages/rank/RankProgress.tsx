@@ -564,6 +564,7 @@ const RankProgress: React.FC = () => {
                   )}
                 </List>
 
+      <Box>
                 <Alert severity="info" sx={{ mt: 2 }}>
                   <Typography variant="body2">
                     At your current pace, you can achieve {nextRank.name} rank in approximately{' '}

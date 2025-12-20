@@ -265,9 +265,8 @@ const Transactions: React.FC = () => {
   ];
 
   return (
-    
-      <Box>
-        {/* Header */}
+    <Box>
+      {/* Header */}
         <Stack
           direction={{ xs: 'column', sm: 'row' }}
           justifyContent="space-between"
@@ -547,8 +546,7 @@ const Transactions: React.FC = () => {
             />
           </Box>
         </Card>
-      </Box>
-    
+    </Box>
   );
 };
 

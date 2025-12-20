@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { Box } from '@mui/material';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
@@ -103,14 +104,15 @@ const EditProfile: React.FC = () => {
 
     if (loading) {
         return (
-            
+            <Box>
                 <LoadingSpinner />
-            
+            </Box>
         );
     }
 
+
     return (
-        
+        <Box>
             <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -179,7 +181,7 @@ const EditProfile: React.FC = () => {
                                         </div>
                                     </div>
                                     {errors.gender && (
-                                        <p className="mt-1 text-sm text-red-600">{errors.gender.message}</p>
+                                        <p className="mt-1 text-sm text-red-600">{errors.gender?.message}</p>
                                     )}
                                 </div>
                             </div>
@@ -257,9 +259,10 @@ const EditProfile: React.FC = () => {
                         </div>
                     </form>
                 </div>
-            </motion.div>
-        
+            </motion.div >
+        </Box >
     );
 };
+
 
 export default EditProfile;

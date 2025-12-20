@@ -264,7 +264,7 @@ const DocumentUpload: React.FC = () => {
 
   if (success) {
     return (
-      
+      <Box>
         <Card>
           <CardContent sx={{ textAlign: 'center', py: 6 }}>
             <CheckCircle sx={{ fontSize: 80, color: 'success.main', mb: 2 }} />
@@ -283,81 +283,81 @@ const DocumentUpload: React.FC = () => {
             </Button>
           </CardContent>
         </Card>
-      
+      </Box>
     );
   }
 
   return (
-    
-      <Box>
-        {/* Stepper */}
-        <Paper sx={{ p: 3, mb: 3 }}>
-          <Stepper activeStep={activeStep}>
-            {steps.map((label) => (
-              <Step key={label}>
-                <StepLabel>{label}</StepLabel>
-              </Step>
-            ))}
-          </Stepper>
-        </Paper>
+    <Box>
 
-        {/* Content */}
-        <Card>
-          <CardContent>
-            {error && (
-              <Alert severity="error" sx={{ mb: 3 }}>
-                {error}
-              </Alert>
-            )}
+      {/* Stepper */}
+      <Paper sx={{ p: 3, mb: 3 }}>
+        <Stepper activeStep={activeStep}>
+          {steps.map((label) => (
+            <Step key={label}>
+              <StepLabel>{label}</StepLabel>
+            </Step>
+          ))}
+        </Stepper>
+      </Paper>
 
-            {getStepContent(activeStep)}
+      {/* Content */}
+      <Card>
+        <CardContent>
+          {error && (
+            <Alert severity="error" sx={{ mb: 3 }}>
+              {error}
+            </Alert>
+          )}
 
-            {/* Navigation Buttons */}
-            <Box sx={{ display: 'flex', justifyContent: 'space-between', mt: 4 }}>
+          {getStepContent(activeStep)}
+
+          {/* Navigation Buttons */}
+          <Box sx={{ display: 'flex', justifyContent: 'space-between', mt: 4 }}>
+            <Button
+              onClick={handleBack}
+              disabled={activeStep === 0}
+              startIcon={<ArrowBack />}
+            >
+              Back
+            </Button>
+            {activeStep === steps.length - 1 ? (
               <Button
-                onClick={handleBack}
-                disabled={activeStep === 0}
-                startIcon={<ArrowBack />}
+                variant="contained"
+                onClick={handleSubmit}
+                disabled={uploading}
+                startIcon={<CloudUpload />}
               >
-                Back
+                {uploading ? 'Uploading...' : 'Submit All Documents'}
               </Button>
-              {activeStep === steps.length - 1 ? (
-                <Button
-                  variant="contained"
-                  onClick={handleSubmit}
-                  disabled={uploading}
-                  startIcon={<CloudUpload />}
-                >
-                  {uploading ? 'Uploading...' : 'Submit All Documents'}
-                </Button>
-              ) : (
-                <Button
-                  variant="contained"
-                  onClick={handleNext}
-                  endIcon={<ArrowForward />}
-                >
-                  Next
-                </Button>
-              )}
-            </Box>
-          </CardContent>
-        </Card>
+            ) : (
+              <Button
+                variant="contained"
+                onClick={handleNext}
+                endIcon={<ArrowForward />}
+              >
+                Next
+              </Button>
+            )}
+          </Box>
+        </CardContent>
+      </Card>
 
-        {/* Guidelines */}
-        <Alert severity="info" icon={<Info />} sx={{ mt: 3 }}>
-          <Typography variant="body2">
-            <strong>Upload Guidelines:</strong>
-            <ul style={{ margin: '8px 0', paddingLeft: '20px' }}>
-              <li>All documents must be clear and readable</li>
-              <li>File size should not exceed 5MB</li>
-              <li>Accepted formats: JPG, PNG, PDF</li>
-              <li>Ensure all details match your profile information</li>
-              <li>Documents will be verified within 24-48 hours</li>
-            </ul>
-          </Typography>
-        </Alert>
-      </Box>
-    
+      {/* Guidelines */}
+      <Alert severity="info" icon={<Info />} sx={{ mt: 3 }}>
+        <Typography variant="body2">
+          <strong>Upload Guidelines:</strong>
+          <ul style={{ margin: '8px 0', paddingLeft: '20px' }}>
+            <li>All documents must be clear and readable</li>
+            <li>File size should not exceed 5MB</li>
+            <li>Accepted formats: JPG, PNG, PDF</li>
+            <li>Ensure all details match your profile information</li>
+            <li>Documents will be verified within 24-48 hours</li>
+          </ul>
+        </Typography>
+      </Alert>
+    </Box>
+
   );
 };
 

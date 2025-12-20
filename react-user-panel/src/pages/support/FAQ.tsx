@@ -80,7 +80,7 @@ const FAQ: React.FC = () => {
   const fetchCategories = async () => {
     try {
       const response = await getFAQCategories();
-      setCategories(response.data);
+      setCategories(response.data || []);
     } catch (err: any) {
       console.error('Failed to load FAQ categories:', err);
     }
@@ -145,7 +145,7 @@ const FAQ: React.FC = () => {
   }
 
   return (
-    
+      
       <Box>
         {/* Header */}
         <Paper

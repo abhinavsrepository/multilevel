@@ -164,19 +164,19 @@ const Achievements: React.FC = () => {
 
   if (error) {
     return (
-      
+      <Box>
         <Alert severity="error" sx={{ mb: 3 }}>
           {error}
         </Alert>
         <Button variant="contained" onClick={fetchData}>
           Retry
         </Button>
-      
+      </Box>
     );
   }
 
   return (
-    
+     
       <Box>
         {/* Stats Overview */}
         <Grid container spacing={3} sx={{ mb: 3 }}>

@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
+import { Box } from '@mui/material';
 import {
   FiUser,
   FiEdit2,
@@ -216,26 +217,26 @@ const Profile: React.FC = () => {
 
   if (loading) {
     return (
-      
+      <Box>
         <LoadingSpinner />
-      
+      </Box>
     );
   }
 
   if (error || !user) {
     return (
-      
+      <Box>
         <EmptyState
           title="Failed to load profile"
           message={error || 'Please try again later'}
           icon={<FiAlertCircle className="w-16 h-16" />}
         />
-      
+      </Box>
     );
   }
 
   return (
-    
+    <Box>
       <div className="space-y-6">
         {/* Header Section with Cover Photo and Profile Picture */}
         <motion.div
@@ -327,8 +328,8 @@ const Profile: React.FC = () => {
                     </span>
                     <span
                       className={`px-3 py-1 rounded-full text-sm font-semibold ${user.isActive
-                          ? 'bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-200'
-                          : 'bg-red-100 dark:bg-red-900 text-red-800 dark:text-red-200'
+                        ? 'bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-200'
+                        : 'bg-red-100 dark:bg-red-900 text-red-800 dark:text-red-200'
                         }`}
                     >
                       {user.isActive ? 'Active' : 'Inactive'}
@@ -358,8 +359,8 @@ const Profile: React.FC = () => {
                   key={tab.id}
                   onClick={() => setActiveTab(tab.id)}
                   className={`flex-shrink-0 px-6 py-4 font-semibold text-sm transition-colors flex items-center gap-2 border-b-2 ${activeTab === tab.id
-                      ? 'border-blue-600 text-blue-600 dark:text-blue-400'
-                      : 'border-transparent text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200'
+                    ? 'border-blue-600 text-blue-600 dark:text-blue-400'
+                    : 'border-transparent text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200'
                     }`}
                 >
                   {tab.icon}
@@ -846,8 +847,8 @@ const Profile: React.FC = () => {
                         </div>
                         <span
                           className={`px-2 py-1 text-xs font-semibold rounded ${login.status === 'SUCCESS'
-                              ? 'bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-200'
-                              : 'bg-red-100 dark:bg-red-900 text-red-800 dark:text-red-200'
+                            ? 'bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-200'
+                            : 'bg-red-100 dark:bg-red-900 text-red-800 dark:text-red-200'
                             }`}
                         >
                           {login.status}
@@ -1020,28 +1021,28 @@ const Profile: React.FC = () => {
             </div>
           </motion.button>
         </div>
-      </div>
 
-      {/* Profile Edit Modal */}
-      <ProfileEditModal
-        open={showEditModal}
-        onClose={() => setShowEditModal(false)}
-        onSubmit={handleEditProfile}
-        currentData={{
-          firstName: user.fullName.split(' ')[0],
-          lastName: user.fullName.split(' ').slice(1).join(' '),
-          email: user.email,
-          phone: user.mobile,
-          dateOfBirth: user.dateOfBirth ? new Date(user.dateOfBirth) : null,
-          gender: user.gender?.toLowerCase() || '',
-          address: user.address || '',
-          city: user.city || '',
-          state: user.state || '',
-          pincode: user.pincode || '',
-          country: user.country || 'India',
-        }}
-      />
-    
+        {/* Profile Edit Modal */}
+        <ProfileEditModal
+          open={showEditModal}
+          onClose={() => setShowEditModal(false)}
+          onSubmit={handleEditProfile}
+          currentData={{
+            firstName: user.fullName.split(' ')[0],
+            lastName: user.fullName.split(' ').slice(1).join(' '),
+            email: user.email,
+            phone: user.mobile,
+            dateOfBirth: user.dateOfBirth ? new Date(user.dateOfBirth) : null,
+            gender: user.gender?.toLowerCase() || '',
+            address: user.address || '',
+            city: user.city || '',
+            state: user.state || '',
+            pincode: user.pincode || '',
+            country: user.country || 'India',
+          }}
+        />
+      </div>
+    </Box>
   );
 };
 

@@ -167,7 +167,7 @@ const BinaryTreePage: React.FC = () => {
   };
 
   return (
-    
+      
       <Box>
         {/* Page Header */}
         <Box sx={{ mb: 3 }}>

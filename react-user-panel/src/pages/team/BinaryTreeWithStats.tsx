@@ -398,34 +398,34 @@ const BinaryTreeWithStats: React.FC = () => {
                   />
                 </Box>
 
-                <Box sx={{
-                  p: 2,
-                  bgcolor: 'primary.lighter',
-                  borderRadius: 2,
-                  textAlign: 'center',
-                  mb: 2,
-                }}>
-                  <Typography variant="h3" fontWeight="bold" color="primary.main">
-                    {unlockedLevels}
-                  </Typography>
-                  <Typography variant="subtitle2" color="text.secondary">
-                    Levels Unlocked
-                  </Typography>
-                </Box>
+          <Box sx={{
+            p: 2,
+            bgcolor: 'primary.lighter',
+            borderRadius: 2,
+            textAlign: 'center',
+            mb: 2,
+          }}>
+            <Typography variant="h3" fontWeight="bold" color="primary.main">
+              {unlockedLevels}
+            </Typography>
+            <Typography variant="subtitle2" color="text.secondary">
+              Levels Unlocked
+            </Typography>
+          </Box>
 
-                <Alert severity="info" icon={<Info />}>
-                  {directReferrals < 3 && (
-                    <>Need {3 - directReferrals} more direct referrals to unlock Level 5</>
-                  )}
-                  {directReferrals >= 3 && directReferrals < 5 && (
-                    <>Need {5 - directReferrals} more direct referrals to unlock all levels</>
-                  )}
-                  {directReferrals >= 5 && (
-                    <>All levels unlocked! 🎉</>
-                  )}
-                </Alert>
-              </CardContent>
-            </Card>
+          <Alert severity="info" icon={<Info />}>
+            {directReferrals < 3 && (
+              <>Need {3 - directReferrals} more direct referrals to unlock Level 5</>
+            )}
+            {directReferrals >= 3 && directReferrals < 5 && (
+              <>Need {5 - directReferrals} more direct referrals to unlock all levels</>
+            )}
+            {directReferrals >= 5 && (
+              <>All levels unlocked! 🎉</>
+            )}
+          </Alert>
+        </CardContent>
+      </Card>
 
             {/* Business Volume Stats */}
             <Card>

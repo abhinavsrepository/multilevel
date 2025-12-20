@@ -211,17 +211,18 @@ const Withdrawal: React.FC = () => {
 
   if (loading) {
     return (
-      
+      <Box>
         <Box>
           <Skeleton variant="rectangular" height={200} sx={{ mb: 3, borderRadius: 2 }} />
           <Skeleton variant="rectangular" height={400} sx={{ borderRadius: 2 }} />
         </Box>
-      
+      </Box>
+
     );
   }
 
   return (
-    
+    <Box>
       <Box>
         {/* Header */}
         <Stack direction="row" spacing={2} alignItems="center" sx={{ mb: 4 }}>
@@ -642,7 +643,8 @@ const Withdrawal: React.FC = () => {
           </Grid>
         </Grid>
       </Box>
-    
+    </Box>
+
   );
 };
 

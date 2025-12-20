@@ -101,7 +101,7 @@ const RankAchievementTimeline: React.FC = () => {
   };
 
   return (
-    
+      <Box>
       <Box sx={{ p: 3 }}>
         <Typography variant="h4" gutterBottom fontWeight="bold">
           Rank Achievements

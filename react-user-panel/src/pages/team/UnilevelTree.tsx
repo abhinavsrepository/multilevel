@@ -179,7 +179,7 @@ const UnilevelTreePage: React.FC = () => {
   };
 
   return (
-    
+    <Box>
       <Box>
         {/* Page Header */}
         <Box sx={{ mb: 3 }}>
@@ -365,8 +365,8 @@ const UnilevelTreePage: React.FC = () => {
                       selectedNode.status === 'ACTIVE'
                         ? 'success'
                         : selectedNode.status === 'PENDING'
-                        ? 'warning'
-                        : 'error'
+                          ? 'warning'
+                          : 'error'
                     }
                     size="small"
                   />
@@ -456,7 +456,7 @@ const UnilevelTreePage: React.FC = () => {
           )}
         </Dialog>
       </Box>
-    
+    </Box>
   );
 };
 

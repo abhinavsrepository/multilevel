@@ -121,17 +121,15 @@ const TeamReport: React.FC = () => {
    */
   if (loading) {
     return (
-      
-        <Box>
-          <Grid container spacing={3}>
-            {[1, 2, 3, 4, 5, 6].map((i) => (
-              <Grid item xs={12} key={i}>
-                <Skeleton variant="rectangular" height={300} sx={{ borderRadius: 3 }} />
-              </Grid>
-            ))}
-          </Grid>
-        </Box>
-      
+      <Box>
+        <Grid container spacing={3}>
+          {[1, 2, 3, 4, 5, 6].map((i) => (
+            <Grid item xs={12} key={i}>
+              <Skeleton variant="rectangular" height={300} sx={{ borderRadius: 3 }} />
+            </Grid>
+          ))}
+        </Grid>
+      </Box>
     );
   }
 
@@ -140,18 +138,17 @@ const TeamReport: React.FC = () => {
    */
   if (error || !report) {
     return (
-      
+      <Box>
         <Alert severity="error" sx={{ borderRadius: 2 }}>
           {error || 'Failed to load team report'}
         </Alert>
-      
+      </Box>
     );
   }
 
   return (
-    
-      <Box>
-        {/* Page Header */}
+    <Box>
+      {/* Page Header */}
         <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 4 }}>
           <Box>
             <Typography variant="h4" fontWeight={700} gutterBottom>
@@ -600,8 +597,7 @@ const TeamReport: React.FC = () => {
             <ListItemText>Export as Excel</ListItemText>
           </MenuItem>
         </Menu>
-      </Box>
-    
+    </Box>
   );
 };
 

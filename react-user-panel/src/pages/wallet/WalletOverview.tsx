@@ -120,16 +120,18 @@ const WalletOverview: React.FC = () => {
   if (error || !walletBalance) {
     return (
       
+      <Box>
         <Alert severity="error">{error || 'Failed to load wallet'}</Alert>
         <Button startIcon={<Refresh />} onClick={handleRefresh} sx={{ mt: 2 }}>
           Retry
         </Button>
+        </Box>
       
     );
   }
 
   return (
-    
+      
       <Box>
         {/* Header */}
         <Stack

@@ -11,6 +11,7 @@ import {
   FiCalendar,
   FiArrowLeft,
 } from 'react-icons/fi';
+import { Box } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import LoadingSpinner from '../../components/common/LoadingSpinner';
 import EmptyState from '../../components/common/EmptyState';
@@ -36,7 +37,7 @@ const DigitalIDCard: React.FC = () => {
     try {
       setLoading(true);
       const response = await getUserProfile();
-      setUser(response.data);
+      setUser(response.data || null);
     } catch (err: any) {
       setError(err.message || 'Failed to fetch user data');
     } finally {
@@ -187,26 +188,26 @@ const DigitalIDCard: React.FC = () => {
 
   if (loading) {
     return (
-      
+      <Box>
         <LoadingSpinner />
-      
+      </Box>
     );
   }
 
   if (error || !user) {
     return (
-      
+      <Box>
         <EmptyState
           title="Failed to load ID card"
-          description={error || 'Please try again later'}
+          message={error || 'Please try again later'}
           icon={<FiUser className="w-16 h-16" />}
         />
-      
+      </Box>
     );
   }
 
   return (
-    
+    <Box>
       <div className="max-w-4xl mx-auto space-y-6">
         {/* Header */}
         <div className="flex items-center justify-between">
@@ -251,21 +252,19 @@ const DigitalIDCard: React.FC = () => {
           <div className="flex items-center gap-4">
             <button
               onClick={() => setShowFront(true)}
-              className={`px-4 py-2 rounded-lg font-semibold transition-colors ${
-                showFront
-                  ? 'bg-blue-600 text-white'
-                  : 'bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300'
-              }`}
+              className={`px-4 py-2 rounded-lg font-semibold transition-colors ${showFront
+                ? 'bg-blue-600 text-white'
+                : 'bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300'
+                }`}
             >
               Front
             </button>
             <button
               onClick={() => setShowFront(false)}
-              className={`px-4 py-2 rounded-lg font-semibold transition-colors ${
-                !showFront
-                  ? 'bg-blue-600 text-white'
-                  : 'bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300'
-              }`}
+              className={`px-4 py-2 rounded-lg font-semibold transition-colors ${!showFront
+                ? 'bg-blue-600 text-white'
+                : 'bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300'
+                }`}
             >
               Back
             </button>
@@ -443,7 +442,7 @@ const DigitalIDCard: React.FC = () => {
           </div>
         </div>
       </div>
-    
+    </Box>
   );
 };
 

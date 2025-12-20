@@ -189,7 +189,7 @@ const KYCStatus: React.FC = () => {
 
   if (loading) {
     return (
-      
+      <Box>
         <Box>
           <Skeleton variant="rectangular" height={200} sx={{ borderRadius: 2, mb: 3 }} />
           <Grid container spacing={3}>
@@ -206,7 +206,8 @@ const KYCStatus: React.FC = () => {
 
   if (error && !kycData) {
     return (
-      
+      <Box>
+      <Box>
         <Alert severity="error" sx={{ mb: 3 }}>
           {error}
         </Alert>
@@ -223,7 +224,7 @@ const KYCStatus: React.FC = () => {
   const totalDocs = documents.length;
 
   return (
-    
+      <Box>
       <Box>
         {/* Overall KYC Status Card */}
         <Paper

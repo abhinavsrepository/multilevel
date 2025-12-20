@@ -118,7 +118,7 @@ const MyRewards: React.FC = () => {
     : rewards.filter(r => r.rewardType === 'ONE_TIME_BONUS');
 
   return (
-    
+      <Box>
       <Box sx={{ p: 3 }}>
         <Typography variant="h4" gutterBottom fontWeight="bold">
           My Rank Rewards

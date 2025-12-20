@@ -4,7 +4,7 @@ import ReferralRegistrationForm from '@/components/referral/ReferralRegistration
 
 const ReferralRegistration: React.FC = () => {
     return (
-        
+        <Box>
             <Box>
                 <Box sx={{ mb: 3 }}>
                     <Typography variant="h4" fontWeight={700} gutterBottom>
@@ -19,7 +19,7 @@ const ReferralRegistration: React.FC = () => {
                     <ReferralRegistrationForm />
                 </Paper>
             </Box>
-        
+        </Box>
     );
 };
 

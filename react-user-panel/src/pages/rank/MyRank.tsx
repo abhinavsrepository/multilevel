@@ -38,7 +38,6 @@ import {
   CalendarToday,
 } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
-import DashboardLayout from '@/layouts/DashboardLayout';
 
 import { getRankProgress } from '@/api/user.api';
 import { RankProgress } from '@/types';
@@ -90,29 +89,25 @@ const MyRank: React.FC = () => {
 
   if (loading) {
     return (
-      <DashboardLayout title="My Rank">
-        <Box>
-          <Skeleton variant="rectangular" height={300} sx={{ borderRadius: 2, mb: 3 }} />
-          <Grid container spacing={3}>
-            <Grid item xs={12} md={6}>
-              <Skeleton variant="rectangular" height={200} sx={{ borderRadius: 2 }} />
-            </Grid>
-            <Grid item xs={12} md={6}>
-              <Skeleton variant="rectangular" height={200} sx={{ borderRadius: 2 }} />
-            </Grid>
+      <Box>
+        <Skeleton variant="rectangular" height={300} sx={{ borderRadius: 2, mb: 3 }} />
+        <Grid container spacing={3}>
+          <Grid item xs={12} md={6}>
+            <Skeleton variant="rectangular" height={200} sx={{ borderRadius: 2 }} />
           </Grid>
-        </Box>
-      </DashboardLayout>
+          <Grid item xs={12} md={6}>
+            <Skeleton variant="rectangular" height={200} sx={{ borderRadius: 2 }} />
+          </Grid>
+        </Grid>
+      </Box>
     );
   }
 
   if (error) {
     return (
-      <DashboardLayout title="My Rank">
-        <Alert severity="error" sx={{ mb: 3 }}>
-          {error}
-        </Alert>
-      </DashboardLayout>
+      <Alert severity="error" sx={{ mb: 3 }}>
+        {error}
+      </Alert>
     );
   }
 
@@ -123,10 +118,9 @@ const MyRank: React.FC = () => {
   const { currentRank } = rankData;
 
   return (
-    <DashboardLayout title="My Rank">
-      <Box>
-        {/* Current Rank Card */}
-        <Paper
+    <Box>
+      {/* Current Rank Card */}
+      <Paper
           sx={{
             p: 4,
             mb: 3,
@@ -409,8 +403,7 @@ const MyRank: React.FC = () => {
             </Card>
           </Grid>
         </Grid>
-      </Box>
-    </DashboardLayout>
+    </Box>
   );
 };
 

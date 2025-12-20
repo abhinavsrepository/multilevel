@@ -16,7 +16,6 @@ import {
     Alert,
 } from '@mui/material';
 import { format } from 'date-fns';
-import DashboardLayout from '../../layouts/DashboardLayout';
 import api from '../../api/config/axiosConfig';
 
 interface Commission {
@@ -60,16 +59,16 @@ const ReferralBonus: React.FC = () => {
 
     if (loading) {
         return (
-            <DashboardLayout>
+            
                 <Box display="flex" justifyContent="center" alignItems="center" minHeight="60vh">
                     <CircularProgress />
                 </Box>
-            </DashboardLayout>
+            
         );
     }
 
     return (
-        <DashboardLayout>
+        
             <Box sx={{ mb: 4 }}>
                 <Typography variant="h4" gutterBottom fontWeight="bold">
                     Direct Referral Bonus
@@ -140,7 +139,7 @@ const ReferralBonus: React.FC = () => {
                     </TableContainer>
                 </CardContent>
             </Card>
-        </DashboardLayout>
+        
     );
 };
 

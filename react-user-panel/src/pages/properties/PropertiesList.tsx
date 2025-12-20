@@ -16,7 +16,6 @@ import {
   FiCheckSquare,
   FiSquare,
 } from 'react-icons/fi';
-import DashboardLayout from '../../layouts/DashboardLayout';
 import PropertyCard from '../../components/cards/PropertyCard';
 import LoadingSpinner from '../../components/common/LoadingSpinner';
 import EmptyState from '../../components/common/EmptyState';
@@ -190,7 +189,7 @@ const PropertiesList: React.FC = () => {
   ].reduce((a, b) => a + b, 0);
 
   return (
-    <DashboardLayout title="Properties Marketplace">
+    
       <div className="space-y-6">
         {/* Header */}
         <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
@@ -620,7 +619,7 @@ const PropertiesList: React.FC = () => {
           </div>
         </div>
       </div>
-    </DashboardLayout>
+    
   );
 };
 

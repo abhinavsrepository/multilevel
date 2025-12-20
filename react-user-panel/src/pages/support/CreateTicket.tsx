@@ -23,8 +23,6 @@ import { useForm, Controller } from 'react-hook-form';
 import { FileUpload } from '@/components/forms';
 import { createTicket } from '@/api/ticket.api';
 import { TicketCategory, TicketPriority } from '@/types';
-import DashboardLayout from '@/layouts/DashboardLayout';
-
 interface CreateTicketForm {
   category: TicketCategory;
   priority: TicketPriority;
@@ -80,7 +78,7 @@ const CreateTicket: React.FC = () => {
 
   if (success && createdTicketId) {
     return (
-      <DashboardLayout title="Create Support Ticket">
+      
         <Card>
           <CardContent sx={{ textAlign: 'center', py: 6 }}>
             <CheckCircle sx={{ fontSize: 80, color: 'success.main', mb: 2 }} />
@@ -120,12 +118,12 @@ const CreateTicket: React.FC = () => {
           </CardContent>
         </Card>
         
-      </DashboardLayout>
+      
     );
   }
 
   return (
-    <DashboardLayout title="Create Support Ticket">
+    
       <Box>
         {/* Header */}
         <Paper sx={{ p: 3, mb: 3 }}>
@@ -333,7 +331,7 @@ const CreateTicket: React.FC = () => {
           </Button>
         </Alert>
       </Box>
-    </DashboardLayout>
+    
     
   );
 };

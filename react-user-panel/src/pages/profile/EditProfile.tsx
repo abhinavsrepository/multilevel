@@ -5,7 +5,6 @@ import * as yup from 'yup';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { FiSave, FiX, FiUser, FiPhone, FiCalendar, FiMapPin } from 'react-icons/fi';
-import DashboardLayout from '../../layouts/DashboardLayout';
 import { InputField } from '../../components/forms/InputField';
 import LoadingSpinner from '../../components/common/LoadingSpinner';
 import { getUserProfile, updateUserProfile } from '../../api/user.api';
@@ -104,14 +103,14 @@ const EditProfile: React.FC = () => {
 
     if (loading) {
         return (
-            <DashboardLayout title="Edit Profile">
+            
                 <LoadingSpinner />
-            </DashboardLayout>
+            
         );
     }
 
     return (
-        <DashboardLayout title="Edit Profile">
+        
             <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -259,7 +258,7 @@ const EditProfile: React.FC = () => {
                     </form>
                 </div>
             </motion.div>
-        </DashboardLayout>
+        
     );
 };
 

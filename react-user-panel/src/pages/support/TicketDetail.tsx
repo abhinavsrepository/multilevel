@@ -180,7 +180,7 @@ const TicketDetail: React.FC = () => {
 
   if (loading) {
     return (
-      <DashboardLayout title="Ticket Details">
+      
         <Box>
           <Skeleton variant="rectangular" height={150} sx={{ borderRadius: 2, mb: 3 }} />
           <Grid container spacing={3}>
@@ -192,20 +192,20 @@ const TicketDetail: React.FC = () => {
             </Grid>
           </Grid>
         </Box>
-      </DashboardLayout>
+      
     );
   }
 
   if (error && !ticket) {
     return (
-      <DashboardLayout title="Ticket Details">
+      
         <Alert severity="error" sx={{ mb: 3 }}>
           {error}
         </Alert>
         <Button onClick={() => navigate('/support/tickets')} startIcon={<ArrowBack />}>
           Back to Tickets
         </Button>
-      </DashboardLayout>
+      
     );
   }
 
@@ -214,7 +214,7 @@ const TicketDetail: React.FC = () => {
   }
 
   return (
-    <DashboardLayout title={`Ticket #${ticket.ticketId}`}>
+    
       <Box>
         {/* Header */}
         <Paper sx={{ p: 3, mb: 3 }}>
@@ -565,7 +565,7 @@ const TicketDetail: React.FC = () => {
           </DialogActions>
         </Dialog>
       </Box>
-    </DashboardLayout>
+    
   );
 };
 

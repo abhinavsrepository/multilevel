@@ -26,7 +26,6 @@ import html2canvas from 'html2canvas';
 import BinaryTree from '@/components/tree/BinaryTree';
 import { getBinaryTree } from '@/api/team.api';
 import type { TreeNode } from '@/types';
-import { DashboardLayout } from '@/layouts';
 
 /**
  * BinaryTree Page
@@ -168,7 +167,7 @@ const BinaryTreePage: React.FC = () => {
   };
 
   return (
-    <DashboardLayout title="Binary Tree" showBreadcrumb={false}>
+    
       <Box>
         {/* Page Header */}
         <Box sx={{ mb: 3 }}>
@@ -411,7 +410,7 @@ const BinaryTreePage: React.FC = () => {
           )}
         </Dialog>
       </Box>
-    </DashboardLayout>
+    
   );
 };
 

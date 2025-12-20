@@ -21,7 +21,6 @@ import {
   TrendingUp,
 } from '@mui/icons-material';
 import { FiDollarSign, FiTrendingUp } from 'react-icons/fi';
-import DashboardLayout from '../../layouts/DashboardLayout';
 import WalletCard from '../../components/cards/WalletCard';
 import LineChart from '../../components/charts/LineChart';
 import { getWalletBalance, getTransactionTrends } from '../../api/wallet.api';
@@ -104,7 +103,7 @@ const WalletOverview: React.FC = () => {
 
   if (loading) {
     return (
-      <DashboardLayout title="Wallet">
+      
         <Box>
           <Grid container spacing={3}>
             {[1, 2, 3, 4].map((item) => (
@@ -114,23 +113,23 @@ const WalletOverview: React.FC = () => {
             ))}
           </Grid>
         </Box>
-      </DashboardLayout>
+      
     );
   }
 
   if (error || !walletBalance) {
     return (
-      <DashboardLayout title="Wallet">
+      
         <Alert severity="error">{error || 'Failed to load wallet'}</Alert>
         <Button startIcon={<Refresh />} onClick={handleRefresh} sx={{ mt: 2 }}>
           Retry
         </Button>
-      </DashboardLayout>
+      
     );
   }
 
   return (
-    <DashboardLayout title="Wallet Overview">
+    
       <Box>
         {/* Header */}
         <Stack
@@ -330,7 +329,7 @@ const WalletOverview: React.FC = () => {
           </Typography>
         </Alert>
       </Box>
-    </DashboardLayout>
+    
   );
 };
 

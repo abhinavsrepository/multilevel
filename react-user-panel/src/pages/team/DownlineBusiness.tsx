@@ -37,7 +37,6 @@ import {
   Cancel
 } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
-import DashboardLayout from '@/layouts/DashboardLayout';
 import { getTeamMembers, getTeamBV } from '@/api/team.api';
 import { TeamMember, PaginatedResponse } from '@/types';
 import StatsCard from '@/components/common/StatsCard';
@@ -142,16 +141,15 @@ const DownlineBusiness: React.FC = () => {
   };
 
   return (
-    <DashboardLayout title="Downline Business">
-      <Box sx={{ p: 0 }}>
-        {/* Header */}
-        <Box sx={{ mb: 4 }}>
-          <Typography variant="h4" fontWeight={700} gutterBottom>
-            Downline Business Analysis
-          </Typography>
-          <Typography variant="body1" color="text.secondary" sx={{ mb: 3 }}>
-            Monitor sales volume, commission performance, and team growth metrics.
-          </Typography>
+    <Box sx={{ p: 0 }}>
+      {/* Header */}
+      <Box sx={{ mb: 4 }}>
+        <Typography variant="h4" fontWeight={700} gutterBottom>
+          Downline Business Analysis
+        </Typography>
+        <Typography variant="body1" color="text.secondary" sx={{ mb: 3 }}>
+          Monitor sales volume, commission performance, and team growth metrics.
+        </Typography>
 
           {/* KPI Dashboard (FR-UP-003) */}
           <Grid container spacing={3}>
@@ -359,8 +357,7 @@ const DownlineBusiness: React.FC = () => {
             rowsPerPageOptions={[10, 25, 50]}
           />
         </Card>
-      </Box>
-    </DashboardLayout>
+    </Box>
   );
 };
 

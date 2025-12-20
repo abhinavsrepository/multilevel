@@ -128,7 +128,7 @@ const FAQ: React.FC = () => {
 
   if (loading && faqs.length === 0) {
     return (
-      <DashboardLayout title="FAQ">
+      
         <Box>
           <Skeleton variant="rectangular" height={80} sx={{ borderRadius: 2, mb: 3 }} />
           <Grid container spacing={2} sx={{ mb: 3 }}>
@@ -140,12 +140,12 @@ const FAQ: React.FC = () => {
           </Grid>
           <Skeleton variant="rectangular" height={400} sx={{ borderRadius: 2 }} />
         </Box>
-      </DashboardLayout>
+      
     );
   }
 
   return (
-    <DashboardLayout title="Frequently Asked Questions">
+    
       <Box>
         {/* Header */}
         <Paper
@@ -402,7 +402,7 @@ const FAQ: React.FC = () => {
           </CardContent>
         </Card>
       </Box>
-    </DashboardLayout>
+    
   );
 };
 

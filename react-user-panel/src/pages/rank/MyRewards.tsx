@@ -26,7 +26,6 @@ import {
   Schedule,
   CardGiftcard,
 } from '@mui/icons-material';
-import DashboardLayout from '@/layouts/DashboardLayout';
 import { getMyRewards, getMyRewardStats } from '@/api/user.api';
 import { formatCurrency, formatDate } from '@/utils/formatters';
 
@@ -119,7 +118,7 @@ const MyRewards: React.FC = () => {
     : rewards.filter(r => r.rewardType === 'ONE_TIME_BONUS');
 
   return (
-    <DashboardLayout>
+    
       <Box sx={{ p: 3 }}>
         <Typography variant="h4" gutterBottom fontWeight="bold">
           My Rank Rewards
@@ -325,7 +324,7 @@ const MyRewards: React.FC = () => {
           </>
         )}
       </Box>
-    </DashboardLayout>
+    
   );
 };
 

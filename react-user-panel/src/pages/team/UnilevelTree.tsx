@@ -179,7 +179,7 @@ const UnilevelTreePage: React.FC = () => {
   };
 
   return (
-    <DashboardLayout title="Unilevel Tree" showBreadcrumb={false}>
+    
       <Box>
         {/* Page Header */}
         <Box sx={{ mb: 3 }}>
@@ -456,7 +456,7 @@ const UnilevelTreePage: React.FC = () => {
           )}
         </Dialog>
       </Box>
-    </DashboardLayout>
+    
   );
 };
 

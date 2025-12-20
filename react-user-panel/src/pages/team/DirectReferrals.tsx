@@ -21,7 +21,6 @@ import {
 } from '@mui/icons-material';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
-import { DashboardLayout } from '@/layouts';
 
 import StatsCard from '@/components/common/StatsCard';
 import UserCard from '@/components/cards/UserCard';
@@ -145,7 +144,7 @@ const DirectReferrals: React.FC = () => {
   };
 
   return (
-    <DashboardLayout title="Direct Referrals">
+    
       <Box>
         {/* Page Header */}
         <Box sx={{ mb: 3 }}>
@@ -351,7 +350,7 @@ const DirectReferrals: React.FC = () => {
           </Box>
         )}
       </Box>
-    </DashboardLayout>
+    
   );
 };
 

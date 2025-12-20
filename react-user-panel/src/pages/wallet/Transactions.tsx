@@ -30,7 +30,6 @@ import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import dayjs, { Dayjs } from 'dayjs';
-import DashboardLayout from '../../layouts/DashboardLayout';
 import StatsCard from '../../components/common/StatsCard';
 import { getTransactions, getTransactionSummary } from '../../api/wallet.api';
 import { Transaction, TransactionSummary, TransactionType, TransactionCategory, WalletType } from '../../types';
@@ -266,7 +265,7 @@ const Transactions: React.FC = () => {
   ];
 
   return (
-    <DashboardLayout title="Transactions">
+    
       <Box>
         {/* Header */}
         <Stack
@@ -549,7 +548,7 @@ const Transactions: React.FC = () => {
           </Box>
         </Card>
       </Box>
-    </DashboardLayout>
+    
   );
 };
 

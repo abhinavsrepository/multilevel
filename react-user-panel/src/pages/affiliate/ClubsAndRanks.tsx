@@ -17,7 +17,6 @@ import {
     CircularProgress,
     Alert,
 } from '@mui/material';
-import DashboardLayout from '../../layouts/DashboardLayout';
 import api from '../../api/config/axiosConfig';
 
 interface ClubProgress {
@@ -91,16 +90,16 @@ const ClubsAndRanks: React.FC = () => {
 
     if (loading) {
         return (
-            <DashboardLayout>
+            
                 <Box display="flex" justifyContent="center" alignItems="center" minHeight="60vh">
                     <CircularProgress />
                 </Box>
-            </DashboardLayout>
+            
         );
     }
 
     return (
-        <DashboardLayout>
+        
             <Box sx={{ mb: 4 }}>
                 <Typography variant="h4" gutterBottom fontWeight="bold">
                     Clubs & Ranks
@@ -222,7 +221,7 @@ const ClubsAndRanks: React.FC = () => {
                     </TableContainer>
                 </CardContent>
             </Card>
-        </DashboardLayout>
+        
     );
 };
 

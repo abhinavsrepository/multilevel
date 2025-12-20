@@ -50,7 +50,6 @@ import {
 } from '@mui/icons-material';
 import { motion } from 'framer-motion';
 import { useParams, useNavigate } from 'react-router-dom';
-import DashboardLayout from '../../layouts/DashboardLayout';
 import LineChart from '../../components/charts/LineChart';
 import { getInvestmentById, updateNominee, payInstallment } from '../../api/investment.api';
 import { Investment, NomineeDetails } from '../../types';

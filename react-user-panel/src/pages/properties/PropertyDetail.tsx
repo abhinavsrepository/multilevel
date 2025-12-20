@@ -22,7 +22,6 @@ import {
   FiMail,
   FiAward,
 } from 'react-icons/fi';
-import DashboardLayout from '../../layouts/DashboardLayout';
 import LoadingSpinner from '../../components/common/LoadingSpinner';
 import EmptyState from '../../components/common/EmptyState';
 import PropertyCard from '../../components/cards/PropertyCard';
@@ -203,27 +202,27 @@ const PropertyDetail: React.FC = () => {
 
   if (isLoading) {
     return (
-      <DashboardLayout title="Property Details">
+      
         <LoadingSpinner />
-      </DashboardLayout>
+      
     );
   }
 
   if (error || !property) {
     return (
-      <DashboardLayout title="Property Details">
-        <EmptyState
-          title="Property not found"
-          message="The property you're looking for doesn't exist or has been removed"
-          icon={<FiHome className="w-16 h-16" />}
-        />
-      </DashboardLayout>
+      <EmptyState
+        title="Property not found"
+        message="The property you're looking for doesn't exist or has been removed"
+        icon={<FiHome className="w-16 h-16" />}
+      />
     );
   }
 
+  // TypeScript: property is guaranteed to be defined after the null check above
+  const currentProperty = property;
+
   return (
-    <DashboardLayout title={property.title}>
-      <div className="space-y-6">
+    <div className="space-y-6">
         {/* Back Button */}
         <button
           onClick={() => navigate('/properties')}
@@ -245,7 +244,7 @@ const PropertyDetail: React.FC = () => {
               <div className="relative h-96">
                 <img
                   src={images[0]}
-                  alt={property.title}
+                  alt={currentProperty.title}
                   className="w-full h-full object-cover cursor-pointer"
                   onClick={() => openLightbox(0)}
                 />
@@ -287,7 +286,7 @@ const PropertyDetail: React.FC = () => {
                     >
                       <img
                         src={image}
-                        alt={`${property.title} - ${index + 2}`}
+                        alt={`${currentProperty.title} - ${index + 2}`}
                         className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
                       />
                       {index === 3 && images.length > 5 && (
@@ -312,31 +311,31 @@ const PropertyDetail: React.FC = () => {
                 <div>
                   <div className="flex items-center gap-3 mb-2">
                     <span
-                      className={`px-3 py-1 rounded-full text-sm font-semibold ${property.status === 'AVAILABLE'
+                      className={`px-3 py-1 rounded-full text-sm font-semibold ${currentProperty.status === 'AVAILABLE'
                         ? 'bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-200'
-                        : property.status === 'FEW_SLOTS_LEFT'
+                        : currentProperty.status === 'FEW_SLOTS_LEFT'
                           ? 'bg-orange-100 dark:bg-orange-900 text-orange-800 dark:text-orange-200'
                           : 'bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200'
                         }`}
                     >
-                      {property.status.replace(/_/g, ' ')}
+                      {currentProperty.status.replace(/_/g, ' ')}
                     </span>
                     <span className="px-3 py-1 bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 rounded-full text-sm font-semibold">
-                      {property.propertyType}
+                      {currentProperty.propertyType}
                     </span>
                   </div>
                   <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">
-                    {property.title}
+                    {currentProperty.title}
                   </h1>
                   <p className="text-gray-600 dark:text-gray-400 flex items-center gap-2">
                     <FiMapPin className="w-4 h-4" />
-                    {property.location.address}, {property.location.city}, {property.location.state}
+                    {currentProperty.location.address}, {currentProperty.location.city}, {currentProperty.location.state}
                   </p>
                 </div>
                 <div className="text-right">
                   <p className="text-sm text-gray-600 dark:text-gray-400 mb-1">Total Price</p>
                   <p className="text-3xl font-bold text-gray-900 dark:text-white">
-                    {formatCurrency(property.price)}
+                    {formatCurrency(currentProperty.price)}
                   </p>
                 </div>
               </div>
@@ -346,26 +345,26 @@ const PropertyDetail: React.FC = () => {
                 <div>
                   <p className="text-sm text-gray-600 dark:text-gray-400 mb-1">Min Investment</p>
                   <p className="text-lg font-bold text-gray-900 dark:text-white">
-                    {formatCurrency(property.minInvestment)}
+                    {formatCurrency(currentProperty.minInvestment)}
                   </p>
                 </div>
                 <div>
                   <p className="text-sm text-gray-600 dark:text-gray-400 mb-1">Expected ROI</p>
                   <p className="text-lg font-bold text-green-600 dark:text-green-400 flex items-center gap-1">
                     <FiTrendingUp className="w-4 h-4" />
-                    {property.expectedROI}%
+                    {currentProperty.expectedROI}%
                   </p>
                 </div>
                 <div>
                   <p className="text-sm text-gray-600 dark:text-gray-400 mb-1">Tenure</p>
                   <p className="text-lg font-bold text-gray-900 dark:text-white">
-                    {property.roiTenure} Years
+                    {currentProperty.roiTenure} Years
                   </p>
                 </div>
                 <div>
                   <p className="text-sm text-gray-600 dark:text-gray-400 mb-1">BV Value</p>
                   <p className="text-lg font-bold text-blue-600 dark:text-blue-400">
-                    {property.bvValue.toLocaleString()} BV
+                    {currentProperty.bvValue.toLocaleString()} BV
                   </p>
                 </div>
               </div>
@@ -377,23 +376,23 @@ const PropertyDetail: React.FC = () => {
                     Booking Progress
                   </p>
                   <p className="text-sm font-semibold text-gray-900 dark:text-white">
-                    {property.bookingInfo.bookingProgress}%
+                    {currentProperty.bookingInfo.bookingProgress}%
                   </p>
                 </div>
                 <div className="h-3 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
                   <motion.div
                     className="h-full bg-gradient-to-r from-blue-500 to-blue-600 rounded-full"
                     initial={{ width: 0 }}
-                    animate={{ width: `${property.bookingInfo.bookingProgress}%` }}
+                    animate={{ width: `${currentProperty.bookingInfo.bookingProgress}%` }}
                     transition={{ duration: 1, delay: 0.3 }}
                   />
                 </div>
                 <div className="flex items-center justify-between mt-2">
                   <p className="text-sm text-gray-600 dark:text-gray-400">
-                    {property.bookingInfo.bookedSlots} / {property.bookingInfo.totalSlots} slots booked
+                    {currentProperty.bookingInfo.bookedSlots} / {currentProperty.bookingInfo.totalSlots} slots booked
                   </p>
                   <p className="text-sm text-green-600 dark:text-green-400 font-semibold">
-                    {property.bookingInfo.availableSlots} slots available
+                    {currentProperty.bookingInfo.availableSlots} slots available
                   </p>
                 </div>
               </div>
@@ -434,61 +433,61 @@ const PropertyDetail: React.FC = () => {
                         Description
                       </h2>
                       <p className="text-gray-700 dark:text-gray-300 leading-relaxed">
-                        {property.description}
+                        {currentProperty.description}
                       </p>
                     </div>
 
-                    {property.details && (
+                    {currentProperty.details && (
                       <div>
                         <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-4">
                           Property Details
                         </h2>
                         <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-                          {property.details.totalArea && (
+                          {currentProperty.details.totalArea && (
                             <div className="p-3 bg-gray-50 dark:bg-gray-700 rounded-lg">
                               <p className="text-sm text-gray-600 dark:text-gray-400">Total Area</p>
                               <p className="font-semibold text-gray-900 dark:text-white">
-                                {property.details.totalArea} sq.ft
+                                {currentProperty.details.totalArea} sq.ft
                               </p>
                             </div>
                           )}
-                          {property.details.bedrooms !== undefined && (
+                          {currentProperty.details.bedrooms !== undefined && (
                             <div className="p-3 bg-gray-50 dark:bg-gray-700 rounded-lg">
                               <p className="text-sm text-gray-600 dark:text-gray-400">Bedrooms</p>
                               <p className="font-semibold text-gray-900 dark:text-white">
-                                {property.details.bedrooms}
+                                {currentProperty.details.bedrooms}
                               </p>
                             </div>
                           )}
-                          {property.details.bathrooms !== undefined && (
+                          {currentProperty.details.bathrooms !== undefined && (
                             <div className="p-3 bg-gray-50 dark:bg-gray-700 rounded-lg">
                               <p className="text-sm text-gray-600 dark:text-gray-400">Bathrooms</p>
                               <p className="font-semibold text-gray-900 dark:text-white">
-                                {property.details.bathrooms}
+                                {currentProperty.details.bathrooms}
                               </p>
                             </div>
                           )}
-                          {property.details.facing && (
+                          {currentProperty.details.facing && (
                             <div className="p-3 bg-gray-50 dark:bg-gray-700 rounded-lg">
                               <p className="text-sm text-gray-600 dark:text-gray-400">Facing</p>
                               <p className="font-semibold text-gray-900 dark:text-white capitalize">
-                                {property.details.facing.replace(/_/g, ' ').toLowerCase()}
+                                {currentProperty.details.facing.replace(/_/g, ' ').toLowerCase()}
                               </p>
                             </div>
                           )}
-                          {property.details.furnishing && (
+                          {currentProperty.details.furnishing && (
                             <div className="p-3 bg-gray-50 dark:bg-gray-700 rounded-lg">
                               <p className="text-sm text-gray-600 dark:text-gray-400">Furnishing</p>
                               <p className="font-semibold text-gray-900 dark:text-white capitalize">
-                                {property.details.furnishing.replace(/_/g, ' ').toLowerCase()}
+                                {currentProperty.details.furnishing.replace(/_/g, ' ').toLowerCase()}
                               </p>
                             </div>
                           )}
-                          {property.details.possession && (
+                          {currentProperty.details.possession && (
                             <div className="p-3 bg-gray-50 dark:bg-gray-700 rounded-lg">
                               <p className="text-sm text-gray-600 dark:text-gray-400">Possession</p>
                               <p className="font-semibold text-gray-900 dark:text-white">
-                                {property.details.possession}
+                                {currentProperty.details.possession}
                               </p>
                             </div>
                           )}
@@ -496,13 +495,13 @@ const PropertyDetail: React.FC = () => {
                       </div>
                     )}
 
-                    {property.amenities.length > 0 && (
+                    {currentProperty.amenities.length > 0 && (
                       <div>
                         <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-4">
                           Amenities
                         </h2>
                         <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
-                          {property.amenities.map((amenity, index) => (
+                          {currentProperty.amenities.map((amenity, index) => (
                             <div
                               key={index}
                               className="flex items-center gap-2 text-gray-700 dark:text-gray-300"
@@ -530,7 +529,7 @@ const PropertyDetail: React.FC = () => {
                           Minimum Investment
                         </p>
                         <p className="text-2xl font-bold text-gray-900 dark:text-white">
-                          {formatCurrency(property.minInvestment)}
+                          {formatCurrency(currentProperty.minInvestment)}
                         </p>
                       </div>
                       <div className="p-4 bg-green-50 dark:bg-green-900/20 rounded-lg border border-green-200 dark:border-green-800">
@@ -538,7 +537,7 @@ const PropertyDetail: React.FC = () => {
                           Expected ROI
                         </p>
                         <p className="text-2xl font-bold text-gray-900 dark:text-white">
-                          {property.expectedROI}% p.a.
+                          {currentProperty.expectedROI}% p.a.
                         </p>
                       </div>
                       <div className="p-4 bg-purple-50 dark:bg-purple-900/20 rounded-lg border border-purple-200 dark:border-purple-800">
@@ -546,7 +545,7 @@ const PropertyDetail: React.FC = () => {
                           ROI Tenure
                         </p>
                         <p className="text-2xl font-bold text-gray-900 dark:text-white">
-                          {property.roiTenure} Years
+                          {currentProperty.roiTenure} Years
                         </p>
                       </div>
                       <div className="p-4 bg-yellow-50 dark:bg-yellow-900/20 rounded-lg border border-yellow-200 dark:border-yellow-800">
@@ -554,7 +553,7 @@ const PropertyDetail: React.FC = () => {
                           Annual Appreciation
                         </p>
                         <p className="text-2xl font-bold text-gray-900 dark:text-white">
-                          {property.annualAppreciation}%
+                          {currentProperty.annualAppreciation}%
                         </p>
                       </div>
                     </div>
@@ -568,21 +567,21 @@ const PropertyDetail: React.FC = () => {
                         <div className="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-700 rounded-lg">
                           <span className="text-gray-700 dark:text-gray-300">Direct Referral</span>
                           <span className="font-semibold text-gray-900 dark:text-white">
-                            {property.commissionStructure.directReferralEnabled
-                              ? `${property.commissionStructure.directReferralPercentage}%`
+                            {currentProperty.commissionStructure.directReferralEnabled
+                              ? `${currentProperty.commissionStructure.directReferralPercentage}%`
                               : 'Not Available'}
                           </span>
                         </div>
                         <div className="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-700 rounded-lg">
                           <span className="text-gray-700 dark:text-gray-300">Level Commission</span>
                           <span className="font-semibold text-gray-900 dark:text-white">
-                            {property.commissionStructure.levelCommissionEnabled ? 'Yes' : 'No'}
+                            {currentProperty.commissionStructure.levelCommissionEnabled ? 'Yes' : 'No'}
                           </span>
                         </div>
                         <div className="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-700 rounded-lg">
                           <span className="text-gray-700 dark:text-gray-300">Binary Commission</span>
                           <span className="font-semibold text-gray-900 dark:text-white">
-                            {property.commissionStructure.binaryCommissionEnabled ? 'Yes' : 'No'}
+                            {currentProperty.commissionStructure.binaryCommissionEnabled ? 'Yes' : 'No'}
                           </span>
                         </div>
                       </div>
@@ -599,7 +598,7 @@ const PropertyDetail: React.FC = () => {
                             Total Investments
                           </p>
                           <p className="text-xl font-bold text-gray-900 dark:text-white">
-                            {formatCurrency(property.investmentStats.totalInvestments)}
+                            {formatCurrency(currentProperty.investmentStats.totalInvestments)}
                           </p>
                         </div>
                         <div className="p-3 bg-gray-50 dark:bg-gray-700 rounded-lg text-center">
@@ -607,7 +606,7 @@ const PropertyDetail: React.FC = () => {
                             Total Investors
                           </p>
                           <p className="text-xl font-bold text-gray-900 dark:text-white">
-                            {property.investmentStats.totalInvestorsCount}
+                            {currentProperty.investmentStats.totalInvestorsCount}
                           </p>
                         </div>
                         <div className="p-3 bg-gray-50 dark:bg-gray-700 rounded-lg text-center">
@@ -615,7 +614,7 @@ const PropertyDetail: React.FC = () => {
                             Average Investment
                           </p>
                           <p className="text-xl font-bold text-gray-900 dark:text-white">
-                            {formatCurrency(property.investmentStats.averageInvestment)}
+                            {formatCurrency(currentProperty.investmentStats.averageInvestment)}
                           </p>
                         </div>
                       </div>
@@ -635,11 +634,11 @@ const PropertyDetail: React.FC = () => {
                         Address
                       </h3>
                       <p className="text-gray-700 dark:text-gray-300">
-                        {property.location.address}
+                        {currentProperty.location.address}
                         <br />
-                        {property.location.city}, {property.location.state} - {property.location.pincode}
+                        {currentProperty.location.city}, {currentProperty.location.state} - {currentProperty.location.pincode}
                         <br />
-                        {property.location.country}
+                        {currentProperty.location.country}
                       </p>
                     </div>
 
@@ -651,13 +650,13 @@ const PropertyDetail: React.FC = () => {
                     </div>
 
                     {/* Nearby Facilities */}
-                    {property.location.nearbyFacilities && property.location.nearbyFacilities.length > 0 && (
+                    {currentProperty.location.nearbyFacilities && currentProperty.location.nearbyFacilities.length > 0 && (
                       <div>
                         <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-3">
                           Nearby Facilities
                         </h3>
                         <div className="space-y-2">
-                          {property.location.nearbyFacilities.map((facility, index) => (
+                          {currentProperty.location.nearbyFacilities.map((facility, index) => (
                             <div
                               key={index}
                               className="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-700 rounded-lg"
@@ -694,32 +693,32 @@ const PropertyDetail: React.FC = () => {
                       </div>
                       <div className="flex-1">
                         <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">
-                          {property.developer.name}
+                          {currentProperty.developer.name}
                         </h2>
-                        {property.developer.reraNumber && (
+                        {currentProperty.developer.reraNumber && (
                           <p className="text-gray-600 dark:text-gray-400 mb-4">
-                            RERA: {property.developer.reraNumber}
+                            RERA: {currentProperty.developer.reraNumber}
                           </p>
                         )}
-                        {property.developer.about && (
+                        {currentProperty.developer.about && (
                           <p className="text-gray-700 dark:text-gray-300 leading-relaxed mb-4">
-                            {property.developer.about}
+                            {currentProperty.developer.about}
                           </p>
                         )}
                         <div className="flex items-center gap-4">
                           <a
-                            href={`tel:${property.developer.contactNumber}`}
+                            href={`tel:${currentProperty.developer.contactNumber}`}
                             className="flex items-center gap-2 text-blue-600 dark:text-blue-400 hover:underline"
                           >
                             <FiPhone className="w-4 h-4" />
-                            {property.developer.contactNumber}
+                            {currentProperty.developer.contactNumber}
                           </a>
                           <a
-                            href={`mailto:${property.developer.email}`}
+                            href={`mailto:${currentProperty.developer.email}`}
                             className="flex items-center gap-2 text-blue-600 dark:text-blue-400 hover:underline"
                           >
                             <FiMail className="w-4 h-4" />
-                            {property.developer.email}
+                            {currentProperty.developer.email}
                           </a>
                         </div>
                       </div>
@@ -787,7 +786,7 @@ const PropertyDetail: React.FC = () => {
                       >
                         <img
                           src={image}
-                          alt={`${property.title} - ${index + 1}`}
+                          alt={`${currentProperty.title} - ${index + 1}`}
                           className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
                         />
                       </div>
@@ -872,23 +871,23 @@ const PropertyDetail: React.FC = () => {
                         type="number"
                         value={investmentAmount || ''}
                         onChange={(e) => setInvestmentAmount(Number(e.target.value))}
-                        min={property.minInvestment}
-                        max={property.maxInvestmentPerUser}
+                        min={currentProperty.minInvestment}
+                        max={currentProperty.maxInvestmentPerUser}
                         step="1000"
-                        placeholder={`Min ${property.minInvestment.toLocaleString()}`}
+                        placeholder={`Min ${currentProperty.minInvestment.toLocaleString()}`}
                         className="w-full pl-8 pr-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white font-semibold focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                       />
                     </div>
                     <p className="text-xs text-gray-600 dark:text-gray-400 mt-1">
-                      Min: {formatCurrency(property.minInvestment)} | Max:{' '}
-                      {formatCurrency(property.maxInvestmentPerUser)}
+                      Min: {formatCurrency(currentProperty.minInvestment)} | Max:{' '}
+                      {formatCurrency(currentProperty.maxInvestmentPerUser)}
                     </p>
                   </div>
 
-                  {investmentAmount >= property.minInvestment && (
+                  {investmentAmount >= currentProperty.minInvestment && (
                     <div className="p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg border border-blue-200 dark:border-blue-800">
                       <p className="text-sm text-blue-600 dark:text-blue-400 mb-1">
-                        Estimated Returns ({property.expectedROI}% for {property.roiTenure} years)
+                        Estimated Returns ({currentProperty.expectedROI}% for {currentProperty.roiTenure} years)
                       </p>
                       <p className="text-2xl font-bold text-gray-900 dark:text-white">
                         +{formatCurrency(calculatedReturns)}
@@ -907,12 +906,12 @@ const PropertyDetail: React.FC = () => {
                   <button
                     onClick={handleInvestNow}
                     disabled={
-                      property.status === 'SOLD_OUT' ||
-                      investmentAmount < property.minInvestment
+                      currentProperty.status === 'SOLD_OUT' ||
+                      investmentAmount < currentProperty.minInvestment
                     }
                     className="w-full py-3 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
                   >
-                    {property.status === 'SOLD_OUT' ? (
+                    {currentProperty.status === 'SOLD_OUT' ? (
                       'Sold Out'
                     ) : (
                       <>
@@ -942,19 +941,19 @@ const PropertyDetail: React.FC = () => {
                   <div className="flex items-center justify-between">
                     <span className="text-gray-600 dark:text-gray-400">Total Views</span>
                     <span className="font-semibold text-gray-900 dark:text-white">
-                      {property.views.toLocaleString()}
+                      {currentProperty.views.toLocaleString()}
                     </span>
                   </div>
                   <div className="flex items-center justify-between">
                     <span className="text-gray-600 dark:text-gray-400">Listed On</span>
                     <span className="font-semibold text-gray-900 dark:text-white">
-                      {formatDate(property.listedDate)}
+                      {formatDate(currentProperty.listedDate)}
                     </span>
                   </div>
                   <div className="flex items-center justify-between">
                     <span className="text-gray-600 dark:text-gray-400">Property ID</span>
                     <span className="font-semibold text-gray-900 dark:text-white">
-                      {property.propertyId}
+                      {currentProperty.propertyId}
                     </span>
                   </div>
                 </div>
@@ -981,7 +980,6 @@ const PropertyDetail: React.FC = () => {
             </div>
           </div>
         )}
-      </div>
 
       {/* Lightbox */}
       <AnimatePresence>
@@ -1025,14 +1023,14 @@ const PropertyDetail: React.FC = () => {
             </button>
 
             <img
-              src={property.images[lightboxIndex]}
-              alt={`${property.title} - ${lightboxIndex + 1}`}
+              src={currentProperty.images[lightboxIndex]}
+              alt={`${currentProperty.title} - ${lightboxIndex + 1}`}
               className="max-w-[90vw] max-h-[90vh] object-contain"
               onClick={(e) => e.stopPropagation()}
             />
 
             <div className="absolute bottom-4 left-1/2 -translate-x-1/2 text-white">
-              {lightboxIndex + 1} / {property.images.length}
+              {lightboxIndex + 1} / {currentProperty.images.length}
             </div>
           </motion.div>
         )}
@@ -1044,12 +1042,12 @@ const PropertyDetail: React.FC = () => {
         onClose={() => setShowInvestmentModal(false)}
         onSubmit={handleInvestmentSubmit}
         walletBalance={50000} // Would come from user state
-        minInvestment={property.minInvestment}
-        maxInvestment={property.maxInvestmentPerUser}
-        interestRate={property.expectedROI}
-        lockPeriod={property.roiTenure * 365}
+        minInvestment={currentProperty.minInvestment}
+        maxInvestment={currentProperty.maxInvestmentPerUser}
+        interestRate={currentProperty.expectedROI}
+        lockPeriod={currentProperty.roiTenure * 365}
       />
-    </DashboardLayout>
+    </div>
   );
 };
 

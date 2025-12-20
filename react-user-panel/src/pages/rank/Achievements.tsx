@@ -38,7 +38,6 @@ import {
 } from '@mui/icons-material';
 
 import { formatCurrency, formatDate } from '@/utils/formatters';
-import DashboardLayout from '@/layouts/DashboardLayout';
 import { getMyAchievements, getMyAchievementTimeline } from '@/api/rank-achievement.api';
 import { getMyRewards } from '@/api/rank-reward.api';
 import {
@@ -148,7 +147,7 @@ const Achievements: React.FC = () => {
 
   if (loading) {
     return (
-      <DashboardLayout title="Achievements & Rewards">
+      
         <Box>
           <Grid container spacing={3} sx={{ mb: 3 }}>
             {[1, 2, 3, 4].map((i) => (
@@ -159,25 +158,25 @@ const Achievements: React.FC = () => {
           </Grid>
           <Skeleton variant="rectangular" height={400} sx={{ borderRadius: 2 }} />
         </Box>
-      </DashboardLayout>
+      
     );
   }
 
   if (error) {
     return (
-      <DashboardLayout title="Achievements & Rewards">
+      
         <Alert severity="error" sx={{ mb: 3 }}>
           {error}
         </Alert>
         <Button variant="contained" onClick={fetchData}>
           Retry
         </Button>
-      </DashboardLayout>
+      
     );
   }
 
   return (
-    <DashboardLayout title="Achievements & Rewards">
+    
       <Box>
         {/* Stats Overview */}
         <Grid container spacing={3} sx={{ mb: 3 }}>
@@ -656,7 +655,7 @@ const Achievements: React.FC = () => {
           )}
         </Dialog>
       </Box>
-    </DashboardLayout>
+    
   );
 };
 

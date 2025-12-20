@@ -28,7 +28,6 @@ import {
   ShowChart,
   PieChart as PieChartIcon,
 } from '@mui/icons-material';
-import DashboardLayout from '../../layouts/DashboardLayout';
 import StatsCard from '../../components/common/StatsCard';
 import LineChart from '../../components/charts/LineChart';
 import PieChart from '../../components/charts/PieChart';
@@ -102,7 +101,7 @@ const Portfolio: React.FC = () => {
 
   if (loading) {
     return (
-      <DashboardLayout title="Portfolio">
+      
         <Box>
           <Grid container spacing={3}>
             {[1, 2, 3, 4].map((item) => (
@@ -113,23 +112,23 @@ const Portfolio: React.FC = () => {
           </Grid>
           <Skeleton variant="rectangular" height={400} sx={{ mt: 3, borderRadius: 2 }} />
         </Box>
-      </DashboardLayout>
+      
     );
   }
 
   if (error || !portfolio) {
     return (
-      <DashboardLayout title="Portfolio">
+      
         <Alert severity="error">{error || 'Failed to load portfolio'}</Alert>
         <Button startIcon={<Refresh />} onClick={handleRefresh} sx={{ mt: 2 }}>
           Retry
         </Button>
-      </DashboardLayout>
+      
     );
   }
 
   return (
-    <DashboardLayout title="Portfolio Summary">
+    
       <Box>
         {/* Header */}
         <Stack
@@ -517,7 +516,7 @@ const Portfolio: React.FC = () => {
           </CardContent>
         </Card>
       </Box>
-    </DashboardLayout>
+    
   );
 };
 

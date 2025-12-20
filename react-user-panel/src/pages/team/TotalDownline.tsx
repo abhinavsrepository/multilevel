@@ -41,7 +41,6 @@ import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import { useNavigate } from 'react-router-dom';
-import DashboardLayout from '@/layouts/DashboardLayout';
 import { getTeamMembers, getTeamStats } from '@/api/team.api';
 import { TeamMember, PaginatedResponse, TeamStats } from '@/types';
 import { USER_STATUS_COLORS, USER_STATUS_LABELS } from '@/utils/constants';
@@ -150,15 +149,14 @@ const TotalDownline: React.FC = () => {
   };
 
   return (
-    <DashboardLayout title="Total Downline">
-      <Box sx={{ p: 0 }}>
-        <Box sx={{ mb: 4 }}>
-          <Typography variant="h4" fontWeight={700} gutterBottom>
-            Total Downline
-          </Typography>
-          <Typography variant="body1" color="text.secondary" sx={{ mb: 3 }}>
-            View and manage your entire network organization
-          </Typography>
+    <Box sx={{ p: 0 }}>
+      <Box sx={{ mb: 4 }}>
+        <Typography variant="h4" fontWeight={700} gutterBottom>
+          Total Downline
+        </Typography>
+        <Typography variant="body1" color="text.secondary" sx={{ mb: 3 }}>
+          View and manage your entire network organization
+        </Typography>
 
           {/* Stats Widgets */}
           <Grid container spacing={3}>
@@ -437,8 +435,7 @@ const TotalDownline: React.FC = () => {
             rowsPerPageOptions={[10, 25, 50, 100]}
           />
         </Card>
-      </Box>
-    </DashboardLayout>
+    </Box>
   );
 };
 

@@ -27,10 +27,8 @@ import {
 } from '@mui/icons-material';
 
 import { getAvailableRanks, getRankProgress } from '@/api/user.api';
-import { Rank, RankProgress } from '@/types';
+import { Rank } from '@/types';
 import { formatCurrency } from '@/utils/formatters';
-import DashboardLayout from '@/layouts/DashboardLayout';
-
 const AllRanks: React.FC = () => {
   const theme = useTheme();
   const [loading, setLoading] = useState(true);
@@ -52,8 +50,8 @@ const AllRanks: React.FC = () => {
         getRankProgress(),
       ]);
 
-      setRanks(ranksResponse.data);
-      setCurrentRankId(progressResponse.data.currentRank.id);
+      setRanks(ranksResponse.data || []);
+      setCurrentRankId(progressResponse.data?.currentRank?.id || null);
     } catch (err: any) {
       setError(err.response?.data?.message || 'Failed to load ranks');
     } finally {
@@ -84,7 +82,7 @@ const AllRanks: React.FC = () => {
 
   if (loading) {
     return (
-      <DashboardLayout title="All Ranks">
+      
         <Grid container spacing={3}>
           {[1, 2, 3, 4, 5, 6].map((i) => (
             <Grid item xs={12} md={6} lg={4} key={i}>
@@ -92,22 +90,22 @@ const AllRanks: React.FC = () => {
             </Grid>
           ))}
         </Grid>
-      </DashboardLayout>
+      
     );
   }
 
   if (error) {
     return (
-      <DashboardLayout title="All Ranks">
+      
         <Alert severity="error" sx={{ mb: 3 }}>
           {error}
         </Alert>
-      </DashboardLayout>
+      
     );
   }
 
   return (
-    <DashboardLayout title="All Ranks">
+    
       <Box>
         {/* Header */}
         <Box sx={{ mb: 4, textAlign: 'center' }}>
@@ -410,7 +408,7 @@ const AllRanks: React.FC = () => {
           </Typography>
         </Alert>
       </Box>
-    </DashboardLayout>
+  
   );
 };
 

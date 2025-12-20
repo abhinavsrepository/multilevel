@@ -28,7 +28,6 @@ import {
   CheckCircle,
   Schedule,
 } from '@mui/icons-material';
-import DashboardLayout from '@/layouts/DashboardLayout';
 import { getMyAchievements, getMyAchievementTimeline } from '@/api/user.api';
 import { formatCurrency, formatDate } from '@/utils/formatters';
 
@@ -102,7 +101,7 @@ const RankAchievementTimeline: React.FC = () => {
   };
 
   return (
-    <DashboardLayout>
+    
       <Box sx={{ p: 3 }}>
         <Typography variant="h4" gutterBottom fontWeight="bold">
           Rank Achievements
@@ -316,7 +315,7 @@ const RankAchievementTimeline: React.FC = () => {
           </>
         )}
       </Box>
-    </DashboardLayout>
+    
   );
 };
 

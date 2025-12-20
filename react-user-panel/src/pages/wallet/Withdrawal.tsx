@@ -30,7 +30,6 @@ import {
   ArrowBack,
   MonetizationOn,
 } from '@mui/icons-material';
-import DashboardLayout from '../../layouts/DashboardLayout';
 import { getWalletBalance } from '../../api/wallet.api';
 import {
   getWithdrawalRules,
@@ -212,17 +211,17 @@ const Withdrawal: React.FC = () => {
 
   if (loading) {
     return (
-      <DashboardLayout title="Withdrawal">
+      
         <Box>
           <Skeleton variant="rectangular" height={200} sx={{ mb: 3, borderRadius: 2 }} />
           <Skeleton variant="rectangular" height={400} sx={{ borderRadius: 2 }} />
         </Box>
-      </DashboardLayout>
+      
     );
   }
 
   return (
-    <DashboardLayout title="Withdrawal">
+    
       <Box>
         {/* Header */}
         <Stack direction="row" spacing={2} alignItems="center" sx={{ mb: 4 }}>
@@ -643,7 +642,7 @@ const Withdrawal: React.FC = () => {
           </Grid>
         </Grid>
       </Box>
-    </DashboardLayout>
+    
   );
 };
 

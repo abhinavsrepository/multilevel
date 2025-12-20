@@ -24,7 +24,6 @@ import {
   Refresh,
 } from '@mui/icons-material';
 import { motion } from 'framer-motion';
-import DashboardLayout from '../../layouts/DashboardLayout';
 import StatsCard from '../../components/common/StatsCard';
 import InvestmentCard from '../../components/cards/InvestmentCard';
 import { getInvestments, getInvestmentStats } from '../../api/investment.api';
@@ -173,7 +172,7 @@ const MyInvestments: React.FC = () => {
   };
 
   return (
-    <DashboardLayout title="My Investments">
+    
       <Box>
         {/* Header */}
         <Box sx={{ mb: 4 }}>
@@ -451,7 +450,7 @@ const MyInvestments: React.FC = () => {
           </Box>
         )}
       </Box>
-    </DashboardLayout>
+    
   );
 };
 

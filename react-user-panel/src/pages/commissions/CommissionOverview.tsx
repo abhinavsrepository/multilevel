@@ -21,8 +21,6 @@ import {
   Stars,
 } from '@mui/icons-material';
 import { motion } from 'framer-motion';
-import DashboardLayout from '@/layouts/DashboardLayout';
-
 import StatsCard from '@/components/common/StatsCard';
 import { LineChart } from '@/components/charts';
 import { PieChart } from '@/components/charts';
@@ -138,7 +136,7 @@ const CommissionOverview: React.FC = () => {
    */
   if (loading) {
     return (
-      <DashboardLayout title="Commission Overview">
+      
         <Box>
           <Grid container spacing={3}>
             {[1, 2, 3].map((i) => (
@@ -159,7 +157,7 @@ const CommissionOverview: React.FC = () => {
             </Grid>
           </Grid>
         </Box>
-      </DashboardLayout>
+      
     );
   }
 
@@ -168,16 +166,16 @@ const CommissionOverview: React.FC = () => {
    */
   if (error || !summary) {
     return (
-      <DashboardLayout title="Commission Overview">
+      
         <Alert severity="error" sx={{ borderRadius: 2 }}>
           {error || 'Failed to load commission data'}
         </Alert>
-      </DashboardLayout>
+      
     );
   }
 
   return (
-    <DashboardLayout title="Commission Overview" showBreadcrumb={false}>
+    
       <Box>
         {/* Total Earnings Cards */}
         <Grid container spacing={3} sx={{ mb: 4 }}>
@@ -366,7 +364,7 @@ const CommissionOverview: React.FC = () => {
           </Grid>
         </Grid>
       </Box>
-    </DashboardLayout>
+    
   );
 };
 

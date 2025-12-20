@@ -51,7 +51,6 @@ import {
   LinkedIn,
 } from '@mui/icons-material';
 
-import DashboardLayout from '../../layouts/DashboardLayout';
 
 import { getReferralLink } from '@/api/user.api';
 import { getDirectReferrals } from '@/api/team.api';
@@ -189,7 +188,7 @@ const ReferralTools: React.FC = () => {
 
   if (loading) {
     return (
-      <DashboardLayout title="Referral Tools">
+      
         <Box>
           <Skeleton variant="rectangular" height={300} sx={{ borderRadius: 2, mb: 3 }} />
           <Grid container spacing={3}>
@@ -200,17 +199,17 @@ const ReferralTools: React.FC = () => {
             ))}
           </Grid>
         </Box>
-      </DashboardLayout>
+      
     );
   }
 
   if (error) {
     return (
-      <DashboardLayout title="Referral Tools">
+      
         <Alert severity="error" sx={{ mb: 3 }}>
           {error}
         </Alert>
-      </DashboardLayout>
+      
     );
   }
 
@@ -221,7 +220,7 @@ const ReferralTools: React.FC = () => {
   const { stats } = referralData;
 
   return (
-    <DashboardLayout title="Referral Tools">
+    
       <Box>
         {/* Stats Overview */}
         <Grid container spacing={3} sx={{ mb: 3 }}>
@@ -954,7 +953,7 @@ const ReferralTools: React.FC = () => {
           </TabPanel>
         </Card>
       </Box >
-    </DashboardLayout >
+    
   );
 };
 

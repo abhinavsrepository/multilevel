@@ -52,7 +52,6 @@ import { FileUpload } from '@/components/forms';
 import { getKYCStatus, uploadKYCDocument } from '@/api/user.api';
 import { KYCDocument, DocumentType } from '@/types';
 import { formatCurrency, formatDate } from '@/utils/formatters';
-import DashboardLayout from '../../layouts/DashboardLayout';
 
 const KYCStatus: React.FC = () => {
   const theme = useTheme();
@@ -190,7 +189,7 @@ const KYCStatus: React.FC = () => {
 
   if (loading) {
     return (
-      <DashboardLayout title="KYC Status">
+      
         <Box>
           <Skeleton variant="rectangular" height={200} sx={{ borderRadius: 2, mb: 3 }} />
           <Grid container spacing={3}>
@@ -201,17 +200,17 @@ const KYCStatus: React.FC = () => {
             ))}
           </Grid>
         </Box>
-      </DashboardLayout>
+      
     );
   }
 
   if (error && !kycData) {
     return (
-      <DashboardLayout title="KYC Status">
+      
         <Alert severity="error" sx={{ mb: 3 }}>
           {error}
         </Alert>
-      </DashboardLayout>
+      
     );
   }
 
@@ -224,7 +223,7 @@ const KYCStatus: React.FC = () => {
   const totalDocs = documents.length;
 
   return (
-    <DashboardLayout title="KYC Status">
+    
       <Box>
         {/* Overall KYC Status Card */}
         <Paper
@@ -639,7 +638,7 @@ const KYCStatus: React.FC = () => {
           </DialogActions>
         </Dialog>
       </Box>
-    </DashboardLayout >
+    
   );
 };
 

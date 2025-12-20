@@ -32,7 +32,6 @@ import {
   Pending,
   Refresh,
 } from '@mui/icons-material';
-import DashboardLayout from '../../layouts/DashboardLayout';
 import { BankAccount } from '../../types';
 import { toast } from 'react-toastify';
 import { useForm, Controller } from 'react-hook-form';
@@ -225,7 +224,7 @@ const BankAccounts: React.FC = () => {
   };
 
   return (
-    <DashboardLayout title="Bank Accounts">
+    
       <Box>
         {/* Header */}
         <Stack
@@ -628,7 +627,7 @@ const BankAccounts: React.FC = () => {
           </DialogActions>
         </Dialog>
       </Box>
-    </DashboardLayout>
+    
   );
 };
 

@@ -121,7 +121,7 @@ const TeamReport: React.FC = () => {
    */
   if (loading) {
     return (
-      <DashboardLayout title="Team Report">
+      
         <Box>
           <Grid container spacing={3}>
             {[1, 2, 3, 4, 5, 6].map((i) => (
@@ -131,7 +131,7 @@ const TeamReport: React.FC = () => {
             ))}
           </Grid>
         </Box>
-      </DashboardLayout>
+      
     );
   }
 
@@ -140,16 +140,16 @@ const TeamReport: React.FC = () => {
    */
   if (error || !report) {
     return (
-      <DashboardLayout title="Team Report">
+      
         <Alert severity="error" sx={{ borderRadius: 2 }}>
           {error || 'Failed to load team report'}
         </Alert>
-      </DashboardLayout>
+      
     );
   }
 
   return (
-    <DashboardLayout title="Team Report">
+    
       <Box>
         {/* Page Header */}
         <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 4 }}>
@@ -601,7 +601,7 @@ const TeamReport: React.FC = () => {
           </MenuItem>
         </Menu>
       </Box>
-    </DashboardLayout>
+    
   );
 };
 

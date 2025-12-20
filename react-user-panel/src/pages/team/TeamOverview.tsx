@@ -30,7 +30,6 @@ import {
 } from '@mui/icons-material';
 import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
-import DashboardLayout from '@/layouts/DashboardLayout';
 import StatsCard from '@/components/common/StatsCard';
 import { LineChart } from '@/components/charts';
 import { getTeamStats, getTeamGrowth, getLevelBreakdown } from '@/api/team.api';
@@ -155,28 +154,26 @@ const TeamOverview: React.FC = () => {
    */
   if (loading) {
     return (
-      <DashboardLayout title="Team Overview">
-        <Box>
-          <Grid container spacing={3}>
-            {[1, 2, 3, 4].map((i) => (
-              <Grid item xs={12} sm={6} md={3} key={i}>
-                <Skeleton variant="rectangular" height={140} sx={{ borderRadius: 3 }} />
-              </Grid>
-            ))}
-            {[1, 2, 3, 4].map((i) => (
-              <Grid item xs={12} sm={6} md={3} key={`action-${i}`}>
-                <Skeleton variant="rectangular" height={120} sx={{ borderRadius: 3 }} />
-              </Grid>
-            ))}
-            <Grid item xs={12} lg={8}>
-              <Skeleton variant="rectangular" height={400} sx={{ borderRadius: 3 }} />
+      <Box>
+        <Grid container spacing={3}>
+          {[1, 2, 3, 4].map((i) => (
+            <Grid item xs={12} sm={6} md={3} key={i}>
+              <Skeleton variant="rectangular" height={140} sx={{ borderRadius: 3 }} />
             </Grid>
-            <Grid item xs={12} lg={4}>
-              <Skeleton variant="rectangular" height={400} sx={{ borderRadius: 3 }} />
+          ))}
+          {[1, 2, 3, 4].map((i) => (
+            <Grid item xs={12} sm={6} md={3} key={`action-${i}`}>
+              <Skeleton variant="rectangular" height={120} sx={{ borderRadius: 3 }} />
             </Grid>
+          ))}
+          <Grid item xs={12} lg={8}>
+            <Skeleton variant="rectangular" height={400} sx={{ borderRadius: 3 }} />
           </Grid>
-        </Box>
-      </DashboardLayout>
+          <Grid item xs={12} lg={4}>
+            <Skeleton variant="rectangular" height={400} sx={{ borderRadius: 3 }} />
+          </Grid>
+        </Grid>
+      </Box>
     );
   }
 
@@ -185,26 +182,23 @@ const TeamOverview: React.FC = () => {
    */
   if (error || !stats) {
     return (
-      <DashboardLayout title="Team Overview">
-        <Alert severity="error" sx={{ borderRadius: 2 }}>
-          {error || 'Failed to load team data'}
-        </Alert>
-      </DashboardLayout>
+      <Alert severity="error" sx={{ borderRadius: 2 }}>
+        {error || 'Failed to load team data'}
+      </Alert>
     );
   }
 
   return (
-    <DashboardLayout title="Team Overview">
-      <Box>
-        {/* Page Header */}
-        <Box sx={{ mb: 4 }}>
-          <Typography variant="h4" fontWeight={700} gutterBottom>
-            Team Overview
-          </Typography>
-          <Typography variant="body1" color="text.secondary">
-            Monitor and manage your team network
-          </Typography>
-        </Box>
+    <Box>
+      {/* Page Header */}
+      <Box sx={{ mb: 4 }}>
+        <Typography variant="h4" fontWeight={700} gutterBottom>
+          Team Overview
+        </Typography>
+        <Typography variant="body1" color="text.secondary">
+          Monitor and manage your team network
+        </Typography>
+      </Box>
 
         {/* Team Stats Cards */}
         <Grid container spacing={3} sx={{ mb: 4 }}>
@@ -539,8 +533,7 @@ const TeamOverview: React.FC = () => {
             </Paper>
           </Grid>
         </Grid>
-      </Box>
-    </DashboardLayout>
+    </Box>
   );
 };
 

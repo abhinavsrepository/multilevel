@@ -35,7 +35,6 @@ import {
 import { getRankProgress } from '@/api/user.api';
 import { RankProgress as RankProgressType } from '@/types';
 import { formatCurrency, formatNumber } from '@/utils/formatters';
-import DashboardLayout from '@/layouts/DashboardLayout';
 
 const RankProgress: React.FC = () => {
   const theme = useTheme();
@@ -105,48 +104,41 @@ const RankProgress: React.FC = () => {
 
   if (loading) {
     return (
-      <DashboardLayout title="Rank Progress">
-        <Box>
-          <Skeleton variant="rectangular" height={200} sx={{ borderRadius: 2, mb: 3 }} />
-          <Grid container spacing={3}>
-            {[1, 2, 3, 4].map((i) => (
-              <Grid item xs={12} md={6} key={i}>
-                <Skeleton variant="rectangular" height={150} sx={{ borderRadius: 2 }} />
-              </Grid>
-            ))}
-          </Grid>
-        </Box>
-      </DashboardLayout>
+      <Box>
+        <Skeleton variant="rectangular" height={200} sx={{ borderRadius: 2, mb: 3 }} />
+        <Grid container spacing={3}>
+          {[1, 2, 3, 4].map((i) => (
+            <Grid item xs={12} md={6} key={i}>
+              <Skeleton variant="rectangular" height={150} sx={{ borderRadius: 2 }} />
+            </Grid>
+          ))}
+        </Grid>
+      </Box>
     );
   }
 
   if (error) {
     return (
-      <DashboardLayout title="Rank Progress">
-        <Alert severity="error" sx={{ mb: 3 }}>
-          {error}
-        </Alert>
-      </DashboardLayout>
+      <Alert severity="error" sx={{ mb: 3 }}>
+        {error}
+      </Alert>
     );
   }
 
   if (!rankData || !rankData.nextRank) {
     return (
-      <DashboardLayout title="Rank Progress">
-        <Alert severity="info" sx={{ mb: 3 }}>
-          You have achieved the highest rank! Congratulations!
-        </Alert>
-      </DashboardLayout>
+      <Alert severity="info" sx={{ mb: 3 }}>
+        You have achieved the highest rank! Congratulations!
+      </Alert>
     );
   }
 
   const { currentRank, nextRank, progress, overallProgress } = rankData;
 
   return (
-    <DashboardLayout title="Rank Progress">
-      <Box>
-        {/* Next Rank Card */}
-        <Paper
+    <Box>
+      {/* Next Rank Card */}
+      <Paper
           sx={{
             p: 4,
             mb: 3,
@@ -582,8 +574,7 @@ const RankProgress: React.FC = () => {
             </Card>
           </Grid>
         </Grid>
-      </Box>
-    </DashboardLayout>
+    </Box>
   );
 };
 

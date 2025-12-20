@@ -28,7 +28,6 @@ import {
   FiTrendingUp,
   FiActivity,
 } from 'react-icons/fi';
-import DashboardLayout from '../../layouts/DashboardLayout';
 import { ProfileEditModal } from '../../components/modals/ProfileEditModal';
 import LoadingSpinner from '../../components/common/LoadingSpinner';
 import EmptyState from '../../components/common/EmptyState';
@@ -217,26 +216,26 @@ const Profile: React.FC = () => {
 
   if (loading) {
     return (
-      <DashboardLayout title="My Profile">
+      
         <LoadingSpinner />
-      </DashboardLayout>
+      
     );
   }
 
   if (error || !user) {
     return (
-      <DashboardLayout title="My Profile">
+      
         <EmptyState
           title="Failed to load profile"
           message={error || 'Please try again later'}
           icon={<FiAlertCircle className="w-16 h-16" />}
         />
-      </DashboardLayout>
+      
     );
   }
 
   return (
-    <DashboardLayout title="My Profile">
+    
       <div className="space-y-6">
         {/* Header Section with Cover Photo and Profile Picture */}
         <motion.div
@@ -1042,7 +1041,7 @@ const Profile: React.FC = () => {
           country: user.country || 'India',
         }}
       />
-    </DashboardLayout>
+    
   );
 };
 

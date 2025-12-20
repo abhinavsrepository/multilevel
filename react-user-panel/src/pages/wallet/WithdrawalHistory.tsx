@@ -37,7 +37,6 @@ import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import dayjs, { Dayjs } from 'dayjs';
-import DashboardLayout from '../../layouts/DashboardLayout';
 import { getWithdrawals, cancelWithdrawal, downloadWithdrawalReceipt } from '../../api/payout.api';
 import { Withdrawal, WithdrawalStatus } from '../../types';
 import { toast } from 'react-toastify';
@@ -214,7 +213,7 @@ const WithdrawalHistory: React.FC = () => {
   };
 
   return (
-    <DashboardLayout title="Withdrawal History">
+    
       <Box>
         {/* Header */}
         <Stack
@@ -532,7 +531,7 @@ const WithdrawalHistory: React.FC = () => {
           </DialogActions>
         </Dialog>
       </Box>
-    </DashboardLayout>
+    
   );
 };
 

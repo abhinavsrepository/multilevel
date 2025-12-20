@@ -12,7 +12,6 @@ import {
   FiArrowLeft,
 } from 'react-icons/fi';
 import { useNavigate } from 'react-router-dom';
-import DashboardLayout from '../../layouts/DashboardLayout';
 import LoadingSpinner from '../../components/common/LoadingSpinner';
 import EmptyState from '../../components/common/EmptyState';
 import { User } from '../../types';
@@ -188,26 +187,26 @@ const DigitalIDCard: React.FC = () => {
 
   if (loading) {
     return (
-      <DashboardLayout title="Digital ID Card">
+      
         <LoadingSpinner />
-      </DashboardLayout>
+      
     );
   }
 
   if (error || !user) {
     return (
-      <DashboardLayout title="Digital ID Card">
+      
         <EmptyState
           title="Failed to load ID card"
           description={error || 'Please try again later'}
           icon={<FiUser className="w-16 h-16" />}
         />
-      </DashboardLayout>
+      
     );
   }
 
   return (
-    <DashboardLayout title="Digital ID Card">
+    
       <div className="max-w-4xl mx-auto space-y-6">
         {/* Header */}
         <div className="flex items-center justify-between">
@@ -444,7 +443,7 @@ const DigitalIDCard: React.FC = () => {
           </div>
         </div>
       </div>
-    </DashboardLayout>
+    
   );
 };
 

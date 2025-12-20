@@ -26,8 +26,6 @@ import { useNavigate } from 'react-router-dom';
 import { FileUpload } from '@/components/forms';
 import { uploadKYCDocument } from '@/api/user.api';
 import { DocumentType } from '@/types';
-import DashboardLayout from '@/layouts/DashboardLayout';
-
 const DocumentUpload: React.FC = () => {
   const theme = useTheme();
   const navigate = useNavigate();
@@ -266,7 +264,7 @@ const DocumentUpload: React.FC = () => {
 
   if (success) {
     return (
-      <DashboardLayout title="Document Upload">
+      
         <Card>
           <CardContent sx={{ textAlign: 'center', py: 6 }}>
             <CheckCircle sx={{ fontSize: 80, color: 'success.main', mb: 2 }} />
@@ -285,12 +283,12 @@ const DocumentUpload: React.FC = () => {
             </Button>
           </CardContent>
         </Card>
-      </DashboardLayout>
+      
     );
   }
 
   return (
-    <DashboardLayout title="Document Upload">
+    
       <Box>
         {/* Stepper */}
         <Paper sx={{ p: 3, mb: 3 }}>
@@ -359,7 +357,7 @@ const DocumentUpload: React.FC = () => {
           </Typography>
         </Alert>
       </Box>
-    </DashboardLayout>
+    
   );
 };
 

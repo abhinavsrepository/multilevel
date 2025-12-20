@@ -16,7 +16,6 @@ import {
     Alert,
     CircularProgress,
 } from '@mui/material';
-import DashboardLayout from '../../layouts/DashboardLayout';
 import api from '../../api/config/axiosConfig';
 
 interface LevelData {
@@ -86,16 +85,16 @@ const LevelIncome: React.FC = () => {
 
     if (loading) {
         return (
-            <DashboardLayout>
+            
                 <Box display="flex" justifyContent="center" alignItems="center" minHeight="60vh">
                     <CircularProgress />
                 </Box>
-            </DashboardLayout>
+            
         );
     }
 
     return (
-        <DashboardLayout>
+        
             <Box sx={{ mb: 4 }}>
                 <Typography variant="h4" gutterBottom fontWeight="bold">
                     Level Income
@@ -190,7 +189,7 @@ const LevelIncome: React.FC = () => {
                     </TableContainer>
                 </CardContent>
             </Card>
-        </DashboardLayout>
+        
     );
 };
 

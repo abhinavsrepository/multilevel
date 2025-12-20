@@ -33,8 +33,6 @@ import {
   ArrowForward,
 } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
-import DashboardLayout from '@/layouts/DashboardLayout';
-
 import EmptyState from '@/components/common/EmptyState';
 import { getTickets, getTicketStats } from '@/api/ticket.api';
 import { Ticket, TicketCategory, TicketPriority, TicketStatus } from '@/types';
@@ -159,7 +157,7 @@ const Tickets: React.FC = () => {
 
   if (loading && !tickets.length) {
     return (
-      <DashboardLayout title="Support Tickets">
+      
         <Box>
           <Grid container spacing={3} sx={{ mb: 3 }}>
             {[1, 2, 3, 4].map((i) => (
@@ -170,12 +168,12 @@ const Tickets: React.FC = () => {
           </Grid>
           <Skeleton variant="rectangular" height={400} sx={{ borderRadius: 2 }} />
         </Box>
-      </DashboardLayout>
+      
     );
   }
 
   return (
-    <DashboardLayout title="Support Tickets">
+    
       <Box>
         {/* Stats Overview */}
         {stats && (
@@ -490,7 +488,7 @@ const Tickets: React.FC = () => {
           <HelpOutline />
         </Fab>
       </Box>
-    </DashboardLayout>
+    
   );
 };
 

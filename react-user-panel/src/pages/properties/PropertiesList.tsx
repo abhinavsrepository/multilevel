@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useNavigate, useSearchParams } from 'react-router-dom';
+import { Box } from '@mui/material';
 import {
   FiGrid,
   FiList,
@@ -619,7 +620,7 @@ const PropertiesList: React.FC = () => {
           </div>
         </div>
       </div>
-    
+    </Box>
   );
 };
 

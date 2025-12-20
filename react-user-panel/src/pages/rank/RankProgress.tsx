@@ -27,14 +27,12 @@ import {
   Cancel,
   AccessTime,
   EmojiEvents,
-  ExpandMore,
-  Lock,
   LockOpen,
 } from '@mui/icons-material';
 
 import { getRankProgress } from '@/api/user.api';
 import { RankProgress as RankProgressType } from '@/types';
-import { formatCurrency, formatNumber } from '@/utils/formatters';
+import { formatCurrency } from '@/utils/formatters';
 
 const RankProgress: React.FC = () => {
   const theme = useTheme();
@@ -51,7 +49,7 @@ const RankProgress: React.FC = () => {
       setLoading(true);
       setError(null);
       const response = await getRankProgress();
-      setRankData(response.data);
+      setRankData(response.data ?? null);
     } catch (err: any) {
       setError(err.response?.data?.message || 'Failed to load rank progress');
     } finally {
@@ -133,7 +131,7 @@ const RankProgress: React.FC = () => {
     );
   }
 
-  const { currentRank, nextRank, progress, overallProgress } = rankData;
+  const { nextRank, progress, overallProgress } = rankData;
 
   return (
     <Box>
@@ -564,7 +562,6 @@ const RankProgress: React.FC = () => {
                   )}
                 </List>
 
-      <Box>
                 <Alert severity="info" sx={{ mt: 2 }}>
                   <Typography variant="body2">
                     At your current pace, you can achieve {nextRank.name} rank in approximately{' '}

@@ -12,10 +12,13 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 public class ActivityResponse {
-    private Long activityId;
+    private Long id; // Changed from activityId to match frontend
     private String type;
+    private String icon;
     private String description;
     private BigDecimal amount;
+    private String timeAgo;
     private String status;
-    private LocalDateTime createdAt;
+    private String statusColor;
+    private LocalDateTime createdAt; // Keep for backend calculations
 }

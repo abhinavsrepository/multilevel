@@ -80,6 +80,42 @@ exports.changePassword = async (req, res) => {
 };
 
 
+// Helper function to convert date to "time ago" format
+const getTimeAgo = (date) => {
+    const seconds = Math.floor((new Date() - new Date(date)) / 1000);
+
+    let interval = seconds / 31536000;
+    if (interval > 1) return Math.floor(interval) + ' years ago';
+
+    interval = seconds / 2592000;
+    if (interval > 1) return Math.floor(interval) + ' months ago';
+
+    interval = seconds / 86400;
+    if (interval > 1) return Math.floor(interval) + ' days ago';
+
+    interval = seconds / 3600;
+    if (interval > 1) return Math.floor(interval) + ' hours ago';
+
+    interval = seconds / 60;
+    if (interval > 1) return Math.floor(interval) + ' minutes ago';
+
+    return Math.floor(seconds) + ' seconds ago';
+};
+
+// Map activity action to type
+const getActivityType = (action) => {
+    const mapping = {
+        'USER_REGISTERED': 'NEW_MEMBER',
+        'INVESTMENT_MADE': 'INVESTMENT',
+        'COMMISSION_EARNED': 'COMMISSION',
+        'WITHDRAWAL_REQUESTED': 'PAYOUT',
+        'RANK_UPGRADED': 'RANK_UPGRADE',
+        'INSTALLMENT_PAID': 'INSTALLMENT_PAID',
+        'PROPERTY_LAUNCHED': 'PROPERTY_LAUNCH'
+    };
+    return mapping[action] || 'NEW_MEMBER';
+};
+
 exports.getDashboard = async (req, res) => {
     try {
         const userId = req.user.id;
@@ -157,7 +193,8 @@ exports.getDashboard = async (req, res) => {
             safeQuery(() => Income.findAll({
                 attributes: [
                     [sequelize.fn('DATE', sequelize.col('created_at')), 'date'],
-                    [sequelize.fn('SUM', sequelize.col('amount')), 'dailyEarnings']
+                    [sequelize.fn('SUM', sequelize.col('amount')), 'totalEarnings'],
+                    'incomeType'
                 ],
                 where: {
                     userId,
@@ -165,7 +202,7 @@ exports.getDashboard = async (req, res) => {
                         [Op.gte]: new Date(new Date().setDate(new Date().getDate() - 7))
                     }
                 },
-                group: [sequelize.fn('DATE', sequelize.col('created_at'))],
+                group: [sequelize.fn('DATE', sequelize.col('created_at')), 'incomeType'],
                 order: [[sequelize.fn('DATE', sequelize.col('created_at')), 'ASC']]
             }), []),
 
@@ -179,17 +216,41 @@ exports.getDashboard = async (req, res) => {
                 group: ['propertyId']
             }), []),
 
-            // 10. Team Growth (Bar Chart - Last 6 months)
-            safeQuery(() => User.findAll({
-                attributes: [
-                    [sequelize.fn('TO_CHAR', sequelize.col('created_at'), 'YYYY-MM'), 'month'],
-                    [sequelize.fn('COUNT', sequelize.col('id')), 'count']
-                ],
-                where: { sponsorId: userId },
-                group: [sequelize.fn('TO_CHAR', sequelize.col('created_at'), 'YYYY-MM')],
-                order: [[sequelize.fn('TO_CHAR', sequelize.col('created_at'), 'YYYY-MM'), 'ASC']],
-                limit: 6
-            }), []),
+            // 10. Team Growth (Bar Chart - Last 6 months) - Left/Right Leg
+            safeQuery(async () => {
+                const sixMonthsAgo = new Date();
+                sixMonthsAgo.setMonth(sixMonthsAgo.getMonth() - 6);
+
+                const leftLegData = await User.findAll({
+                    attributes: [
+                        [sequelize.fn('TO_CHAR', sequelize.col('created_at'), 'YYYY-MM'), 'month'],
+                        [sequelize.fn('COUNT', sequelize.col('id')), 'count']
+                    ],
+                    where: {
+                        placementUserId: userId,
+                        placementSide: 'LEFT',
+                        createdAt: { [Op.gte]: sixMonthsAgo }
+                    },
+                    group: [sequelize.fn('TO_CHAR', sequelize.col('created_at'), 'YYYY-MM')],
+                    raw: true
+                });
+
+                const rightLegData = await User.findAll({
+                    attributes: [
+                        [sequelize.fn('TO_CHAR', sequelize.col('created_at'), 'YYYY-MM'), 'month'],
+                        [sequelize.fn('COUNT', sequelize.col('id')), 'count']
+                    ],
+                    where: {
+                        placementUserId: userId,
+                        placementSide: 'RIGHT',
+                        createdAt: { [Op.gte]: sixMonthsAgo }
+                    },
+                    group: [sequelize.fn('TO_CHAR', sequelize.col('created_at'), 'YYYY-MM')],
+                    raw: true
+                });
+
+                return { leftLegData, rightLegData };
+            }, { leftLegData: [], rightLegData: [] }),
 
             // 11. Announcements
             safeQuery(() => Announcement.findAll({
@@ -203,13 +264,26 @@ exports.getDashboard = async (req, res) => {
             }), [])
         ]);
 
-        // Process Charts Data
-        const processedEarningsTrend = earningsTrend.map(e => ({
-            date: e.get('date'),
-            totalEarnings: parseFloat(e.get('dailyEarnings')),
-            commission: parseFloat(e.get('dailyEarnings')), // Simplified
-            roi: 0 // Need ROI model/logic
-        }));
+        // Process Charts Data - Earnings Trend
+        // Group by date and separate commission and ROI
+        const earningsMap = {};
+        earningsTrend.forEach(e => {
+            const date = e.get('date');
+            if (!earningsMap[date]) {
+                earningsMap[date] = { date, totalEarnings: 0, commission: 0, roi: 0 };
+            }
+            const amount = parseFloat(e.get('totalEarnings')) || 0;
+            const type = e.incomeType;
+
+            earningsMap[date].totalEarnings += amount;
+
+            if (type && type.toLowerCase().includes('commission')) {
+                earningsMap[date].commission += amount;
+            } else if (type && (type.toLowerCase().includes('roi') || type.toLowerCase().includes('rental'))) {
+                earningsMap[date].roi += amount;
+            }
+        });
+        const processedEarningsTrend = Object.values(earningsMap);
 
         const processedCommissionBreakdown = commissionBreakdown.map((c, index) => {
             const colors = ['#6366f1', '#10b981', '#f59e0b', '#ef4444'];
@@ -232,38 +306,63 @@ exports.getDashboard = async (req, res) => {
             };
         });
 
-        const processedTeamGrowth = teamGrowth.map(t => ({
-            month: t.get('month'),
-            leftLeg: parseInt(t.get('count')) / 2, // Mock split
-            rightLeg: parseInt(t.get('count')) / 2
-        }));
+        // Process Team Growth - Merge left and right leg data
+        const teamGrowthMap = {};
+
+        teamGrowth.leftLegData?.forEach(item => {
+            const month = item.month;
+            if (!teamGrowthMap[month]) {
+                teamGrowthMap[month] = { month, leftLeg: 0, rightLeg: 0 };
+            }
+            teamGrowthMap[month].leftLeg = parseInt(item.count) || 0;
+        });
+
+        teamGrowth.rightLegData?.forEach(item => {
+            const month = item.month;
+            if (!teamGrowthMap[month]) {
+                teamGrowthMap[month] = { month, leftLeg: 0, rightLeg: 0 };
+            }
+            teamGrowthMap[month].rightLeg = parseInt(item.count) || 0;
+        });
+
+        const processedTeamGrowth = Object.values(teamGrowthMap).sort((a, b) =>
+            a.month.localeCompare(b.month)
+        );
 
         // Process Activities
-        const processedActivities = recentActivities.map(a => ({
-            id: a.id,
-            type: 'NEW_MEMBER', // Map action to type
-            icon: 'person',
-            description: a.description || a.action,
-            timeAgo: a.createdAt.toISOString(), // Frontend handles formatting
-            status: 'Completed',
-            statusColor: 'success'
-        }));
+        const processedActivities = recentActivities.map(a => {
+            const activityType = getActivityType(a.action);
+            return {
+                id: a.id,
+                type: activityType,
+                icon: activityType.toLowerCase(),
+                description: a.description || a.action,
+                amount: a.amount || null,
+                timeAgo: getTimeAgo(a.createdAt),
+                status: 'Completed',
+                statusColor: 'success'
+            };
+        });
 
         // Process Announcements
-        const processedAnnouncements = announcements.map(a => ({
-            id: a.id,
-            title: a.title,
-            description: a.description,
-            date: a.createdAt.toISOString().split('T')[0],
-            link: a.link
-        }));
+        const processedAnnouncements = announcements.map(a => {
+            const createdDate = a.createdAt || new Date();
+            return {
+                id: a.id,
+                title: a.title,
+                description: a.description,
+                date: createdDate instanceof Date ? createdDate.toISOString().split('T')[0] : createdDate,
+                link: a.link || null
+            };
+        });
 
         const dashboardData = {
             user: {
                 fullName: `${req.user.firstName} ${req.user.lastName}`,
                 userId: req.user.username, // Using username as ID for display
                 rank: user?.rank || 'Associate',
-                profilePicture: null // Add field if exists
+                profilePicture: req.user.profilePhoto || req.user.profilePicture || null,
+                rankIcon: null // Add if rank icons are implemented
             },
             stats: {
                 totalInvestment: totalInvestment || 0,

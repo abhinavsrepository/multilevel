@@ -214,74 +214,209 @@ exports.blockUser = async (req, res) => {
 
 exports.getAdminDashboard = async (req, res) => {
     try {
-        const totalUsers = await User.count();
-        const activeUsers = await User.count({ where: { status: 'ACTIVE' } });
-        const totalProperties = await Property.count();
-        const totalInvestments = await Investment.sum('investmentAmount') || 0;
-        const pendingPayoutsCount = await Payout.count({ where: { status: 'REQUESTED' } });
-        const pendingPayoutsAmount = await Payout.sum('requestedAmount', { where: { status: 'REQUESTED' } }) || 0;
-        const pendingKyc = await KycDocument.count({ where: { status: 'PENDING' } });
-        const commissionsPaid = await Commission.sum('amount') || 0;
+        const sequelize = require('../models').sequelize;
+        const { ActivityLog, Income } = require('../models');
 
-        // Mock chart data for now
-        const charts = {
-            registrationTrend: [
-                { date: '2023-01', value: 10 },
-                { date: '2023-02', value: 20 },
-                { date: '2023-03', value: 15 },
-                { date: '2023-04', value: 30 },
-                { date: '2023-05', value: 50 },
-            ],
-            investmentTrend: [
-                { date: '2023-01', value: 1000 },
-                { date: '2023-02', value: 2000 },
-                { date: '2023-03', value: 1500 },
-                { date: '2023-04', value: 3000 },
-                { date: '2023-05', value: 5000 },
-            ],
-            commissionDistribution: [
-                { category: 'Direct', value: 40 },
-                { category: 'Binary', value: 30 },
-                { category: 'Unilevel', value: 20 },
-                { category: 'Bonus', value: 10 },
-            ],
-            topPerformers: [
-                { name: 'User A', value: 10000 },
-                { name: 'User B', value: 8000 },
-                { name: 'User C', value: 6000 },
-                { name: 'User D', value: 4000 },
-                { name: 'User E', value: 2000 },
-            ]
-        };
+        // Calculate date ranges
+        const today = new Date();
+        const todayStart = new Date(today.setHours(0, 0, 0, 0));
+        const todayEnd = new Date(today.setHours(23, 59, 59, 999));
 
-        const recentActivities = []; // Populate with real logs if available
+        const lastMonth = new Date();
+        lastMonth.setMonth(lastMonth.getMonth() - 1);
+
+        const twoMonthsAgo = new Date();
+        twoMonthsAgo.setMonth(twoMonthsAgo.getMonth() - 2);
+
+        // Parallel queries for better performance
+        const [
+            totalUsers,
+            activeUsers,
+            todayRegistrations,
+            lastMonthUsers,
+            twoMonthsAgoUsers,
+            totalProperties,
+            activeProperties,
+            totalInvestments,
+            todayInvestments,
+            lastMonthInvestments,
+            pendingPayoutsCount,
+            pendingPayoutsAmount,
+            pendingKyc,
+            commissionsPaid,
+            registrationTrend,
+            investmentTrend,
+            commissionBreakdown,
+            topPerformers,
+            recentActivityLogs
+        ] = await Promise.all([
+            // User stats
+            User.count(),
+            User.count({ where: { status: 'ACTIVE' } }),
+            User.count({ where: { createdAt: { [Op.gte]: todayStart } } }),
+            User.count({ where: { createdAt: { [Op.gte]: lastMonth } } }),
+            User.count({ where: { createdAt: { [Op.gte]: twoMonthsAgo, [Op.lt]: lastMonth } } }),
+
+            // Property stats
+            Property.count(),
+            Property.count({ where: { status: 'ACTIVE' } }),
+
+            // Investment stats
+            Investment.sum('investmentAmount') || 0,
+            Investment.sum('investmentAmount', { where: { createdAt: { [Op.gte]: todayStart } } }) || 0,
+            Investment.sum('investmentAmount', { where: { createdAt: { [Op.gte]: lastMonth } } }) || 0,
+
+            // Payout stats
+            Payout.count({ where: { status: 'REQUESTED' } }),
+            Payout.sum('requestedAmount', { where: { status: 'REQUESTED' } }) || 0,
+
+            // KYC stats
+            KycDocument.count({ where: { status: 'PENDING' } }),
+
+            // Commission stats
+            Commission.sum('amount') || 0,
+
+            // Chart 1: Registration Trend (Last 30 days)
+            User.findAll({
+                attributes: [
+                    [sequelize.fn('DATE', sequelize.col('created_at')), 'date'],
+                    [sequelize.fn('COUNT', sequelize.col('id')), 'value']
+                ],
+                where: {
+                    createdAt: { [Op.gte]: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000) }
+                },
+                group: [sequelize.fn('DATE', sequelize.col('created_at'))],
+                order: [[sequelize.fn('DATE', sequelize.col('created_at')), 'ASC']],
+                raw: true
+            }),
+
+            // Chart 2: Investment Trend (Last 30 days)
+            Investment.findAll({
+                attributes: [
+                    [sequelize.fn('DATE', sequelize.col('created_at')), 'date'],
+                    [sequelize.fn('SUM', sequelize.col('investment_amount')), 'value']
+                ],
+                where: {
+                    createdAt: { [Op.gte]: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000) }
+                },
+                group: [sequelize.fn('DATE', sequelize.col('created_at'))],
+                order: [[sequelize.fn('DATE', sequelize.col('created_at')), 'ASC']],
+                raw: true
+            }),
+
+            // Chart 3: Commission Distribution by Type
+            Income.findAll({
+                attributes: [
+                    'incomeType',
+                    [sequelize.fn('SUM', sequelize.col('amount')), 'value']
+                ],
+                group: ['incomeType'],
+                raw: true
+            }),
+
+            // Chart 4: Top Performers (by total investment)
+            sequelize.query(`
+                SELECT
+                    u.username as name,
+                    u.id as "userId",
+                    COALESCE(SUM(i.investment_amount), 0) as value,
+                    ROW_NUMBER() OVER (ORDER BY COALESCE(SUM(i.investment_amount), 0) DESC) as rank
+                FROM users u
+                LEFT JOIN investments i ON u.id = i.user_id
+                GROUP BY u.id, u.username
+                ORDER BY value DESC
+                LIMIT 5
+            `, { type: sequelize.QueryTypes.SELECT }),
+
+            // Recent Activities (Last 10)
+            ActivityLog ? ActivityLog.findAll({
+                limit: 10,
+                order: [['createdAt', 'DESC']],
+                include: [{
+                    model: User,
+                    as: 'user',
+                    attributes: ['id', 'username', 'firstName', 'lastName']
+                }]
+            }) : []
+        ]);
+
+        // Calculate growth percentages
+        const userGrowth = twoMonthsAgoUsers > 0
+            ? ((lastMonthUsers - twoMonthsAgoUsers) / twoMonthsAgoUsers * 100).toFixed(1)
+            : 0;
+
+        const investmentGrowth = lastMonthInvestments > 0
+            ? ((lastMonthInvestments / (totalInvestments - lastMonthInvestments)) * 100).toFixed(1)
+            : 0;
+
+        // Process commission breakdown to match frontend interface
+        const processedCommissionBreakdown = commissionBreakdown.map(item => ({
+            category: item.incomeType || 'Other',
+            value: parseFloat(item.value) || 0
+        }));
+
+        // Process top performers
+        const processedTopPerformers = topPerformers.map(item => ({
+            name: item.name,
+            value: parseFloat(item.value) || 0,
+            rank: parseInt(item.rank) || 0,
+            userId: item.userId
+        }));
+
+        // Process recent activities
+        const processedActivities = recentActivityLogs.map(activity => ({
+            id: activity.id,
+            timestamp: activity.createdAt,
+            activityType: activity.action || 'ACTIVITY',
+            user: {
+                userId: activity.user?.username || 'Unknown',
+                fullName: activity.user ? `${activity.user.firstName || ''} ${activity.user.lastName || ''}`.trim() : 'Unknown User'
+            },
+            amount: activity.amount || null,
+            status: 'SUCCESS',
+            description: activity.description || activity.action || 'Activity'
+        }));
 
         res.json({
             success: true,
             data: {
                 stats: {
                     totalUsers,
-                    activeUsers,
-                    userGrowth: 5, // Mock
-                    todayRegistrations: 2, // Mock
+                    todayRegistrations,
+                    totalInvestment: parseFloat(totalInvestments),
+                    todayInvestment: parseFloat(todayInvestments),
+                    activeProperties,
                     totalProperties,
-                    activeProperties: totalProperties, // Mock
-                    totalInvestment: totalInvestments,
-                    investmentGrowth: 10, // Mock
-                    todayInvestment: 500, // Mock
                     pendingPayouts: {
                         count: pendingPayoutsCount,
-                        amount: pendingPayoutsAmount
+                        amount: parseFloat(pendingPayoutsAmount)
                     },
-                    commissionsPaid,
-                    pendingKYC: pendingKyc
+                    commissionsPaid: parseFloat(commissionsPaid),
+                    pendingKYC: pendingKyc,
+                    activeTickets: 0, // Add if support ticket model exists
+                    userGrowth: parseFloat(userGrowth),
+                    investmentGrowth: parseFloat(investmentGrowth)
                 },
-                charts,
-                recentActivities
+                charts: {
+                    registrationTrend: registrationTrend.map(item => ({
+                        date: item.date,
+                        value: parseInt(item.value)
+                    })),
+                    investmentTrend: investmentTrend.map(item => ({
+                        date: item.date,
+                        value: parseFloat(item.value)
+                    })),
+                    commissionDistribution: processedCommissionBreakdown,
+                    topPerformers: processedTopPerformers,
+                    propertyStatus: [], // Add if needed
+                    revenueByType: [], // Add if needed
+                    monthlyComparison: [] // Add if needed
+                },
+                recentActivities: processedActivities
             }
         });
     } catch (error) {
-        console.error(error);
+        console.error('Admin Dashboard Error:', error);
         res.status(500).json({ success: false, message: 'Server Error', error: error.message });
     }
 };

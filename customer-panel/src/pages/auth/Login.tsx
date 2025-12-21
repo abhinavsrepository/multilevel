@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Form, Input, Button, Card, Typography, Radio, App } from 'antd';
 import { UserOutlined, LockOutlined } from '@ant-design/icons';
@@ -15,6 +15,23 @@ export const Login = () => {
   const { message } = App.useApp();
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
+
+  const [form] = Form.useForm();
+
+  // Auto-fill credentials based on user type for demo purposes
+  useEffect(() => {
+    if (userType === 'ASSOCIATE') {
+      form.setFieldsValue({
+        email: 'userpanel@test.com',
+        password: 'UserPanel@123'
+      });
+    } else {
+      form.setFieldsValue({
+        email: 'customer@test.com',
+        password: 'Customer@123'
+      });
+    }
+  }, [userType, form]);
 
   const onFinish = async (values: LoginCredentials) => {
     try {
@@ -45,7 +62,7 @@ export const Login = () => {
 
   return (
     <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#f0f2f5' }}>
-      <Card bordered={false} variant="outlined" style={{ width: 450, boxShadow: '0 4px 12px rgba(0,0,0,0.1)' }}>
+      <Card variant="outlined" style={{ width: 450, boxShadow: '0 4px 12px rgba(0,0,0,0.1)' }}>
         <div style={{ textAlign: 'center', marginBottom: 32 }}>
           <Title level={2} style={{ marginBottom: 8 }}>Real Estate Portal</Title>
           <Text type="secondary">Sign in to your account</Text>
@@ -59,7 +76,17 @@ export const Login = () => {
           </Radio.Group>
         </div>
 
-        <Form name="login" onFinish={onFinish} layout="vertical" size="large">
+        <Form
+          form={form}
+          name="login"
+          onFinish={onFinish}
+          layout="vertical"
+          size="large"
+          initialValues={{
+            email: 'userpanel@test.com',
+            password: 'UserPanel@123'
+          }}
+        >
           <Form.Item
             name="email"
             rules={[

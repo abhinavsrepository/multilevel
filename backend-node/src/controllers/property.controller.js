@@ -1,6 +1,21 @@
 const { Property, Favorite, Investment, User, sequelize } = require('../models');
 const { Op } = require('sequelize');
 
+const transformProperty = (p) => {
+    const json = p.toJSON ? p.toJSON() : p;
+    return {
+        ...json,
+        price: parseFloat(json.basePrice) || 0,
+        location: json.address || '',
+        area: parseFloat(json.totalArea) || 0,
+        areaUnit: 'SQ_FT',
+        minInvestment: parseFloat(json.minimumInvestment) || 0,
+        maxInvestment: parseFloat(json.minimumInvestment) || 0,
+        featured: json.isFeatured,
+        trending: false
+    };
+};
+
 // ==================== Property Listing Functions ====================
 
 exports.getAllProperties = async (req, res) => {
@@ -32,7 +47,7 @@ exports.getAllProperties = async (req, res) => {
 
         res.json({
             success: true,
-            data: rows,
+            data: rows.map(transformProperty),
             pagination: {
                 total: count,
                 page: parseInt(page),
@@ -59,7 +74,7 @@ exports.getFeaturedProperties = async (req, res) => {
 
         res.json({
             success: true,
-            data: rows,
+            data: rows.map(transformProperty),
             pagination: {
                 total: count,
                 page: parseInt(page),
@@ -86,7 +101,7 @@ exports.getNewLaunchProperties = async (req, res) => {
 
         res.json({
             success: true,
-            data: rows,
+            data: rows.map(transformProperty),
             pagination: {
                 total: count,
                 page: parseInt(page),
@@ -113,7 +128,7 @@ exports.getTrendingProperties = async (req, res) => {
 
         res.json({
             success: true,
-            data: rows,
+            data: rows.map(transformProperty),
             pagination: {
                 total: count,
                 page: parseInt(page),
@@ -163,7 +178,7 @@ exports.getRecommendedProperties = async (req, res) => {
 
         res.json({
             success: true,
-            data: rows,
+            data: rows.map(transformProperty),
             pagination: {
                 total: count,
                 page: parseInt(page),
@@ -184,7 +199,19 @@ exports.getPropertyById = async (req, res) => {
         if (property) {
             // Increment views
             await property.increment('views');
-            res.json({ success: true, data: property });
+            const json = property.toJSON();
+            const formattedProperty = {
+                ...json,
+                price: parseFloat(json.basePrice) || 0,
+                location: json.address || '',
+                area: parseFloat(json.totalArea) || 0,
+                areaUnit: 'SQ_FT',
+                minInvestment: parseFloat(json.minimumInvestment) || 0,
+                maxInvestment: parseFloat(json.minimumInvestment) || 0,
+                featured: json.isFeatured,
+                trending: false
+            };
+            res.json({ success: true, data: formattedProperty });
         } else {
             res.status(404).json({ success: false, message: 'Property not found' });
         }
@@ -200,7 +227,19 @@ exports.getPropertyByPropertyId = async (req, res) => {
         if (property) {
             // Increment views
             await property.increment('views');
-            res.json({ success: true, data: property });
+            const json = property.toJSON();
+            const formattedProperty = {
+                ...json,
+                price: parseFloat(json.basePrice) || 0,
+                location: json.address || '',
+                area: parseFloat(json.totalArea) || 0,
+                areaUnit: 'SQ_FT',
+                minInvestment: parseFloat(json.minimumInvestment) || 0,
+                maxInvestment: parseFloat(json.minimumInvestment) || 0,
+                featured: json.isFeatured,
+                trending: false
+            };
+            res.json({ success: true, data: formattedProperty });
         } else {
             res.status(404).json({ success: false, message: 'Property not found' });
         }
@@ -290,7 +329,7 @@ exports.searchProperties = async (req, res) => {
 
         res.json({
             success: true,
-            data: rows,
+            data: rows.map(transformProperty),
             pagination: {
                 total: count,
                 page: parseInt(page),

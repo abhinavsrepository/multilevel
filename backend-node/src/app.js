@@ -41,6 +41,10 @@ const levelBonusRoutes = require('./routes/level-bonus.routes');
 const matchingBonusRoutes = require('./routes/matching-bonus.routes');
 const bonanzaEnhancedRoutes = require('./routes/bonanza-enhanced.routes');
 const topupRoutes = require('./routes/topup.routes');
+const dashboardRoutes = require('./routes/dashboard.routes');
+const bookingRoutes = require('./routes/booking.routes');
+const documentRoutes = require('./routes/document.routes');
+const siteVisitRoutes = require('./routes/site-visit.routes');
 const healthRoutes = require('./routes/health.routes');
 
 const app = express();
@@ -116,6 +120,10 @@ app.use('/api/v1/level-bonus', levelBonusRoutes);
 app.use('/api/v1/matching-bonus', matchingBonusRoutes);
 app.use('/api/v1/bonanza', bonanzaEnhancedRoutes);
 app.use('/api/v1/topup', topupRoutes);
+app.use('/api/v1/dashboard', dashboardRoutes);
+app.use('/api/v1/bookings', bookingRoutes);
+app.use('/api/v1/documents', documentRoutes);
+app.use('/api/v1/site-visits', siteVisitRoutes);
 
 // Static files
 app.use('/uploads', express.static(path.join(__dirname, '../uploads')));
@@ -126,7 +134,8 @@ app.use(express.static(adminPanelPath));
 
 // SPA fallback - serve index.html for all non-API routes
 // This ensures React Router can handle routing on refresh
-app.get('*', (req, res, next) => {
+// Express 5 requires explicit parameter names, so we use :path*
+app.use((req, res, next) => {
     // Skip API routes and uploads
     if (req.path.startsWith('/api') || req.path.startsWith('/uploads') || req.path.startsWith('/health')) {
         return next();

@@ -22,7 +22,7 @@ export const SiteVisits = () => {
     try {
       setLoading(true);
       const response = await siteVisitApi.getAll();
-      setVisits(response.data.content || []);
+      setVisits(response.data.data || []);
     } catch (error) {
       console.error('Failed to fetch visits', error);
     } finally {

@@ -7,7 +7,19 @@ exports.getNotifications = catchAsync(async (req, res) => {
             where: { userId: req.user.id },
             order: [['createdAt', 'DESC']]
         });
-        res.status(200).json({ status: 'success', data: notifications });
+
+        // Transform to match frontend interface
+        const formatted = notifications.map(n => ({
+            id: n.id,
+            userId: n.userId,
+            title: n.title,
+            message: n.message,
+            type: n.type,
+            read: n.isRead,
+            createdAt: n.createdAt
+        }));
+
+        res.status(200).json({ status: 'success', data: formatted });
     } catch (error) {
         res.status(500).json({ status: 'error', message: error.message });
     }

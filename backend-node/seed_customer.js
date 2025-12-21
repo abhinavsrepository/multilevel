@@ -1,31 +1,31 @@
 const { User, sequelize } = require('./src/models');
 const bcrypt = require('bcryptjs');
 
-async function seedUser() {
+async function seedCustomer() {
     try {
         await sequelize.authenticate();
         console.log('DB Connected');
 
-        const email = 'userpanel@test.com';
-        const password = 'UserPanel@123';
+        const email = 'customer@test.com';
+        const password = 'Customer@123';
 
         let user = await User.findOne({ where: { email } });
         if (user) {
-            console.log('User exists. Updating password...');
+            console.log('User exists. Updating password and role...');
             user.password = password;
-            user.role = 'ASSOCIATE';
+            user.role = 'CUSTOMER';
             await user.save();
-            console.log('Password updated.');
+            console.log('User updated.');
         } else {
-            console.log('Creating new user...');
+            console.log('Creating new customer...');
             user = await User.create({
-                username: 'userpanel_demo',
+                username: 'customer_demo',
                 email: email,
                 password: password,
-                fullName: 'User Panel Demo',
-                mobile: '9876543210',
-                referralCode: 'USERPANEL1',
-                role: 'ASSOCIATE',
+                fullName: 'Customer Demo',
+                mobile: '9876543211', // Different mobile
+                referralCode: 'CUST123',
+                role: 'CUSTOMER',
                 status: 'ACTIVE',
                 emailVerified: true,
                 phoneVerified: true
@@ -36,6 +36,7 @@ async function seedUser() {
         console.log('LOGIN CREDENTIALS:');
         console.log('Email:', email);
         console.log('Password:', password);
+        console.log('Role: CUSTOMER');
 
     } catch (err) {
         console.error('SEED ERROR:', err);
@@ -44,4 +45,4 @@ async function seedUser() {
     }
 }
 
-seedUser();
+seedCustomer();

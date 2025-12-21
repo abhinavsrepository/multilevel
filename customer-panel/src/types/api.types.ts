@@ -5,13 +5,13 @@ export interface ApiResponse<T> {
 }
 
 export interface PaginatedResponse<T> {
-  content: T[];
-  totalElements: number;
-  totalPages: number;
-  currentPage: number;
-  pageSize: number;
-  hasNext: boolean;
-  hasPrevious: boolean;
+  success: boolean;
+  data: T[];
+  pagination: {
+    total: number;
+    page: number;
+    pages: number;
+  };
 }
 
 export interface PaginationParams {

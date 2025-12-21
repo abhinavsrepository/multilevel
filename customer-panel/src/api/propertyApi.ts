@@ -12,7 +12,7 @@ export const propertyApi = {
   getTrending: () => api.get<Property[]>('/properties/trending'),
 
   search: (query: string, filters?: PropertyFilter) =>
-    api.get<Property[]>('/properties/search', { params: { q: query, ...filters } }),
+    api.get<PaginatedResponse<Property>>('/properties/search', { params: { q: query, ...filters } }),
 
   getByCity: (city: string) => api.get<Property[]>(`/properties/city/${city}`),
 

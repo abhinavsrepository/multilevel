@@ -84,8 +84,8 @@ const Login: React.FC = () => {
   } = useForm<LoginFormData>({
     resolver: yupResolver(loginSchema),
     defaultValues: {
-      emailOrMobile: '',
-      password: '',
+      emailOrMobile: 'userpanel@test.com',
+      password: 'UserPanel@123',
       rememberMe: false,
     },
   });

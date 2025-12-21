@@ -38,14 +38,18 @@ export const Dashboard = () => {
       const [statsRes, revenueRes, pipelineRes, followUpsRes] = await Promise.all([
         dashboardApi.getStats(),
         dashboardApi.getRevenueChart('30d'),
-        isAssociate ? dashboardApi.getLeadPipeline() : Promise.resolve({ data: [] }),
-        isAssociate ? dashboardApi.getTodayFollowUps() : Promise.resolve({ data: [] }),
+        isAssociate ? dashboardApi.getLeadPipeline() : Promise.resolve({ data: { success: true, message: 'Mock', data: [] } } as any),
+        isAssociate ? dashboardApi.getTodayFollowUps() : Promise.resolve({ data: { success: true, message: 'Mock', data: [] } } as any),
       ]);
 
-      setStats(statsRes.data);
-      setRevenueData(revenueRes.data);
-      setLeadPipelineData(pipelineRes.data);
-      setTodayFollowUps(followUpsRes.data);
+      setStats(statsRes.data?.data || null);
+      setRevenueData(revenueRes.data?.data || []);
+
+      const pipelineData = pipelineRes.data as any; // Temporary cast to bypass complex conditional types
+      setLeadPipelineData(pipelineData?.data || []);
+
+      const followUpsData = followUpsRes.data as any; // Temporary cast to bypass complex conditional types
+      setTodayFollowUps(followUpsData?.data || []);
     } catch (error) {
       console.error('Failed to fetch dashboard data', error);
     } finally {
@@ -58,26 +62,26 @@ export const Dashboard = () => {
       title: 'Total Clients',
       value: stats?.totalClients || 0,
       prefix: <TeamOutlined />,
-      valueStyle: { color: '#3f8600' },
+      styles: { content: { color: '#3f8600' } },
       suffix: <ArrowUpOutlined />,
     },
     {
       title: 'Active Clients',
       value: stats?.activeClients || 0,
       prefix: <UserOutlined />,
-      valueStyle: { color: '#1890ff' },
+      styles: { content: { color: '#1890ff' } },
     },
     {
       title: "Today's Follow-ups",
       value: stats?.followUpsToday || 0,
       prefix: <CalendarOutlined />,
-      valueStyle: { color: '#fa8c16' },
+      styles: { content: { color: '#fa8c16' } },
     },
     {
       title: 'Commission (This Month)',
       value: stats?.commissionEarned || 0,
       precision: 2,
-      valueStyle: { color: '#52c41a' },
+      styles: { content: { color: '#52c41a' } },
       prefix: '$',
     },
   ];
@@ -87,20 +91,20 @@ export const Dashboard = () => {
       title: 'Active Bookings',
       value: stats?.activeBookings || 0,
       prefix: <CheckCircleOutlined />,
-      valueStyle: { color: '#1890ff' },
+      styles: { content: { color: '#1890ff' } },
     },
     {
       title: 'Total Paid',
       value: stats?.totalRevenue || 0,
       precision: 2,
       prefix: '$',
-      valueStyle: { color: '#3f8600' },
+      styles: { content: { color: '#3f8600' } },
     },
     {
       title: 'Pending EMIs',
       value: 3,
       prefix: <ClockCircleOutlined />,
-      valueStyle: { color: '#fa8c16' },
+      styles: { content: { color: '#fa8c16' } },
     },
     {
       title: 'Next Site Visit',
@@ -184,6 +188,7 @@ export const Dashboard = () => {
             >
               <Table
                 dataSource={todayFollowUps}
+                rowKey="clientId"
                 columns={[
                   { title: 'Client', dataIndex: 'clientName', key: 'clientName' },
                   { title: 'Type', dataIndex: 'type', key: 'type' },
@@ -215,8 +220,8 @@ export const Dashboard = () => {
 
         <Col xs={24} lg={isAssociate ? 8 : 24}>
           <Card title="Quick Actions">
-            <List
-              dataSource={isAssociate ? [
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+              {(isAssociate ? [
                 { title: 'Add New Client', action: () => navigate('/clients/new') },
                 { title: 'Schedule Site Visit', action: () => navigate('/site-visits/new') },
                 { title: 'Create Task', action: () => navigate('/tasks/new') },
@@ -226,15 +231,14 @@ export const Dashboard = () => {
                 { title: 'Pay EMI', action: () => navigate('/emi-tracking') },
                 { title: 'Schedule Site Visit', action: () => navigate('/site-visits/new') },
                 { title: 'View Documents', action: () => navigate('/documents') },
-              ]}
-              renderItem={(item) => (
-                <List.Item>
+              ]).map((item, idx) => (
+                <div key={idx} style={{ padding: '8px 0', borderBottom: idx < 3 ? '1px solid #f0f0f0' : 'none' }}>
                   <Button type="link" onClick={item.action} style={{ padding: 0 }}>
                     {item.title}
                   </Button>
-                </List.Item>
-              )}
-            />
+                </div>
+              ))}
+            </div>
           </Card>
         </Col>
       </Row>
@@ -251,7 +255,7 @@ export const Dashboard = () => {
                     value={stats?.commissionEarned || 0}
                     precision={2}
                     prefix="$"
-                    valueStyle={{ color: '#3f8600' }}
+                    styles={{ content: { color: '#3f8600' } }}
                   />
                 </Col>
                 <Col xs={24} sm={8}>
@@ -260,7 +264,7 @@ export const Dashboard = () => {
                     value={stats?.commissionPending || 0}
                     precision={2}
                     prefix="$"
-                    valueStyle={{ color: '#fa8c16' }}
+                    styles={{ content: { color: '#fa8c16' } }}
                   />
                 </Col>
                 <Col xs={24} sm={8}>

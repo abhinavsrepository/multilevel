@@ -18,7 +18,7 @@ export const Documents = () => {
     try {
       setLoading(true);
       const response = await documentApi.getAll();
-      setDocuments(response.data.content || []);
+      setDocuments(response.data.data || []);
     } catch (error) {
       console.error('Failed to fetch documents', error);
     } finally {
@@ -68,9 +68,6 @@ export const Documents = () => {
     <div>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 24 }}>
         <Title level={2}>Document Vault</Title>
-        <Upload>
-          <Button type="primary" icon={<UploadOutlined />}>Upload Document</Button>
-        </Upload>
       </div>
 
       <Card>

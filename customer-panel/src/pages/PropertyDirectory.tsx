@@ -33,7 +33,7 @@ export const PropertyDirectory = () => {
     try {
       setLoading(true);
       const response = await propertyApi.search(searchText, filters);
-      dispatch(setProperties(response.data || []));
+      dispatch(setProperties(response.data.data || []));
     } catch (error) {
       console.error('Failed to fetch properties', error);
     } finally {
@@ -70,7 +70,7 @@ export const PropertyDirectory = () => {
       </div>
 
       <Card style={{ marginBottom: 16 }}>
-        <Space style={{ width: '100%' }} direction="vertical">
+        <Space style={{ width: '100%' }} orientation="vertical">
           <Input
             size="large"
             placeholder="Search properties..."
@@ -136,11 +136,11 @@ export const PropertyDirectory = () => {
             >
               <div>
                 <Title level={5} style={{ marginBottom: 8 }}>{property.title}</Title>
-                <Space direction="vertical" style={{ width: '100%' }}>
+                <Space orientation="vertical" style={{ width: '100%' }}>
                   <Text type="secondary">
                     <EnvironmentOutlined /> {property.location}, {property.city}
                   </Text>
-                  <Text strong style={{ fontSize: 18, color: '#1890ff' }}>${property.price.toLocaleString()}</Text>
+                  <Text strong style={{ fontSize: 18, color: '#1890ff' }}>${(property.price || 0).toLocaleString()}</Text>
                   <div>
                     <Tag color={property.availabilityStatus === 'AVAILABLE' ? 'green' : property.availabilityStatus === 'RESERVED' ? 'orange' : 'red'}>
                       {property.availabilityStatus}
@@ -181,7 +181,7 @@ export const PropertyDirectory = () => {
           <tbody>
             <tr>
               <td><strong>Price</strong></td>
-              {comparisonList.map((prop) => <td key={prop.id}>${prop.price.toLocaleString()}</td>)}
+              {comparisonList.map((prop) => <td key={prop.id}>${(prop.price || 0).toLocaleString()}</td>)}
             </tr>
             <tr>
               <td><strong>Location</strong></td>

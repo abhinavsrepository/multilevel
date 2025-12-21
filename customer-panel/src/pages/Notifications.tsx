@@ -25,8 +25,8 @@ export const Notifications = () => {
     try {
       setLoading(true);
       const response = await notificationApi.getAll();
-      setNotificationsLocal(response.data || []);
-      dispatch(setNotifications(response.data || []));
+      setNotificationsLocal(response.data.data || []);
+      dispatch(setNotifications(response.data.data || []));
     } catch (error) {
       console.error('Failed to fetch notifications', error);
     } finally {
@@ -64,39 +64,45 @@ export const Notifications = () => {
       </div>
 
       <Card>
-        <List
-          loading={loading}
-          dataSource={notifications}
-          locale={{ emptyText: <Empty description="No notifications" /> }}
-          renderItem={(item) => (
-            <List.Item
-              style={{ background: item.read ? 'transparent' : '#f0f5ff', padding: 16, borderRadius: 4, marginBottom: 8 }}
-              actions={[
-                !item.read && (
+        {loading ? (
+          <div style={{ textAlign: 'center', padding: '20px' }}>Loading...</div>
+        ) : notifications.length === 0 ? (
+          <Empty description="No notifications" />
+        ) : (
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+            {notifications.map((item) => (
+              <div
+                key={item.id}
+                style={{
+                  background: item.read ? 'transparent' : '#f0f5ff',
+                  padding: 16,
+                  borderRadius: 4,
+                  border: '1px solid #f0f0f0',
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  alignItems: 'center'
+                }}
+              >
+                <div style={{ display: 'flex', alignItems: 'flex-start', gap: '16px' }}>
+                  <BellOutlined style={{ fontSize: 24, color: '#1890ff', marginTop: '4px' }} />
+                  <div>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '4px' }}>
+                      <span style={{ fontWeight: 500, fontSize: '16px' }}>{item.title}</span>
+                      {!item.read && <Tag color="blue">NEW</Tag>}
+                    </div>
+                    <p style={{ margin: 0, color: '#595959' }}>{item.message}</p>
+                    <small style={{ color: '#8c8c8c' }}>{dayjs(item.createdAt).fromNow()}</small>
+                  </div>
+                </div>
+                {!item.read && (
                   <Button size="small" onClick={() => handleMarkAsRead(item.id)}>
                     Mark as Read
                   </Button>
-                ),
-              ]}
-            >
-              <List.Item.Meta
-                avatar={<BellOutlined style={{ fontSize: 24, color: '#1890ff' }} />}
-                title={
-                  <div>
-                    {item.title}
-                    {!item.read && <Tag color="blue" style={{ marginLeft: 8 }}>NEW</Tag>}
-                  </div>
-                }
-                description={
-                  <>
-                    <p>{item.message}</p>
-                    <small style={{ color: '#8c8c8c' }}>{dayjs(item.createdAt).fromNow()}</small>
-                  </>
-                }
-              />
-            </List.Item>
-          )}
-        />
+                )}
+              </div>
+            ))}
+          </div>
+        )}
       </Card>
     </div>
   );

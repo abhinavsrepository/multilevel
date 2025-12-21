@@ -28,7 +28,10 @@ function getDatabaseConfig() {
         database: process.env.DB_NAME,
         host: process.env.DB_HOST,
         port: process.env.DB_PORT || 5432,
-        dialect: 'postgres'
+        dialect: 'postgres',
+        dialectOptions: {
+            connectTimeout: 10000 // 10 seconds timeout
+        }
     };
 }
 

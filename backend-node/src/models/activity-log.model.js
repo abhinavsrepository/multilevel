@@ -61,7 +61,7 @@ module.exports = (sequelize, DataTypes) => {
     });
 
     ActivityLog.associate = function (models) {
-        ActivityLog.belongsTo(models.User, { foreignKey: 'userId' });
+        ActivityLog.belongsTo(models.User, { foreignKey: 'userId', as: 'user' });
     };
 
     return ActivityLog;

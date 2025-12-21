@@ -41,6 +41,87 @@ exports.getAllUsers = async (req, res) => {
     }
 };
 
+exports.getUserById = async (req, res) => {
+    try {
+        const user = await User.findByPk(req.params.id, {
+            attributes: { exclude: ['password'] },
+            include: [
+                {
+                    model: Wallet,
+                    as: 'wallet',
+                    required: false
+                }
+            ]
+        });
+
+        if (!user) {
+            return res.status(404).json({
+                success: false,
+                message: 'User not found'
+            });
+        }
+
+        res.json({
+            success: true,
+            data: user
+        });
+    } catch (error) {
+        console.error('Get User By ID Error:', error);
+        res.status(500).json({
+            success: false,
+            message: 'Server Error',
+            error: error.message
+        });
+    }
+};
+
+exports.updateUser = async (req, res) => {
+    try {
+        const user = await User.findByPk(req.params.id);
+        if (!user) {
+            return res.status(404).json({ success: false, message: 'User not found' });
+        }
+
+        await user.update(req.body);
+        res.json({ success: true, data: user, message: 'User updated successfully' });
+    } catch (error) {
+        console.error('Update User Error:', error);
+        res.status(500).json({ success: false, message: 'Server Error', error: error.message });
+    }
+};
+
+exports.deleteUser = async (req, res) => {
+    try {
+        const user = await User.findByPk(req.params.id);
+        if (!user) {
+            return res.status(404).json({ success: false, message: 'User not found' });
+        }
+
+        await user.destroy();
+        res.json({ success: true, message: 'User deleted successfully' });
+    } catch (error) {
+        console.error('Delete User Error:', error);
+        res.status(500).json({ success: false, message: 'Server Error', error: error.message });
+    }
+};
+
+exports.sendNotification = async (req, res) => {
+    try {
+        const user = await User.findByPk(req.params.id);
+        if (!user) {
+            return res.status(404).json({ success: false, message: 'User not found' });
+        }
+
+        const { title, message, type } = req.body;
+        await notificationService.sendNotification(user.id, title, message, type || 'INFO');
+
+        res.json({ success: true, message: 'Notification sent successfully' });
+    } catch (error) {
+        console.error('Send Notification Error:', error);
+        res.status(500).json({ success: false, message: 'Server Error', error: error.message });
+    }
+};
+
 exports.createUser = async (req, res) => {
     try {
         console.log('createUser body:', req.body);
@@ -215,7 +296,9 @@ exports.blockUser = async (req, res) => {
 exports.getAdminDashboard = async (req, res) => {
     try {
         const sequelize = require('../models').sequelize;
-        const { ActivityLog, Income } = require('../models');
+        const models = require('../models');
+        const ActivityLog = models.ActivityLog || null;
+        const Income = models.Income || null;
 
         // Calculate date ranges
         const today = new Date();
@@ -279,40 +362,40 @@ exports.getAdminDashboard = async (req, res) => {
             // Chart 1: Registration Trend (Last 30 days)
             User.findAll({
                 attributes: [
-                    [sequelize.fn('DATE', sequelize.col('created_at')), 'date'],
+                    [sequelize.fn('TO_CHAR', sequelize.col('created_at'), 'YYYY-MM-DD'), 'date'],
                     [sequelize.fn('COUNT', sequelize.col('id')), 'value']
                 ],
                 where: {
                     createdAt: { [Op.gte]: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000) }
                 },
-                group: [sequelize.fn('DATE', sequelize.col('created_at'))],
-                order: [[sequelize.fn('DATE', sequelize.col('created_at')), 'ASC']],
+                group: [sequelize.fn('TO_CHAR', sequelize.col('created_at'), 'YYYY-MM-DD')],
+                order: [[sequelize.fn('TO_CHAR', sequelize.col('created_at'), 'YYYY-MM-DD'), 'ASC']],
                 raw: true
-            }),
+            }).catch(() => []),
 
             // Chart 2: Investment Trend (Last 30 days)
             Investment.findAll({
                 attributes: [
-                    [sequelize.fn('DATE', sequelize.col('created_at')), 'date'],
+                    [sequelize.fn('TO_CHAR', sequelize.col('created_at'), 'YYYY-MM-DD'), 'date'],
                     [sequelize.fn('SUM', sequelize.col('investment_amount')), 'value']
                 ],
                 where: {
                     createdAt: { [Op.gte]: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000) }
                 },
-                group: [sequelize.fn('DATE', sequelize.col('created_at'))],
-                order: [[sequelize.fn('DATE', sequelize.col('created_at')), 'ASC']],
+                group: [sequelize.fn('TO_CHAR', sequelize.col('created_at'), 'YYYY-MM-DD')],
+                order: [[sequelize.fn('TO_CHAR', sequelize.col('created_at'), 'YYYY-MM-DD'), 'ASC']],
                 raw: true
-            }),
+            }).catch(() => []),
 
             // Chart 3: Commission Distribution by Type
-            Income.findAll({
+            Income ? Income.findAll({
                 attributes: [
                     'incomeType',
                     [sequelize.fn('SUM', sequelize.col('amount')), 'value']
                 ],
                 group: ['incomeType'],
                 raw: true
-            }),
+            }).catch(() => []) : Promise.resolve([]),
 
             // Chart 4: Top Performers (by total investment)
             sequelize.query(`
@@ -326,7 +409,7 @@ exports.getAdminDashboard = async (req, res) => {
                 GROUP BY u.id, u.username
                 ORDER BY value DESC
                 LIMIT 5
-            `, { type: sequelize.QueryTypes.SELECT }),
+            `, { type: sequelize.QueryTypes.SELECT }).catch(() => []),
 
             // Recent Activities (Last 10)
             ActivityLog ? ActivityLog.findAll({
@@ -335,45 +418,55 @@ exports.getAdminDashboard = async (req, res) => {
                 include: [{
                     model: User,
                     as: 'user',
-                    attributes: ['id', 'username', 'firstName', 'lastName']
+                    attributes: ['id', 'username', 'firstName', 'lastName'],
+                    required: false
                 }]
-            }) : []
+            }).catch(() => []) : Promise.resolve([])
         ]);
 
-        // Calculate growth percentages
+        // Calculate growth percentages safely
         const userGrowth = twoMonthsAgoUsers > 0
-            ? ((lastMonthUsers - twoMonthsAgoUsers) / twoMonthsAgoUsers * 100).toFixed(1)
+            ? parseFloat(((lastMonthUsers - twoMonthsAgoUsers) / twoMonthsAgoUsers * 100).toFixed(1))
             : 0;
 
-        const investmentGrowth = lastMonthInvestments > 0
-            ? ((lastMonthInvestments / (totalInvestments - lastMonthInvestments)) * 100).toFixed(1)
+        const investmentGrowthValue = totalInvestments > lastMonthInvestments && lastMonthInvestments > 0
+            ? parseFloat(((lastMonthInvestments / (totalInvestments - lastMonthInvestments)) * 100).toFixed(1))
             : 0;
 
         // Process commission breakdown to match frontend interface
-        const processedCommissionBreakdown = commissionBreakdown.map(item => ({
+        const processedCommissionBreakdown = (commissionBreakdown || []).map(item => ({
             category: item.incomeType || 'Other',
             value: parseFloat(item.value) || 0
         }));
 
+        // Add default categories if empty
+        if (processedCommissionBreakdown.length === 0) {
+            processedCommissionBreakdown.push(
+                { category: 'Direct Bonus', value: 0 },
+                { category: 'Level Bonus', value: 0 },
+                { category: 'Matching Bonus', value: 0 }
+            );
+        }
+
         // Process top performers
-        const processedTopPerformers = topPerformers.map(item => ({
-            name: item.name,
+        const processedTopPerformers = (topPerformers || []).map(item => ({
+            name: item.name || 'Unknown',
             value: parseFloat(item.value) || 0,
             rank: parseInt(item.rank) || 0,
-            userId: item.userId
+            userId: item.userId || item.id
         }));
 
         // Process recent activities
-        const processedActivities = recentActivityLogs.map(activity => ({
+        const processedActivities = (recentActivityLogs || []).map(activity => ({
             id: activity.id,
-            timestamp: activity.createdAt,
+            timestamp: activity.createdAt || new Date().toISOString(),
             activityType: activity.action || 'ACTIVITY',
             user: {
                 userId: activity.user?.username || 'Unknown',
                 fullName: activity.user ? `${activity.user.firstName || ''} ${activity.user.lastName || ''}`.trim() : 'Unknown User'
             },
             amount: activity.amount || null,
-            status: 'SUCCESS',
+            status: activity.status || 'SUCCESS',
             description: activity.description || activity.action || 'Activity'
         }));
 
@@ -391,26 +484,26 @@ exports.getAdminDashboard = async (req, res) => {
                         count: pendingPayoutsCount,
                         amount: parseFloat(pendingPayoutsAmount)
                     },
-                    commissionsPaid: parseFloat(commissionsPaid),
-                    pendingKYC: pendingKyc,
-                    activeTickets: 0, // Add if support ticket model exists
-                    userGrowth: parseFloat(userGrowth),
-                    investmentGrowth: parseFloat(investmentGrowth)
+                    commissionsPaid: parseFloat(commissionsPaid) || 0,
+                    pendingKYC: pendingKyc || 0,
+                    activeTickets: 0,
+                    userGrowth: userGrowth,
+                    investmentGrowth: investmentGrowthValue
                 },
                 charts: {
-                    registrationTrend: registrationTrend.map(item => ({
-                        date: item.date,
-                        value: parseInt(item.value)
+                    registrationTrend: (registrationTrend || []).map(item => ({
+                        date: item.date || new Date().toISOString().split('T')[0],
+                        value: parseInt(item.value) || 0
                     })),
-                    investmentTrend: investmentTrend.map(item => ({
-                        date: item.date,
-                        value: parseFloat(item.value)
+                    investmentTrend: (investmentTrend || []).map(item => ({
+                        date: item.date || new Date().toISOString().split('T')[0],
+                        value: parseFloat(item.value) || 0
                     })),
                     commissionDistribution: processedCommissionBreakdown,
                     topPerformers: processedTopPerformers,
-                    propertyStatus: [], // Add if needed
-                    revenueByType: [], // Add if needed
-                    monthlyComparison: [] // Add if needed
+                    propertyStatus: [],
+                    revenueByType: [],
+                    monthlyComparison: []
                 },
                 recentActivities: processedActivities
             }

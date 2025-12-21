@@ -104,3 +104,88 @@ exports.getPayoutStats = async (req, res) => {
         res.status(500).json({ success: false, message: error.message });
     }
 };
+
+exports.getPayoutById = async (req, res) => {
+    try {
+        const payout = await Payout.findByPk(req.params.id, {
+            include: [{ model: User, attributes: ['id', 'username', 'email'] }]
+        });
+
+        if (!payout) {
+            return res.status(404).json({ success: false, message: 'Payout not found' });
+        }
+
+        res.json({ success: true, data: payout });
+    } catch (error) {
+        res.status(500).json({ success: false, message: error.message });
+    }
+};
+
+exports.approvePayout = async (req, res) => {
+    try {
+        const { Wallet } = require('../models');
+        const payout = await Payout.findByPk(req.params.id);
+
+        if (!payout) {
+            return res.status(404).json({ success: false, message: 'Payout not found' });
+        }
+
+        if (payout.status !== 'REQUESTED' && payout.status !== 'PENDING') {
+            return res.status(400).json({ success: false, message: 'Payout already processed' });
+        }
+
+        await payout.update({
+            status: 'APPROVED',
+            approvedAt: new Date(),
+            approvedBy: req.user.username
+        });
+
+        res.json({ success: true, message: 'Payout approved successfully', data: payout });
+    } catch (error) {
+        res.status(500).json({ success: false, message: error.message });
+    }
+};
+
+exports.rejectPayout = async (req, res) => {
+    try {
+        const { Wallet } = require('../models');
+        const { reason } = req.body;
+        const payout = await Payout.findByPk(req.params.id);
+
+        if (!payout) {
+            return res.status(404).json({ success: false, message: 'Payout not found' });
+        }
+
+        if (payout.status !== 'REQUESTED' && payout.status !== 'PENDING') {
+            return res.status(400).json({ success: false, message: 'Payout already processed' });
+        }
+
+        // Return funds to wallet
+        const wallet = await Wallet.findOne({ where: { userId: payout.userId } });
+        if (wallet) {
+            await wallet.update({
+                withdrawableBalance: parseFloat(wallet.withdrawableBalance) + parseFloat(payout.requestedAmount)
+            });
+        }
+
+        await payout.update({
+            status: 'REJECTED',
+            rejectedAt: new Date(),
+            rejectedBy: req.user.username,
+            rejectionReason: reason
+        });
+
+        res.json({ success: true, message: 'Payout rejected successfully', data: payout });
+    } catch (error) {
+        res.status(500).json({ success: false, message: error.message });
+    }
+};
+
+exports.downloadReceipt = async (req, res) => {
+    try {
+        // TODO: Implement receipt generation
+        res.json({ success: true, message: 'Receipt download functionality coming soon' });
+    } catch (error) {
+        res.status(500).json({ success: false, message: error.message });
+    }
+};

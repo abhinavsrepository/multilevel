@@ -114,3 +114,124 @@ exports.exportProperties = async (req, res) => {
         res.status(500).json({ success: false, message: error.message });
     }
 };
+
+exports.getPropertyById = async (req, res) => {
+    try {
+        const property = await Property.findByPk(req.params.id);
+        if (!property) {
+            return res.status(404).json({ success: false, message: 'Property not found' });
+        }
+        res.json({ success: true, data: property });
+    } catch (error) {
+        res.status(500).json({ success: false, message: error.message });
+    }
+};
+
+exports.createProperty = async (req, res) => {
+    try {
+        const property = await Property.create(req.body);
+        res.status(201).json({ success: true, data: property, message: 'Property created successfully' });
+    } catch (error) {
+        res.status(500).json({ success: false, message: error.message });
+    }
+};
+
+exports.updateProperty = async (req, res) => {
+    try {
+        const property = await Property.findByPk(req.params.id);
+        if (!property) {
+            return res.status(404).json({ success: false, message: 'Property not found' });
+        }
+        await property.update(req.body);
+        res.json({ success: true, data: property, message: 'Property updated successfully' });
+    } catch (error) {
+        res.status(500).json({ success: false, message: error.message });
+    }
+};
+
+exports.deleteProperty = async (req, res) => {
+    try {
+        const property = await Property.findByPk(req.params.id);
+        if (!property) {
+            return res.status(404).json({ success: false, message: 'Property not found' });
+        }
+        await property.destroy();
+        res.json({ success: true, message: 'Property deleted successfully' });
+    } catch (error) {
+        res.status(500).json({ success: false, message: error.message });
+    }
+};
+
+exports.importProperties = async (req, res) => {
+    try {
+        // TODO: Implement CSV/Excel import logic
+        res.json({ success: true, message: 'Property import functionality coming soon' });
+    } catch (error) {
+        res.status(500).json({ success: false, message: error.message });
+    }
+};
+
+exports.uploadPropertyImages = async (req, res) => {
+    try {
+        // TODO: Implement image upload logic
+        res.json({ success: true, message: 'Property image upload functionality coming soon' });
+    } catch (error) {
+        res.status(500).json({ success: false, message: error.message });
+    }
+};
+
+exports.deletePropertyImage = async (req, res) => {
+    try {
+        // TODO: Implement image deletion logic
+        res.json({ success: true, message: 'Property image deletion functionality coming soon' });
+    } catch (error) {
+        res.status(500).json({ success: false, message: error.message });
+    }
+};
+
+exports.uploadPropertyDocument = async (req, res) => {
+    try {
+        // TODO: Implement document upload logic
+        res.json({ success: true, message: 'Property document upload functionality coming soon' });
+    } catch (error) {
+        res.status(500).json({ success: false, message: error.message });
+    }
+};
+
+exports.deletePropertyDocument = async (req, res) => {
+    try {
+        // TODO: Implement document deletion logic
+        res.json({ success: true, message: 'Property document deletion functionality coming soon' });
+    } catch (error) {
+        res.status(500).json({ success: false, message: error.message });
+    }
+};
+
+exports.sendUpdateToInvestors = async (req, res) => {
+    try {
+        const { title, message } = req.body;
+        const notificationService = require('../services/notification.service');
+
+        // Get all investors for this property
+        const investors = await Investment.findAll({
+            where: { propertyId: req.params.id },
+            include: [{ model: User, attributes: ['id'] }]
+        });
+
+        // Send notification to each investor
+        for (const investment of investors) {
+            if (investment.User) {
+                await notificationService.sendNotification(
+                    investment.User.id,
+                    title,
+                    message,
+                    'PROPERTY_UPDATE'
+                );
+            }
+        }
+
+        res.json({ success: true, message: `Update sent to ${investors.length} investors` });
+    } catch (error) {
+        res.status(500).json({ success: false, message: error.message });
+    }
+};

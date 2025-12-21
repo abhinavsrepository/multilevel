@@ -11,7 +11,13 @@ router.get('/users', (req, res, next) => {
     adminController.getAllUsers(req, res, next);
 });
 
+router.get('/users/:id', adminController.getUserById);
+
 router.post('/users', adminController.createUser);
+
+router.put('/users/:id', adminController.updateUser);
+router.delete('/users/:id', adminController.deleteUser);
+router.post('/users/:id/send-notification', adminController.sendNotification);
 
 router.put('/users/:id/activate', adminController.activateUser);
 router.put('/users/:id/block', adminController.blockUser);
@@ -30,8 +36,6 @@ router.get('/users/:id/tickets', adminController.getUserTickets);
 router.get('/dashboard', adminController.getAdminDashboard);
 
 router.get('/payouts/pending', adminController.getPendingPayouts);
-router.put('/payouts/:payoutId/approve', adminController.approvePayout);
-router.put('/payouts/:payoutId/reject', adminController.rejectPayout);
 
 router.get('/kyc/pending', adminController.getPendingKyc);
 router.put('/kyc/:id/approve', adminController.approveKyc);
@@ -41,11 +45,21 @@ router.put('/kyc/:id/reject', adminController.rejectKyc);
 // Property Routes
 const adminPropertyController = require('../controllers/admin-property.controller');
 router.get('/properties', adminPropertyController.getProperties);
+router.get('/properties/:id', adminPropertyController.getPropertyById);
+router.post('/properties', adminPropertyController.createProperty);
+router.put('/properties/:id', adminPropertyController.updateProperty);
+router.delete('/properties/:id', adminPropertyController.deleteProperty);
 router.put('/properties/:id/status', adminPropertyController.updatePropertyStatus);
 router.put('/properties/:id/toggle-featured', adminPropertyController.toggleFeatured);
 router.put('/properties/:id/toggle-trending', adminPropertyController.toggleTrending);
 router.get('/properties/:id/investors', adminPropertyController.getPropertyInvestors);
 router.get('/properties/export', adminPropertyController.exportProperties);
+router.post('/properties/import', adminPropertyController.importProperties);
+router.post('/properties/:id/images', adminPropertyController.uploadPropertyImages);
+router.delete('/properties/:id/images/:imageId', adminPropertyController.deletePropertyImage);
+router.post('/properties/:id/documents', adminPropertyController.uploadPropertyDocument);
+router.delete('/properties/:id/documents/:documentId', adminPropertyController.deletePropertyDocument);
+router.post('/properties/:id/send-update', adminPropertyController.sendUpdateToInvestors);
 
 // Investment Routes
 const adminInvestmentController = require('../controllers/admin-investment.controller');
@@ -61,9 +75,13 @@ router.get('/investments/export', adminInvestmentController.exportInvestments);
 // Payout Routes (Advanced)
 const adminPayoutController = require('../controllers/admin-payout.controller');
 router.get('/payouts', adminPayoutController.getPayouts);
+router.get('/payouts/:id', adminPayoutController.getPayoutById);
+router.put('/payouts/:id/approve', adminPayoutController.approvePayout);
+router.put('/payouts/:id/reject', adminPayoutController.rejectPayout);
 router.put('/payouts/:id/request-info', adminPayoutController.requestMoreInfo);
 router.post('/payouts/batch-process', adminPayoutController.batchProcess);
 router.post('/payouts/:id/retry', adminPayoutController.retryPayout);
+router.get('/payouts/:id/receipt', adminPayoutController.downloadReceipt);
 router.get('/payouts/export', adminPayoutController.exportPayouts);
 router.get('/payouts/statistics', adminPayoutController.getPayoutStats);
 

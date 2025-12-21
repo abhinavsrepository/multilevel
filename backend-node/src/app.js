@@ -120,6 +120,30 @@ app.use('/api/v1/topup', topupRoutes);
 // Static files
 app.use('/uploads', express.static(path.join(__dirname, '../uploads')));
 
+// Serve admin panel static files
+const adminPanelPath = path.join(__dirname, '../../react-admin-panel/dist');
+app.use(express.static(adminPanelPath));
+
+// SPA fallback - serve index.html for all non-API routes
+// This ensures React Router can handle routing on refresh
+app.get('*', (req, res, next) => {
+    // Skip API routes and uploads
+    if (req.path.startsWith('/api') || req.path.startsWith('/uploads') || req.path.startsWith('/health')) {
+        return next();
+    }
+
+    // Serve index.html for all other routes
+    res.sendFile(path.join(adminPanelPath, 'index.html'), (err) => {
+        if (err) {
+            logger.error('Error serving admin panel index.html', {
+                error: err.message,
+                path: req.path
+            });
+            next(err);
+        }
+    });
+});
+
 // 404 Handler - must be after all routes
 app.use(notFoundHandler);
 

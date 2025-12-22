@@ -27,10 +27,7 @@ import {
     AttachMoney,
     CheckCircle,
     Lock,
-    LockOpen,
     Refresh,
-    CalendarToday,
-    Person,
     Search,
 } from '@mui/icons-material';
 import { levelBonusApi } from '../../api/level-bonus.api';
@@ -42,6 +39,8 @@ interface Eligibility {
     directSaleDate: string | null;
     status: 'UNLOCKED' | 'LOCKED';
     directSalesCount: number;
+    activeDirectsCount: number;
+    maxUnlockedLevel: number;
 }
 
 interface Stats {
@@ -122,21 +121,6 @@ const LevelBonus: React.FC = () => {
         fetchData();
     };
 
-    const getStatusColor = (status: string) => {
-        switch (status) {
-            case 'PENDING':
-                return 'warning';
-            case 'APPROVED':
-                return 'info';
-            case 'PAID':
-                return 'success';
-            case 'REJECTED':
-                return 'error';
-            default:
-                return 'default';
-        }
-    };
-
     if (loading) {
         return (
             <Box display="flex" justifyContent="center" alignItems="center" minHeight="400px">
@@ -144,6 +128,13 @@ const LevelBonus: React.FC = () => {
             </Box>
         );
     }
+
+    // Milestones
+    const milestones = [
+        { level: '1-2', required: 1, unlocked: (eligibility?.activeDirectsCount || 0) >= 1 },
+        { level: '3-5', required: 3, unlocked: (eligibility?.activeDirectsCount || 0) >= 3 },
+        { level: 'All', required: 5, unlocked: (eligibility?.activeDirectsCount || 0) >= 5 },
+    ];
 
     return (
         <Box>
@@ -162,90 +153,118 @@ const LevelBonus: React.FC = () => {
                 elevation={3}
                 sx={{
                     mb: 3,
-                    background: eligibility?.levelBonusEligible
-                        ? 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)'
-                        : 'linear-gradient(135deg, #757575 0%, #424242 100%)',
-                    border: eligibility?.levelBonusEligible ? '2px solid #4caf50' : '2px solid #9e9e9e'
+                    background: 'linear-gradient(135deg, #1a237e 0%, #283593 100%)',
+                    color: 'white',
+                    borderRadius: 3
                 }}
             >
-                <CardContent>
-                    <Stack direction="row" alignItems="center" spacing={2} mb={2}>
-                        <Box
-                            sx={{
-                                backgroundColor: 'rgba(255,255,255,0.2)',
-                                borderRadius: '50%',
-                                p: 2,
-                                display: 'flex',
-                                alignItems: 'center',
-                                justifyContent: 'center',
-                            }}
-                        >
-                            {eligibility?.levelBonusEligible ? (
-                                <LockOpen sx={{ color: 'white', fontSize: 48 }} />
-                            ) : (
-                                <Lock sx={{ color: 'white', fontSize: 48 }} />
-                            )}
-                        </Box>
-                        <Box flex={1}>
-                            <Typography variant="h5" fontWeight={700} color="white">
-                                Level Bonus Eligibility Status
+                <CardContent sx={{ p: 3 }}>
+                    <Grid container spacing={3} alignItems="center">
+                        <Grid item xs={12} md={4}>
+                            <Box textAlign="center">
+                                <Box
+                                    sx={{
+                                        position: 'relative',
+                                        display: 'inline-flex',
+                                        mb: 2
+                                    }}
+                                >
+                                    <CircularProgress
+                                        variant="determinate"
+                                        value={100}
+                                        size={120}
+                                        thickness={4}
+                                        sx={{ color: 'rgba(255,255,255,0.1)' }}
+                                    />
+                                    <CircularProgress
+                                        variant="determinate"
+                                        value={Math.min(((eligibility?.activeDirectsCount || 0) / 5) * 100, 100)}
+                                        size={120}
+                                        thickness={4}
+                                        sx={{
+                                            color: '#4caf50',
+                                            position: 'absolute',
+                                            left: 0,
+                                        }}
+                                    />
+                                    <Box
+                                        sx={{
+                                            top: 0,
+                                            left: 0,
+                                            bottom: 0,
+                                            right: 0,
+                                            position: 'absolute',
+                                            display: 'flex',
+                                            alignItems: 'center',
+                                            justifyContent: 'center',
+                                            flexDirection: 'column'
+                                        }}
+                                    >
+                                        <Typography variant="h4" fontWeight={700}>
+                                            {eligibility?.activeDirectsCount || 0}
+                                        </Typography>
+                                        <Typography variant="caption" sx={{ opacity: 0.8 }}>
+                                            Active Directs
+                                        </Typography>
+                                    </Box>
+                                </Box>
+                                <Typography variant="h6" fontWeight={600} gutterBottom>
+                                    Current Status: {eligibility?.activeDirectsCount ? `Unlocked up to Level ${eligibility?.maxUnlockedLevel}` : 'No Levels Unlocked'}
+                                </Typography>
+                            </Box>
+                        </Grid>
+                        <Grid item xs={12} md={8}>
+                            <Typography variant="h6" gutterBottom>
+                                Unlock Progress
                             </Typography>
-                            <Stack direction="row" alignItems="center" spacing={1} mt={1}>
-                                <Typography variant="h3" fontWeight={700} color="white">
-                                    {eligibility?.status || 'LOCKED'}
-                                </Typography>
-                                {eligibility?.levelBonusEligible && (
-                                    <CheckCircle sx={{ color: '#4caf50', fontSize: 40 }} />
-                                )}
-                            </Stack>
-                        </Box>
-                    </Stack>
-
-                    <Divider sx={{ backgroundColor: 'rgba(255,255,255,0.3)', my: 2 }} />
-
-                    {eligibility?.levelBonusEligible ? (
-                        <Box>
-                            <Alert severity="success" sx={{ mb: 2 }}>
-                                <Typography variant="body2" fontWeight={600}>
-                                    Congratulations! You are eligible to earn Level Bonus from your downline's recruitment activity.
-                                </Typography>
+                            <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+                                {milestones.map((milestone, index) => (
+                                    <Paper
+                                        key={index}
+                                        elevation={0}
+                                        sx={{
+                                            p: 2,
+                                            bgcolor: milestone.unlocked ? 'rgba(76, 175, 80, 0.2)' : 'rgba(255, 255, 255, 0.1)',
+                                            border: '1px solid',
+                                            borderColor: milestone.unlocked ? '#4caf50' : 'rgba(255,255,255,0.2)',
+                                            display: 'flex',
+                                            alignItems: 'center',
+                                            justifyContent: 'space-between',
+                                            borderRadius: 2
+                                        }}
+                                    >
+                                        <Box>
+                                            <Typography variant="subtitle1" fontWeight={600}>
+                                                Levels {milestone.level}
+                                            </Typography>
+                                            <Typography variant="caption" sx={{ opacity: 0.8 }}>
+                                                Requires {milestone.required} Active Direct(s)
+                                            </Typography>
+                                        </Box>
+                                        <Box display="flex" alignItems="center" gap={1}>
+                                            {milestone.unlocked ? (
+                                                <Chip
+                                                    label="UNLOCKED"
+                                                    size="small"
+                                                    sx={{ bgcolor: '#4caf50', color: 'white', fontWeight: 700 }}
+                                                />
+                                            ) : (
+                                                <Chip
+                                                    label="LOCKED"
+                                                    size="small"
+                                                    sx={{ bgcolor: 'rgba(255,255,255,0.1)', color: 'white' }}
+                                                />
+                                            )}
+                                            {milestone.unlocked ? <CheckCircle color="success" /> : <Lock sx={{ opacity: 0.5 }} />}
+                                        </Box>
+                                    </Paper>
+                                ))}
+                            </Box>
+                            <Alert severity="info" sx={{ mt: 2, bgcolor: 'rgba(3, 169, 244, 0.1)', color: '#e3f2fd' }}>
+                                Recruitment counts only include "Active" members who have made a purchase.
                             </Alert>
-                            <Grid container spacing={2}>
-                                <Grid item xs={12} md={6}>
-                                    <Box sx={{ backgroundColor: 'rgba(255,255,255,0.1)', borderRadius: 2, p: 2 }}>
-                                        <Typography variant="body2" color="white" gutterBottom>
-                                            Direct Sales Completed
-                                        </Typography>
-                                        <Typography variant="h4" fontWeight={700} color="white">
-                                            {eligibility.directSalesCount}
-                                        </Typography>
-                                    </Box>
-                                </Grid>
-                                <Grid item xs={12} md={6}>
-                                    <Box sx={{ backgroundColor: 'rgba(255,255,255,0.1)', borderRadius: 2, p: 2 }}>
-                                        <Typography variant="body2" color="white" gutterBottom>
-                                            Qualification Date
-                                        </Typography>
-                                        <Typography variant="h6" fontWeight={600} color="white">
-                                            {eligibility.directSaleDate
-                                                ? dayjs(eligibility.directSaleDate).format('MMM DD, YYYY')
-                                                : 'N/A'
-                                            }
-                                        </Typography>
-                                    </Box>
-                                </Grid>
-                            </Grid>
-                        </Box>
-                    ) : (
-                        <Alert severity="warning">
-                            <Typography variant="body2" fontWeight={600}>
-                                You need to complete at least 1 Direct Property Sale (D-SC) to unlock Level Bonus earning.
-                            </Typography>
-                            <Typography variant="caption" display="block" mt={1}>
-                                Level Bonus is paid on downline recruitment activity, but requires a personal direct sale first.
-                            </Typography>
-                        </Alert>
-                    )}
+                        </Grid>
+                    </Grid>
                 </CardContent>
             </Card>
 

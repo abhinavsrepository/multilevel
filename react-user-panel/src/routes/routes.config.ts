@@ -153,27 +153,27 @@ export const routesConfig: RouteConfig[] = [
   },
   {
     path: '/register',
-    element: RegisterSimple,
-    layout: 'blank',
+    element: Register,
+    layout: 'auth',
     protected: false,
     breadcrumb: 'Register',
     title: 'Register',
   },
   {
     path: '/auth/register',
-    element: RegisterSimple,
-    layout: 'blank',
-    protected: false,
-    breadcrumb: 'Register',
-    title: 'Register',
-  },
-  {
-    path: '/register-full',
     element: Register,
     layout: 'auth',
     protected: false,
     breadcrumb: 'Register',
     title: 'Register',
+  },
+  {
+    path: '/register-simple',
+    element: RegisterSimple,
+    layout: 'blank',
+    protected: false,
+    breadcrumb: 'Register Simple',
+    title: 'Register Simple',
   },
   {
     path: '/otp-verification',
@@ -440,7 +440,7 @@ export const routesConfig: RouteConfig[] = [
     title: 'Topup History',
   },
 
- 
+
   {
     path: '/incomes/summary',
     element: IncomeSummary,

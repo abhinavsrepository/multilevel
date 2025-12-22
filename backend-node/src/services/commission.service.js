@@ -18,7 +18,7 @@ exports.calculateLevelCommission = async (investment) => {
         if (!investor) return;
 
         // 3. Traverse upline
-        let currentUpline = await User.findByPk(investor.sponsorId);
+        let currentUpline = await User.findByPk(investor.sponsorUserId);
         let currentLevel = 1;
 
         // Map rules by level for easy access
@@ -37,21 +37,21 @@ exports.calculateLevelCommission = async (investment) => {
                 // "Associate's own Direct Referral Count (which unlocks the payout levels)."
                 const directCount = await User.count({
                     where: {
-                        sponsorId: currentUpline.id,
+                        sponsorUserId: currentUpline.id, // Fixed: Use sponsorUserId (FK) instead of sponsorId (String Code)
                         status: 'ACTIVE' // Explicitly checking for ACTIVE directs as is standard in MLM
                     }
                 });
 
-                // Apply Unlock Rule
-                // 1 Direct = 1 Level open
-                // 2 Directs = 2 Levels open
-                // 3 Directs = 5 Levels open
-                // 5 Directs = 10 Levels open
+                // Apply Unlock Rule based on Active Directs
+                // 1 Active Direct  = Unlocks Level 1 & 2
+                // 3 Active Directs = Unlocks Level 3 (and implied 4, 5 pending further clarification, setting typically to 5)
+                // 5 Active Directs = Unlocks All Levels (e.g. 10)
+
                 let allowedDepth = 0;
-                if (directCount >= 5) allowedDepth = 10;
-                else if (directCount >= 3) allowedDepth = 5;
-                else if (directCount >= 2) allowedDepth = 2;
-                else if (directCount >= 1) allowedDepth = 1;
+                if (directCount >= 5) allowedDepth = 20; // Unlocks "All Pending Levels"
+                else if (directCount >= 3) allowedDepth = 5; // Unlocks Level 3 (and possibly up to 5)
+                else if (directCount >= 1) allowedDepth = 2; // Unlocks Level 1 & 2
+                else allowedDepth = 0;
 
                 let isEligible = true;
                 let rejectionReason = '';
@@ -131,8 +131,8 @@ exports.calculateLevelCommission = async (investment) => {
             }
 
             // Move to next upline
-            if (currentUpline.sponsorId) {
-                currentUpline = await User.findByPk(currentUpline.sponsorId);
+            if (currentUpline.sponsorUserId) {
+                currentUpline = await User.findByPk(currentUpline.sponsorUserId);
             } else {
                 currentUpline = null;
             }

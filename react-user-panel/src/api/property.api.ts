@@ -172,28 +172,28 @@ export const getPropertiesByInvestmentRange = async (params: {
  * Get available property types
  */
 export const getPropertyTypes = async (): Promise<ApiResponse<{ type: PropertyType; count: number }[]>> => {
-  return apiGet<ApiResponse<{ type: PropertyType; count: number }[]>>('/properties/filters/types');
+  return apiGet<ApiResponse<{ type: PropertyType; count: number }[]>>('/properties/metadata/types');
 };
 
 /**
  * Get available cities
  */
 export const getAvailableCities = async (): Promise<ApiResponse<{ city: string; state: string; count: number }[]>> => {
-  return apiGet<ApiResponse<{ city: string; state: string; count: number }[]>>('/properties/filters/cities');
+  return apiGet<ApiResponse<{ city: string; state: string; count: number }[]>>('/properties/metadata/cities');
 };
 
 /**
  * Get available states
  */
 export const getAvailableStates = async (): Promise<ApiResponse<{ state: string; count: number }[]>> => {
-  return apiGet<ApiResponse<{ state: string; count: number }[]>>('/properties/filters/states');
+  return apiGet<ApiResponse<{ state: string; count: number }[]>>('/properties/metadata/states');
 };
 
 /**
  * Get available amenities
  */
 export const getAvailableAmenities = async (): Promise<ApiResponse<{ amenity: string; count: number }[]>> => {
-  return apiGet<ApiResponse<{ amenity: string; count: number }[]>>('/properties/filters/amenities');
+  return apiGet<ApiResponse<{ amenity: string; count: number }[]>>('/properties/metadata/amenities');
 };
 
 /**
@@ -208,7 +208,7 @@ export const getPriceRangeStats = async (): Promise<ApiResponse<{
     minPrice: number;
     maxPrice: number;
     avgPrice: number;
-  }>>('/properties/filters/price-range');
+  }>>('/properties/metadata/price-range');
 };
 
 /**
@@ -223,7 +223,7 @@ export const getInvestmentRangeStats = async (): Promise<ApiResponse<{
     minInvestment: number;
     maxInvestment: number;
     avgInvestment: number;
-  }>>('/properties/filters/investment-range');
+  }>>('/properties/metadata/investment-range');
 };
 
 // ==================== Property Statistics APIs ====================

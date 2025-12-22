@@ -36,7 +36,8 @@ import { BankAccount } from '../../types';
 import { toast } from 'react-toastify';
 import { useForm, Controller } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
-import * => yup';
+import * as yup from 'yup';
+
 import {
   getBankAccounts,
   addBankAccount,

@@ -1,4 +1,4 @@
-import { apiGet, apiPost, apiPut } from './config/axiosConfig';
+import { apiGet, apiPost, apiDelete } from './config/axiosConfig';
 import {
   ApiResponse,
   PaginatedResponse,
@@ -58,18 +58,44 @@ export const checkWithdrawalEligibility = async (amount: number): Promise<ApiRes
   kycRequired: boolean;
   kycStatus: string;
 }>> => {
-  return apiGet<ApiResponse<{
-    eligible: boolean;
-    reason?: string;
-    availableBalance: number;
-    minWithdrawal: number;
-    maxWithdrawal: number;
-    dailyLimit: number;
-    dailyUsed: number;
-    dailyRemaining: number;
-    kycRequired: boolean;
-    kycStatus: string;
-  }>>('/withdrawals/check-eligibility', { amount });
+  // Since there is no direct check-eligibility endpoint, we derive it from limits
+  const response = await apiGet<ApiResponse<any>>('/withdrawals/limits');
+
+  if (!response.data) {
+    throw new Error('Failed to fetch withdrawal limits');
+  }
+
+  const { minAmount, maxAmount, availableBalance } = response.data;
+
+  let eligible = true;
+  let reason = '';
+
+  if (amount < minAmount) {
+    eligible = false;
+    reason = `Minimum withdrawal amount is ${minAmount}`;
+  } else if (amount > maxAmount) {
+    eligible = false;
+    reason = `Maximum withdrawal amount is ${maxAmount}`;
+  } else if (amount > availableBalance) {
+    eligible = false;
+    reason = 'Insufficient balance';
+  }
+
+  return {
+    success: true,
+    data: {
+      eligible,
+      reason,
+      availableBalance,
+      minWithdrawal: minAmount,
+      maxWithdrawal: maxAmount,
+      dailyLimit: maxAmount, // Assuming daily limit same as max amount for now
+      dailyUsed: 0,
+      dailyRemaining: maxAmount,
+      kycRequired: true,
+      kycStatus: 'VERIFIED' // Mocked for now
+    }
+  };
 };
 
 // ==================== Withdrawal History APIs ====================
@@ -93,49 +119,54 @@ export const getWithdrawals = async (params?: {
  * Get withdrawal by ID
  */
 export const getWithdrawalById = async (withdrawalId: number): Promise<ApiResponse<Withdrawal>> => {
-  return apiGet<ApiResponse<Withdrawal>>(`/payouts/withdrawals/${withdrawalId}`);
+  return apiGet<ApiResponse<Withdrawal>>(`/withdrawals/${withdrawalId}`);
 };
 
 /**
  * Get withdrawal by withdrawal ID string
  */
 export const getWithdrawalByWithdrawalId = async (withdrawalId: string): Promise<ApiResponse<Withdrawal>> => {
-  return apiGet<ApiResponse<Withdrawal>>(`/payouts/withdrawals/code/${withdrawalId}`);
+  // Backend doesn't support code lookup yet, try ID lookup or fail gracefully
+  try {
+    return apiGet<ApiResponse<Withdrawal>>(`/withdrawals/${withdrawalId}`);
+  } catch (e) {
+    throw new Error('Lookup by code not supported');
+  }
 };
 
 /**
  * Get pending withdrawals
  */
 export const getPendingWithdrawals = async (params?: PaginationParams): Promise<PaginatedResponse<Withdrawal>> => {
-  return apiGet<PaginatedResponse<Withdrawal>>('/payouts/withdrawals/pending', params);
+  return apiGet<PaginatedResponse<Withdrawal>>('/withdrawals/my-withdrawals', { ...params, status: 'PENDING' });
 };
 
 /**
  * Get approved withdrawals
  */
 export const getApprovedWithdrawals = async (params?: PaginationParams): Promise<PaginatedResponse<Withdrawal>> => {
-  return apiGet<PaginatedResponse<Withdrawal>>('/payouts/withdrawals/approved', params);
+  return apiGet<PaginatedResponse<Withdrawal>>('/withdrawals/my-withdrawals', { ...params, status: 'APPROVED' });
 };
 
 /**
  * Get completed withdrawals
  */
 export const getCompletedWithdrawals = async (params?: PaginationParams): Promise<PaginatedResponse<Withdrawal>> => {
-  return apiGet<PaginatedResponse<Withdrawal>>('/payouts/withdrawals/completed', params);
+  return apiGet<PaginatedResponse<Withdrawal>>('/withdrawals/my-withdrawals', { ...params, status: 'COMPLETED' });
 };
 
 /**
  * Get rejected withdrawals
  */
 export const getRejectedWithdrawals = async (params?: PaginationParams): Promise<PaginatedResponse<Withdrawal>> => {
-  return apiGet<PaginatedResponse<Withdrawal>>('/payouts/withdrawals/rejected', params);
+  return apiGet<PaginatedResponse<Withdrawal>>('/withdrawals/my-withdrawals', { ...params, status: 'REJECTED' });
 };
 
 /**
  * Get cancelled withdrawals
  */
 export const getCancelledWithdrawals = async (params?: PaginationParams): Promise<PaginatedResponse<Withdrawal>> => {
-  return apiGet<PaginatedResponse<Withdrawal>>('/payouts/withdrawals/cancelled', params);
+  return apiGet<PaginatedResponse<Withdrawal>>('/withdrawals/my-withdrawals', { ...params, status: 'CANCELLED' });
 };
 
 // ==================== Withdrawal Actions APIs ====================
@@ -143,15 +174,17 @@ export const getCancelledWithdrawals = async (params?: PaginationParams): Promis
 /**
  * Cancel withdrawal request (only for pending requests)
  */
-export const cancelWithdrawal = async (withdrawalId: number, reason: string): Promise<ApiResponse<Withdrawal>> => {
-  return apiPost<ApiResponse<Withdrawal>>(`/payouts/withdrawals/${withdrawalId}/cancel`, { reason });
+export const cancelWithdrawal = async (withdrawalId: number, _reason: string): Promise<ApiResponse<Withdrawal>> => {
+  // Backend uses DELETE for cancel, reason is currently ignored by backend
+  return apiDelete<ApiResponse<Withdrawal>>(`/withdrawals/${withdrawalId}/cancel`);
 };
 
 /**
  * Resubmit rejected withdrawal
  */
-export const resubmitWithdrawal = async (withdrawalId: number, data?: Partial<WithdrawalRequest>): Promise<ApiResponse<Withdrawal>> => {
-  return apiPost<ApiResponse<Withdrawal>>(`/payouts/withdrawals/${withdrawalId}/resubmit`, data);
+export const resubmitWithdrawal = async (_withdrawalId: number, data?: Partial<WithdrawalRequest>): Promise<ApiResponse<Withdrawal>> => {
+  // Not supported by backend yet, assume create new
+  return createWithdrawalRequest(data as WithdrawalRequest);
 };
 
 // ==================== Withdrawal Statistics APIs ====================

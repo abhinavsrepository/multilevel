@@ -28,6 +28,8 @@ exports.getAllProperties = async (req, res) => {
         const where = {};
         if (status) {
             where.status = status;
+        } else if (req.query.adminView === 'true') {
+            // Admin default view: show all statuses, do not filter
         } else {
             where.status = { [Op.in]: VISIBLE_STATUSES };
         }

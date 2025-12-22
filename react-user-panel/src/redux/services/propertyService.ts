@@ -167,17 +167,17 @@ export const propertyService = createApi({
 
     // Get available cities
     getAvailableCities: builder.query<{ data: string[] }, void>({
-      query: () => '/properties/filters/cities',
+      query: () => '/properties/metadata/cities',
     }),
 
     // Get available property types
     getPropertyTypes: builder.query<{ data: string[] }, void>({
-      query: () => '/properties/filters/types',
+      query: () => '/properties/metadata/types',
     }),
 
     // Get property amenities
     getPropertyAmenities: builder.query<{ data: string[] }, void>({
-      query: () => '/properties/filters/amenities',
+      query: () => '/properties/metadata/amenities',
     }),
 
     // Calculate ROI

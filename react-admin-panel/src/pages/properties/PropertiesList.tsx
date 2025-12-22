@@ -65,6 +65,7 @@ const PropertiesList: React.FC = () => {
       const params: any = {
         page,
         limit: size,
+        adminView: 'true',
       };
 
       // Add filters

@@ -31,13 +31,21 @@ export const propertyService = createApi({
     // Search properties with filters
     searchProperties: builder.mutation<
       { data: Property[]; total: number; page: number; pageSize: number },
-      { filters?: PropertyFilters; page?: number; pageSize?: number }
+      { filters?: PropertyFilters; page?: number; pageSize?: number; search?: string }
     >({
-      query: (data) => ({
-        url: '/properties/search',
-        method: 'POST',
-        body: data,
-      }),
+      query: (data) => {
+        const { filters, page, pageSize, search } = data;
+        return {
+          url: '/properties/search',
+          method: 'GET',
+          params: {
+            ...filters,
+            search,
+            page,
+            size: pageSize,
+          },
+        };
+      },
       invalidatesTags: ['Properties'],
     }),
 

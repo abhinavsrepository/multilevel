@@ -16,6 +16,8 @@ const transformProperty = (p) => {
     };
 };
 
+const VISIBLE_STATUSES = ['ACTIVE', 'AVAILABLE', 'BOOKING_OPEN', 'FEW_SLOTS_LEFT', 'SOLD_OUT', 'UPCOMING'];
+
 // ==================== Property Listing Functions ====================
 
 exports.getAllProperties = async (req, res) => {
@@ -24,7 +26,12 @@ exports.getAllProperties = async (req, res) => {
         const offset = (page - 1) * limit;
 
         const where = {};
-        if (status) where.status = status;
+        if (status) {
+            where.status = status;
+        } else {
+            where.status = { [Op.in]: VISIBLE_STATUSES };
+        }
+
         if (propertyType) where.propertyType = propertyType;
         if (location) {
             where[Op.or] = [
@@ -66,7 +73,7 @@ exports.getFeaturedProperties = async (req, res) => {
         const offset = (page - 1) * size;
 
         const { count, rows } = await Property.findAndCountAll({
-            where: { isFeatured: true, status: 'ACTIVE' },
+            where: { isFeatured: true, status: { [Op.in]: VISIBLE_STATUSES } },
             limit: parseInt(size),
             offset: parseInt(offset),
             order: [['createdAt', 'DESC']]
@@ -93,7 +100,7 @@ exports.getNewLaunchProperties = async (req, res) => {
         const offset = (page - 1) * size;
 
         const { count, rows } = await Property.findAndCountAll({
-            where: { isNewLaunch: true, status: 'ACTIVE' },
+            where: { isNewLaunch: true, status: { [Op.in]: VISIBLE_STATUSES } },
             limit: parseInt(size),
             offset: parseInt(offset),
             order: [['createdAt', 'DESC']]
@@ -120,7 +127,7 @@ exports.getTrendingProperties = async (req, res) => {
         const offset = (page - 1) * size;
 
         const { count, rows } = await Property.findAndCountAll({
-            where: { status: 'ACTIVE' },
+            where: { status: { [Op.in]: VISIBLE_STATUSES } },
             limit: parseInt(size),
             offset: parseInt(offset),
             order: [['views', 'DESC'], ['favoritesCount', 'DESC']]
@@ -155,7 +162,7 @@ exports.getRecommendedProperties = async (req, res) => {
             order: [['createdAt', 'DESC']]
         });
 
-        let where = { status: 'ACTIVE' };
+        let where = { status: { [Op.in]: VISIBLE_STATUSES } };
 
         // If user has investment history, recommend similar properties
         if (userInvestments.length > 0) {
@@ -262,7 +269,7 @@ exports.getSimilarProperties = async (req, res) => {
         const { count, rows } = await Property.findAndCountAll({
             where: {
                 id: { [Op.ne]: property.id },
-                status: 'ACTIVE',
+                status: { [Op.in]: VISIBLE_STATUSES },
                 [Op.or]: [
                     { propertyType: property.propertyType },
                     { city: property.city },
@@ -298,7 +305,14 @@ exports.searchProperties = async (req, res) => {
         const { search, page = 1, size = 20, ...filters } = params;
         const offset = (page - 1) * size;
 
-        const where = { status: 'ACTIVE' };
+        const where = {};
+
+        // Handle status filter
+        if (filters.status && filters.status.length > 0) {
+            where.status = { [Op.in]: Array.isArray(filters.status) ? filters.status : [filters.status] };
+        } else {
+            where.status = { [Op.in]: VISIBLE_STATUSES };
+        }
 
         if (search) {
             where[Op.or] = [
@@ -348,7 +362,7 @@ exports.getPropertiesByType = async (req, res) => {
         const offset = (page - 1) * size;
 
         const { count, rows } = await Property.findAndCountAll({
-            where: { propertyType: req.params.type, status: 'ACTIVE' },
+            where: { propertyType: req.params.type, status: { [Op.in]: VISIBLE_STATUSES } },
             limit: parseInt(size),
             offset: parseInt(offset),
             order: [['createdAt', 'DESC']]
@@ -404,7 +418,7 @@ exports.getPropertiesByCity = async (req, res) => {
         const { count, rows } = await Property.findAndCountAll({
             where: {
                 city: { [Op.like]: `%${req.params.city}%` },
-                status: 'ACTIVE'
+                status: { [Op.in]: VISIBLE_STATUSES }
             },
             limit: parseInt(size),
             offset: parseInt(offset),
@@ -434,7 +448,7 @@ exports.getPropertiesByState = async (req, res) => {
         const { count, rows } = await Property.findAndCountAll({
             where: {
                 state: { [Op.like]: `%${req.params.state}%` },
-                status: 'ACTIVE'
+                status: { [Op.in]: VISIBLE_STATUSES }
             },
             limit: parseInt(size),
             offset: parseInt(offset),
@@ -461,7 +475,7 @@ exports.getPropertiesByPriceRange = async (req, res) => {
         const { minPrice, maxPrice, page = 1, size = 20 } = req.query;
         const offset = (page - 1) * size;
 
-        const where = { status: 'ACTIVE' };
+        const where = { status: { [Op.in]: VISIBLE_STATUSES } };
         if (minPrice || maxPrice) {
             where.basePrice = {};
             if (minPrice) where.basePrice[Op.gte] = minPrice;
@@ -495,7 +509,7 @@ exports.getPropertiesByInvestmentRange = async (req, res) => {
         const { minInvestment, maxInvestment, page = 1, size = 20 } = req.query;
         const offset = (page - 1) * size;
 
-        const where = { status: 'ACTIVE' };
+        const where = { status: { [Op.in]: VISIBLE_STATUSES } };
         if (minInvestment || maxInvestment) {
             where.minimumInvestment = {};
             if (minInvestment) where.minimumInvestment[Op.gte] = minInvestment;
@@ -533,7 +547,7 @@ exports.getPropertyTypes = async (req, res) => {
                 'propertyType',
                 [sequelize.fn('COUNT', sequelize.col('id')), 'count']
             ],
-            where: { status: 'ACTIVE' },
+            where: { status: { [Op.in]: VISIBLE_STATUSES } },
             group: ['propertyType'],
             raw: true
         });
@@ -558,7 +572,7 @@ exports.getAvailableCities = async (req, res) => {
                 'state',
                 [sequelize.fn('COUNT', sequelize.col('id')), 'count']
             ],
-            where: { status: 'ACTIVE' },
+            where: { status: { [Op.in]: VISIBLE_STATUSES } },
             group: ['city', 'state'],
             order: [['city', 'ASC']],
             raw: true
@@ -584,7 +598,7 @@ exports.getAvailableStates = async (req, res) => {
                 'state',
                 [sequelize.fn('COUNT', sequelize.col('id')), 'count']
             ],
-            where: { status: 'ACTIVE' },
+            where: { status: { [Op.in]: VISIBLE_STATUSES } },
             group: ['state'],
             order: [['state', 'ASC']],
             raw: true
@@ -608,7 +622,7 @@ exports.getAvailableAmenities = async (req, res) => {
         const properties = await Property.findAll({
             attributes: ['amenities'],
             where: {
-                status: 'ACTIVE',
+                status: { [Op.in]: VISIBLE_STATUSES },
                 amenities: { [Op.ne]: null }
             },
             raw: true
@@ -643,7 +657,7 @@ exports.getPriceRangeStats = async (req, res) => {
                 [sequelize.fn('MAX', sequelize.col('basePrice')), 'maxPrice'],
                 [sequelize.fn('AVG', sequelize.col('basePrice')), 'avgPrice']
             ],
-            where: { status: 'ACTIVE' },
+            where: { status: { [Op.in]: VISIBLE_STATUSES } },
             raw: true
         });
 
@@ -669,7 +683,7 @@ exports.getInvestmentRangeStats = async (req, res) => {
                 [sequelize.fn('MAX', sequelize.col('minimumInvestment')), 'maxInvestment'],
                 [sequelize.fn('AVG', sequelize.col('minimumInvestment')), 'avgInvestment']
             ],
-            where: { status: 'ACTIVE' },
+            where: { status: { [Op.in]: VISIBLE_STATUSES } },
             raw: true
         });
 

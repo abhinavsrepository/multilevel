@@ -203,10 +203,11 @@ const AddEditProperty: React.FC = () => {
             <Col span={8}>
               <Form.Item name="status" label="Status">
                 <Select>
-                  <Option value="ACTIVE">Active</Option>
-                  <Option value="INACTIVE">Inactive</Option>
+                  <Option value="AVAILABLE">Available</Option>
+                  <Option value="BOOKING_OPEN">Booking Open</Option>
+                  <Option value="UPCOMING">Upcoming</Option>
                   <Option value="SOLD_OUT">Sold Out</Option>
-                  <Option value="UNDER_MAINTENANCE">Under Maintenance</Option>
+                  <Option value="INACTIVE">Inactive (Hidden)</Option>
                 </Select>
               </Form.Item>
             </Col>
@@ -489,7 +490,7 @@ const AddEditProperty: React.FC = () => {
           items={steps.map((item) => ({ title: item.title }))}
         />
 
-        <Form form={form} layout="vertical" onFinish={onFinish} initialValues={{ status: 'ACTIVE' }}>
+        <Form form={form} layout="vertical" onFinish={onFinish} initialValues={{ status: 'AVAILABLE' }}>
           <div className="steps-content">
             {steps.map((step, index) => (
               <div key={index} style={{ display: index === currentStep ? 'block' : 'none' }}>

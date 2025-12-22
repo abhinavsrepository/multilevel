@@ -147,8 +147,17 @@ module.exports = (sequelize, DataTypes) => {
             field: 'virtual_tour_url'
         },
         status: {
-            type: DataTypes.ENUM('ACTIVE', 'INACTIVE', 'SOLD_OUT', 'UNDER_MAINTENANCE'),
-            defaultValue: 'ACTIVE'
+            type: DataTypes.ENUM(
+                'ACTIVE', // Keeping for legacy support, mapped to AVAILABLE
+                'INACTIVE',
+                'SOLD_OUT',
+                'UNDER_MAINTENANCE',
+                'AVAILABLE',
+                'BOOKING_OPEN',
+                'FEW_SLOTS_LEFT',
+                'UPCOMING'
+            ),
+            defaultValue: 'AVAILABLE'
         },
         isVerified: {
             type: DataTypes.BOOLEAN,

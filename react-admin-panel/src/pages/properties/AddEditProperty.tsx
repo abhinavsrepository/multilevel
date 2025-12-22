@@ -490,7 +490,13 @@ const AddEditProperty: React.FC = () => {
         />
 
         <Form form={form} layout="vertical" onFinish={onFinish} initialValues={{ status: 'ACTIVE' }}>
-          <div className="steps-content">{steps[currentStep].content}</div>
+          <div className="steps-content">
+            {steps.map((step, index) => (
+              <div key={index} style={{ display: index === currentStep ? 'block' : 'none' }}>
+                {step.content}
+              </div>
+            ))}
+          </div>
 
           <div className="steps-action" style={{ marginTop: 24, textAlign: 'right' }}>
             {currentStep > 0 && (

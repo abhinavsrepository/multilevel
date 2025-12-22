@@ -421,6 +421,14 @@ export const routesConfig: RouteConfig[] = [
     breadcrumb: 'Reward Status',
     title: 'Reward Status',
   },
+  {
+    path: '/incomes/summary',
+    element: IncomeSummary,
+    layout: 'dashboard',
+    protected: true,
+    breadcrumb: 'Income Summary',
+    title: 'Income Summary',
+  },
 
   // ==================== Topup Routes ====================
   {
@@ -438,16 +446,6 @@ export const routesConfig: RouteConfig[] = [
     protected: true,
     breadcrumb: 'Topup History',
     title: 'Topup History',
-  },
-
-
-  {
-    path: '/incomes/summary',
-    element: IncomeSummary,
-    layout: 'dashboard',
-    protected: true,
-    breadcrumb: 'Income Summary',
-    title: 'Income Summary',
   },
 
   // ==================== Bonanza Routes ====================

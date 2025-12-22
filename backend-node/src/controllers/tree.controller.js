@@ -1,4 +1,4 @@
-const { User } = require('../models');
+const { User, Investment } = require('../models');
 const { Op } = require('sequelize');
 
 // Helper to build tree recursively
@@ -82,6 +82,30 @@ const isDescendant = async (ancestorId, descendantId) => {
     return false;
 };
 
+// Helper to get all descendant IDs (for team stats calculation)
+const getDescendantIds = async (userId) => {
+    let descendants = [];
+    let queue = [userId];
+    let loops = 0;
+    const MAX_LOOPS = 10000; // Safety break to prevent infinite loops
+
+    while (queue.length > 0 && loops < MAX_LOOPS) {
+        const currentId = queue.shift();
+        const directReports = await User.findAll({
+            where: { sponsorUserId: currentId },
+            attributes: ['id']
+        });
+
+        if (directReports.length > 0) {
+            const ids = directReports.map(u => u.id);
+            descendants = [...descendants, ...ids];
+            queue = [...queue, ...ids];
+        }
+        loops++;
+    }
+    return descendants;
+};
+
 exports.getBinaryTree = async (req, res) => {
     try {
         let targetUserId = req.user.id;
@@ -139,30 +163,133 @@ exports.getTreeStats = async (req, res) => {
             return res.status(404).json({ success: false, message: 'User not found' });
         }
 
-        // Count direct referrals
-        const directReferrals = await User.count({ where: { sponsorId: userId } });
+        // Get start of current month for monthly stats
+        const startOfMonth = new Date();
+        startOfMonth.setDate(1);
+        startOfMonth.setHours(0, 0, 0, 0);
 
-        // Count total team size (simplified, ideally use a materialized path or recursive CTE)
-        // For now, just returning direct referrals as team size placeholder or 0 if expensive to calc
-        // In production, maintain a 'teamSize' field on User and update it via hooks/events
-        const teamSize = 0; // Placeholder
+        // 1. Count direct referrals (sponsorUserId matches current user)
+        const directReferrals = await User.count({
+            where: { sponsorUserId: userId }
+        });
 
+        // 2. Count direct referrals this month
+        const directReferralsThisMonth = await User.count({
+            where: {
+                sponsorUserId: userId,
+                createdAt: { [Op.gte]: startOfMonth }
+            }
+        });
+
+        // 3. Get all team members (downline) - using sponsorship tree
+        const descendantIds = await getDescendantIds(userId);
+        const totalTeam = descendantIds.length;
+
+        // 4. Count active/inactive members in team
+        let active = 0;
+        let inactive = 0;
+
+        if (descendantIds.length > 0) {
+            active = await User.count({
+                where: {
+                    id: { [Op.in]: descendantIds },
+                    status: 'ACTIVE'
+                }
+            });
+            inactive = totalTeam - active;
+        }
+
+        // 5. Count left and right leg members (using placement tree)
+        const leftLeg = await countPlacementLeg(userId, 'LEFT');
+        const rightLeg = await countPlacementLeg(userId, 'RIGHT');
+
+        // 6. Calculate matching BV (minimum of left and right)
+        const matchingBV = Math.min(user.leftBv || 0, user.rightBv || 0);
+
+        // 7. Calculate carry forward (sum of both legs)
+        const carryForward = parseFloat((user.carryForwardLeft || 0)) + parseFloat((user.carryForwardRight || 0));
+
+        // 8. Get team investment totals
+        let teamInvestment = 0;
+        let teamInvestmentThisMonth = 0;
+
+        if (descendantIds.length > 0) {
+            teamInvestment = await Investment.sum('investmentAmount', {
+                where: { userId: { [Op.in]: descendantIds } }
+            }) || 0;
+
+            teamInvestmentThisMonth = await Investment.sum('investmentAmount', {
+                where: {
+                    userId: { [Op.in]: descendantIds },
+                    createdAt: { [Op.gte]: startOfMonth }
+                }
+            }) || 0;
+        }
+
+        // Return complete stats matching frontend TeamStats interface
         res.json({
             success: true,
             data: {
-                leftBv: user.leftBv,
-                rightBv: user.rightBv,
-                carryForwardLeft: user.carryForwardLeft,
-                carryForwardRight: user.carryForwardRight,
-                personalBv: user.personalBv,
-                teamBv: user.teamBv,
+                // Team counts
+                totalTeam,
+                leftLeg,
+                rightLeg,
+                active,
+                inactive,
                 directReferrals,
-                teamSize, // To be implemented with proper tree traversal or stored field
-                currentRank: user.rank
+                directReferralsThisMonth,
+
+                // Business Volume
+                teamBV: parseFloat(user.teamBv || 0),
+                leftBV: parseFloat(user.leftBv || 0),
+                rightBV: parseFloat(user.rightBv || 0),
+                matchingBV: parseFloat(matchingBV.toFixed(2)),
+                carryForward: parseFloat(carryForward.toFixed(2)),
+
+                // Investment
+                teamInvestment: parseFloat(teamInvestment.toFixed(2)),
+                teamInvestmentThisMonth: parseFloat(teamInvestmentThisMonth.toFixed(2))
             }
         });
     } catch (error) {
-        console.error(error);
+        console.error('Error in getTreeStats:', error);
         res.status(500).json({ success: false, message: 'Server Error', error: error.message });
+    }
+};
+
+// Helper function to count members in a placement leg recursively
+const countPlacementLeg = async (userId, placement) => {
+    try {
+        let count = 0;
+        let queue = [userId];
+        let loops = 0;
+        const MAX_LOOPS = 10000;
+
+        while (queue.length > 0 && loops < MAX_LOOPS) {
+            const currentId = queue.shift();
+
+            // Find children in this placement leg
+            const children = await User.findAll({
+                where: {
+                    placementUserId: currentId,
+                    ...(placement ? { placement } : {})
+                },
+                attributes: ['id']
+            });
+
+            if (children.length > 0) {
+                count += children.length;
+                // Add children to queue for recursive counting (only direct placement children)
+                for (const child of children) {
+                    queue.push(child.id);
+                }
+            }
+            loops++;
+        }
+
+        return count;
+    } catch (error) {
+        console.error('Error in countPlacementLeg:', error);
+        return 0;
     }
 };

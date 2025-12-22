@@ -122,7 +122,7 @@ exports.register = async (req, res) => {
             placementUserId: sponsor ? sponsor.id : null,
             placement: placement ? placement.toUpperCase() : 'AUTO',
             role: role || 'MEMBER',
-            status: 'ACTIVE'
+            status: 'INACTIVE' // User becomes ACTIVE only after first sale
         });
 
         if (user) {

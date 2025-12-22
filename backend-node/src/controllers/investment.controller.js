@@ -25,6 +25,17 @@ exports.createInvestment = async (req, res) => {
             totalPaid: amount // Assuming full payment for now
         });
 
+        // Auto-activate user on first sale
+        const user = await User.findByPk(userId);
+        if (user && user.status === 'INACTIVE') {
+            // Check if this is their first investment
+            const investmentCount = await Investment.count({ where: { userId } });
+            if (investmentCount === 1) { // This is their first investment
+                await user.update({ status: 'ACTIVE' });
+                console.log(`User ${user.username} auto-activated after first sale`);
+            }
+        }
+
         // Update property slots
         await property.increment('slotsBooked');
 

@@ -18,8 +18,18 @@ import {
     Divider,
     Alert,
     CircularProgress,
-    FormHelperText
+    FormHelperText,
+    Dialog,
+    DialogTitle,
+    DialogContent,
+    DialogContentText,
+    DialogActions,
+    Stack,
+    Paper
 } from '@mui/material';
+import {
+    CheckCircle
+} from '@mui/icons-material';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
@@ -38,6 +48,8 @@ const ReferralRegistrationForm: React.FC<ReferralRegistrationFormProps> = ({ onS
     const [error, setError] = useState<string | null>(null);
     const [validatingSponsor, setValidatingSponsor] = useState(false);
     const [sponsorError, setSponsorError] = useState<string | null>(null);
+    const [showSuccessDialog, setShowSuccessDialog] = useState(false);
+    const [registeredCredentials, setRegisteredCredentials] = useState<{ email: string, password: string } | null>(null);
 
     const [formData, setFormData] = useState({
         sponsorId: '',
@@ -97,10 +109,10 @@ const ReferralRegistrationForm: React.FC<ReferralRegistrationFormProps> = ({ onS
         setTimeout(async () => {
             try {
                 const response = await validateSponsor(sponsorId);
-                if (response.success && response.data?.valid) {
+                if (response.success && response.data?.isValid) {
                     setFormData(prev => ({
                         ...prev,
-                        sponsorName: response.data.sponsor?.name || ''
+                        sponsorName: response.data.name || ''
                     }));
                     setSponsorError(null);
                 } else {
@@ -176,7 +188,15 @@ const ReferralRegistrationForm: React.FC<ReferralRegistrationFormProps> = ({ onS
             const response = await register(registrationData);
 
             if (response.success) {
+                // Save credentials for dialog before resetting
+                setRegisteredCredentials({
+                    email: formData.email,
+                    password: formData.password
+                });
+
                 setSuccess(response.message || "Member registered successfully!");
+                setShowSuccessDialog(true);
+
                 // Reset form except sponsor details
                 setFormData(prev => ({
                     ...prev,
@@ -446,6 +466,74 @@ const ReferralRegistrationForm: React.FC<ReferralRegistrationFormProps> = ({ onS
                     </Box>
                 </CardContent>
             </Card>
+
+            {/* Success Dialog */}
+            <Dialog
+                open={showSuccessDialog}
+                onClose={() => setShowSuccessDialog(false)}
+                maxWidth="sm"
+                fullWidth
+            >
+                <DialogTitle sx={{ textAlign: 'center', bgcolor: 'success.main', color: 'white', py: 2 }}>
+                    <Box display="flex" flexDirection="column" alignItems="center" gap={1}>
+                        <CheckCircle sx={{ fontSize: 48 }} />
+                        <Typography variant="h6" component="span">Registration Successful!</Typography>
+                    </Box>
+                </DialogTitle>
+                <DialogContent sx={{ mt: 3 }}>
+                    <DialogContentText textAlign="center" paragraph>
+                        The new member has been registered successfully.
+                    </DialogContentText>
+                    <Alert severity="warning" sx={{ mb: 3 }}>
+                        Please take a screenshot of these credentials. This is important for the new member to login.
+                    </Alert>
+
+                    {registeredCredentials && (
+                        <Paper
+                            elevation={0}
+                            sx={{
+                                p: 3,
+                                bgcolor: 'grey.100',
+                                border: '1px dashed',
+                                borderColor: 'grey.400',
+                                borderRadius: 2,
+                            }}
+                        >
+                            <Stack spacing={2}>
+                                <Box>
+                                    <Typography variant="caption" color="text.secondary" display="block">
+                                        Email Address
+                                    </Typography>
+                                    <Typography variant="h6" fontWeight={600} fontFamily="monospace">
+                                        {registeredCredentials.email}
+                                    </Typography>
+                                </Box>
+                                <Box>
+                                    <Typography variant="caption" color="text.secondary" display="block">
+                                        Password
+                                    </Typography>
+                                    <Typography variant="h6" fontWeight={600} fontFamily="monospace">
+                                        {registeredCredentials.password}
+                                    </Typography>
+                                </Box>
+                            </Stack>
+                        </Paper>
+                    )}
+                </DialogContent>
+                <DialogActions sx={{ p: 3, pt: 0, justifyContent: 'center' }}>
+                    <Button
+                        onClick={() => {
+                            setShowSuccessDialog(false);
+                            if (onSuccess) onSuccess();
+                        }}
+                        variant="contained"
+                        size="large"
+                        fullWidth
+                    >
+                        I have taken a screenshot, Close
+                    </Button>
+                </DialogActions>
+            </Dialog>
         </Box>
     );
 };

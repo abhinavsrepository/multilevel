@@ -44,6 +44,8 @@ router.put('/kyc/:id/reject', adminController.rejectKyc);
 
 // Property Routes
 const adminPropertyController = require('../controllers/admin-property.controller');
+const propertyUpload = require('../middleware/property-upload.middleware');
+
 router.get('/properties', adminPropertyController.getProperties);
 router.get('/properties/:id', adminPropertyController.getPropertyById);
 router.post('/properties', adminPropertyController.createProperty);
@@ -55,9 +57,9 @@ router.put('/properties/:id/toggle-trending', adminPropertyController.toggleTren
 router.get('/properties/:id/investors', adminPropertyController.getPropertyInvestors);
 router.get('/properties/export', adminPropertyController.exportProperties);
 router.post('/properties/import', adminPropertyController.importProperties);
-router.post('/properties/:id/images', adminPropertyController.uploadPropertyImages);
+router.post('/properties/:id/images', propertyUpload.array('images', 10), adminPropertyController.uploadPropertyImages);
 router.delete('/properties/:id/images/:imageId', adminPropertyController.deletePropertyImage);
-router.post('/properties/:id/documents', adminPropertyController.uploadPropertyDocument);
+router.post('/properties/:id/documents', propertyUpload.single('document'), adminPropertyController.uploadPropertyDocument);
 router.delete('/properties/:id/documents/:documentId', adminPropertyController.deletePropertyDocument);
 router.post('/properties/:id/send-update', adminPropertyController.sendUpdateToInvestors);
 

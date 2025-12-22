@@ -4,3 +4,7 @@ export { default as BinaryTreeWithStats } from './BinaryTreeWithStats';
 export { default as UnilevelTree } from './UnilevelTree';
 export { default as DirectReferrals } from './DirectReferrals';
 export { default as TeamReport } from './TeamReport';
+export { default as TeamLevelDownline } from './TeamLevelDownline';
+export { default as TeamPropertyPerformance } from './TeamPropertyPerformance';
+export { default as TeamMembers } from './TeamMembers';
+export { default as DownlineBusiness } from './DownlineBusiness';

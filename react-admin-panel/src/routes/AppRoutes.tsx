@@ -90,7 +90,7 @@ const LoadingFallback = () => (
 
 const AppRoutes: React.FC = () => {
   return (
-    <BrowserRouter basename="/admin" future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
+    <BrowserRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
       <Suspense fallback={<LoadingFallback />}>
         <Routes>
           {/* Auth Routes */}

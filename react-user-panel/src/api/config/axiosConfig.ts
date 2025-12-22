@@ -4,12 +4,12 @@ import { toast } from 'react-toastify';
 // Determine base URL
 const getBaseUrl = () => {
   // For local development, use proxy
-  if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+  if (typeof window !== 'undefined' && (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')) {
     return '/api/v1';
   }
 
   // For production, always use the backend URL
-  return 'https://backend-node-373e.onrender.com/api/v1';
+  return 'https://mlm-backend-ljan.onrender.com/api/v1';
 };
 
 // Create axios instance

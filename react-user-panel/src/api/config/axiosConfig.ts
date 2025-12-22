@@ -9,7 +9,7 @@ const getBaseUrl = () => {
   }
 
   // For production, always use the backend URL
-  return 'https://mlm-backend-ljan.onrender.com/api/v1';
+  return 'https://backend-node-373e.onrender.com/api/v1';
 };
 
 // Create axios instance

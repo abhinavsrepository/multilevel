@@ -34,7 +34,7 @@ import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import { getUserProfile } from '@/api/user.api';
-import { useAuth } from '@/hooks/useAuth';
+import { useAuthContext } from '@/context/AuthContext';
 import { register, validateSponsor } from '@/api/auth.api';
 
 interface ReferralRegistrationFormProps {
@@ -42,7 +42,7 @@ interface ReferralRegistrationFormProps {
 }
 
 const ReferralRegistrationForm: React.FC<ReferralRegistrationFormProps> = ({ onSuccess }) => {
-    const { user } = useAuth();
+    const { user } = useAuthContext();
     const [loading, setLoading] = useState(false);
     const [success, setSuccess] = useState<string | null>(null);
     const [error, setError] = useState<string | null>(null);
@@ -74,14 +74,11 @@ const ReferralRegistrationForm: React.FC<ReferralRegistrationFormProps> = ({ onS
 
     useEffect(() => {
         if (user) {
-            // Handle different user object structures (Redux AuthUser vs StoredUser)
-            const userName = (user as any).fullName || (user as any).name || '';
-            const userReferralCode = (user as any).referralCode || (user as any).userId || '';
-
+            // Pre-fill sponsor details with logged-in user's information
             setFormData(prev => ({
                 ...prev,
-                sponsorId: userReferralCode,
-                sponsorName: userName
+                sponsorId: user.referralCode,
+                sponsorName: user.fullName
             }));
         }
     }, [user]);

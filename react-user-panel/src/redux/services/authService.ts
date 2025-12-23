@@ -10,9 +10,19 @@ import {
   ChangePasswordRequest,
 } from '../../types/auth.types';
 
+// Determine base URL
+const getBaseUrl = () => {
+  // For local development, use proxy
+  if (typeof window !== 'undefined' && (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')) {
+    return '/api/v1';
+  }
+  // For production, use environment variable or default production URL
+  return import.meta.env.VITE_API_BASE_URL || 'https://mlm-backend-ljan.onrender.com/api/v1';
+};
+
 // Base query with auth token
 const baseQuery = fetchBaseQuery({
-  baseUrl: import.meta.env.VITE_API_BASE_URL || 'http://localhost:8080/api',
+  baseUrl: getBaseUrl(),
   prepareHeaders: (headers) => {
     const token = localStorage.getItem('token');
     if (token) {

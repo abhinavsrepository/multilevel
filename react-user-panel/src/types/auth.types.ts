@@ -38,12 +38,16 @@ export interface RegisterRequest {
 export interface SponsorValidationResponse {
   success: boolean;
   data?: {
-    sponsorId: string;
-    name: string;
-    rank: string;
-    contact: string;
-    isValid: boolean;
+    valid: boolean;
+    sponsor?: {
+      id: number;
+      userId: string;
+      name: string;
+      email: string;
+      referralCode: string;
+    };
   };
+  message?: string;
 }
 
 export interface OTPVerificationRequest {

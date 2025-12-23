@@ -72,18 +72,49 @@ const ReferralRegistrationForm: React.FC<ReferralRegistrationFormProps> = ({ onS
         acceptTerms: false
     });
 
+    // Auto-fill and validate sponsor from logged-in user
     useEffect(() => {
-        if (user) {
-            // Handle different user object structures (Redux AuthUser vs StoredUser)
-            const userName = (user as any).fullName || (user as any).name || '';
-            const userReferralCode = (user as any).referralCode || (user as any).userId || '';
+        const autoFillSponsor = async () => {
+            if (user) {
+                // Handle different user object structures (Redux AuthUser vs StoredUser)
+                const userName = (user as any).fullName || (user as any).name || '';
+                const userReferralCode = (user as any).referralCode || (user as any).userId || '';
 
-            setFormData(prev => ({
-                ...prev,
-                sponsorId: userReferralCode,
-                sponsorName: userName
-            }));
-        }
+                setFormData(prev => ({
+                    ...prev,
+                    sponsorId: userReferralCode,
+                    sponsorName: userName
+                }));
+
+                // Auto-validate the sponsor ID
+                if (userReferralCode) {
+                    setValidatingSponsor(true);
+                    try {
+                        const response = await validateSponsor(userReferralCode);
+                        if (response.success && response.data?.valid) {
+                            setFormData(prev => ({
+                                ...prev,
+                                sponsorName: response.data.sponsor?.name || userName
+                            }));
+                            setSponsorError(null);
+                        } else {
+                            setSponsorError('Invalid sponsor ID from logged-in user');
+                        }
+                    } catch (err: any) {
+                        console.error('Auto-validation error:', err);
+                        // Don't show error for auto-fill, use the user's name as fallback
+                        setFormData(prev => ({
+                            ...prev,
+                            sponsorName: userName
+                        }));
+                    } finally {
+                        setValidatingSponsor(false);
+                    }
+                }
+            }
+        };
+
+        autoFillSponsor();
     }, [user]);
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -248,8 +279,12 @@ const ReferralRegistrationForm: React.FC<ReferralRegistrationFormProps> = ({ onS
                                 onChange={handleSponsorIdChange}
                                 variant="filled"
                                 error={!!sponsorError}
-                                helperText={sponsorError || "Enter sponsor's referral code or user ID"}
+                                helperText={
+                                    sponsorError ||
+                                    (user ? "Auto-filled from your account (read-only)" : "Enter sponsor's referral code or user ID")
+                                }
                                 InputProps={{
+                                    readOnly: !!user, // Make read-only if user is logged in
                                     endAdornment: validatingSponsor ? <CircularProgress size={20} /> : null
                                 }}
                             />

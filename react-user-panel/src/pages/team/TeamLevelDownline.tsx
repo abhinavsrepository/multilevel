@@ -189,9 +189,9 @@ const TeamLevelDownline: React.FC = () => {
     const query = searchQuery.toLowerCase();
     return members.filter(
       (m) =>
-        m.fullName.toLowerCase().includes(query) ||
-        m.userId.toLowerCase().includes(query) ||
-        m.email.toLowerCase().includes(query)
+        (m.fullName || '').toLowerCase().includes(query) ||
+        (m.userId || '').toLowerCase().includes(query) ||
+        (m.email || '').toLowerCase().includes(query)
     );
   };
 
@@ -441,17 +441,17 @@ const TeamLevelDownline: React.FC = () => {
                                   <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
                                     <Avatar
                                       src={member.profilePicture}
-                                      alt={member.fullName}
+                                      alt={member.fullName || 'Member'}
                                       sx={{ width: 40, height: 40 }}
                                     >
-                                      {member.fullName.charAt(0)}
+                                      {(member.fullName || member.userId || 'M').charAt(0).toUpperCase()}
                                     </Avatar>
                                     <Box>
                                       <Typography variant="body2" fontWeight={600}>
-                                        {member.fullName}
+                                        {member.fullName || 'N/A'}
                                       </Typography>
                                       <Typography variant="caption" color="text.secondary">
-                                        {member.userId}
+                                        {member.userId || 'N/A'}
                                       </Typography>
                                     </Box>
                                   </Box>

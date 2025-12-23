@@ -12,6 +12,25 @@ import { initializeTheme } from './redux/slices/themeSlice';
 import './assets/styles/global.css';
 import './assets/styles/variables.css';
 
+// Clear old service workers that might be caching routes
+// This fixes 404 errors on page refresh when using React Router
+if ('serviceWorker' in navigator && import.meta.env.PROD) {
+  navigator.serviceWorker.getRegistrations().then((registrations) => {
+    // Only unregister if PWA is not explicitly enabled
+    if (import.meta.env.VITE_ENABLE_PWA !== 'true') {
+      registrations.forEach((registration) => {
+        registration.unregister().then((success) => {
+          if (success) {
+            console.log('Old service worker unregistered successfully');
+          }
+        });
+      });
+    }
+  }).catch((err) => {
+    console.error('Service worker unregistration failed:', err);
+  });
+}
+
 // Initialize theme on app load
 store.dispatch(initializeTheme());
 

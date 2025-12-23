@@ -76,39 +76,72 @@ const ReferralRegistrationForm: React.FC<ReferralRegistrationFormProps> = ({ onS
     useEffect(() => {
         const autoFillSponsor = async () => {
             if (user) {
-                // Handle different user object structures (Redux AuthUser vs StoredUser)
-                const userName = (user as any).fullName || (user as any).name || '';
-                const userReferralCode = (user as any).referralCode || (user as any).userId || '';
+                try {
+                    // First, fetch the full user profile to get userId and referralCode
+                    const profileResponse = await getUserProfile();
 
-                setFormData(prev => ({
-                    ...prev,
-                    sponsorId: userReferralCode,
-                    sponsorName: userName
-                }));
+                    if (profileResponse.success && profileResponse.data) {
+                        const profile = profileResponse.data;
+                        const userName = profile.fullName || profile.name || '';
+                        const userReferralCode = profile.referralCode || profile.username || profile.userId || '';
 
-                // Auto-validate the sponsor ID
-                if (userReferralCode) {
-                    setValidatingSponsor(true);
-                    try {
-                        const response = await validateSponsor(userReferralCode);
-                        if (response.success && response.data?.valid) {
-                            setFormData(prev => ({
-                                ...prev,
-                                sponsorName: response.data.sponsor?.name || userName
-                            }));
-                            setSponsorError(null);
-                        } else {
-                            setSponsorError('Invalid sponsor ID from logged-in user');
-                        }
-                    } catch (err: any) {
-                        console.error('Auto-validation error:', err);
-                        // Don't show error for auto-fill, use the user's name as fallback
+                        console.log('Auto-filling sponsor from profile:', { userName, userReferralCode, profile });
+
                         setFormData(prev => ({
                             ...prev,
+                            sponsorId: userReferralCode,
                             sponsorName: userName
                         }));
-                    } finally {
-                        setValidatingSponsor(false);
+
+                        // Auto-validate the sponsor ID
+                        if (userReferralCode) {
+                            setValidatingSponsor(true);
+                            try {
+                                const response = await validateSponsor(userReferralCode);
+                                if (response.success && response.data?.valid) {
+                                    setFormData(prev => ({
+                                        ...prev,
+                                        sponsorName: response.data.sponsor?.name || userName
+                                    }));
+                                    setSponsorError(null);
+                                } else {
+                                    console.warn('Sponsor validation failed:', response);
+                                    // Don't show error, just use profile name
+                                    setSponsorError(null);
+                                }
+                            } catch (err: any) {
+                                console.error('Auto-validation error:', err);
+                                // Don't show error for auto-fill, use the user's name as fallback
+                                setSponsorError(null);
+                            } finally {
+                                setValidatingSponsor(false);
+                            }
+                        }
+                    } else {
+                        // Fallback to user object from auth
+                        const userName = (user as any).fullName || (user as any).name || '';
+                        const userReferralCode = (user as any).referralCode || (user as any).username || (user as any).userId || (user as any).id || '';
+
+                        if (userReferralCode) {
+                            setFormData(prev => ({
+                                ...prev,
+                                sponsorId: userReferralCode,
+                                sponsorName: userName
+                            }));
+                        }
+                    }
+                } catch (error) {
+                    console.error('Error fetching user profile for auto-fill:', error);
+                    // Fallback to user object from auth
+                    const userName = (user as any).fullName || (user as any).name || '';
+                    const userReferralCode = (user as any).referralCode || (user as any).username || (user as any).userId || (user as any).id || '';
+
+                    if (userReferralCode) {
+                        setFormData(prev => ({
+                            ...prev,
+                            sponsorId: userReferralCode,
+                            sponsorName: userName
+                        }));
                     }
                 }
             }

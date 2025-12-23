@@ -19,6 +19,11 @@ import {
   RadioGroup,
   Radio,
   CircularProgress,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogContentText,
+  DialogActions,
 } from '@mui/material';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
@@ -29,6 +34,7 @@ import { register as registerUser, clearError, selectAuth } from '@/redux/slices
 import { validateSponsor } from '@/api/auth.api';
 import { InputField } from '@/components/forms/InputField';
 import { PasswordStrength } from '@/components/forms/PasswordStrength';
+import { AuthLayout } from '@/layouts';
 
 import {
   Person,
@@ -87,10 +93,12 @@ const step2Schema = yup.object().shape({
 const step3Schema = yup.object().shape({
   termsAccepted: yup
     .boolean()
-    .oneOf([true], 'You must accept the terms and conditions'),
+    .oneOf([true], 'You must accept the terms and conditions')
+    .required('Terms acceptance is required'),
   privacyAccepted: yup
     .boolean()
-    .oneOf([true], 'You must accept the privacy policy'),
+    .oneOf([true], 'You must accept the privacy policy')
+    .required('Privacy policy acceptance is required'),
 });
 
 // Combined Schema for all steps
@@ -238,6 +246,9 @@ const Register: React.FC = () => {
     setActiveStep((prevStep) => prevStep - 1);
   };
 
+  // Success Dialog State
+  const [showSuccessDialog, setShowSuccessDialog] = useState(false);
+
   // Handle form submission
   const onSubmit = async (data: RegisterFormData) => {
     try {
@@ -255,15 +266,21 @@ const Register: React.FC = () => {
 
       const result = await dispatch(registerUser(registrationData)).unwrap();
       if (result) {
-        // Navigate to OTP verification or dashboard
-        navigate('/auth/otp-verification', {
-          state: { email: data.email, mobile: data.mobile },
-        });
+        setShowSuccessDialog(true);
       }
     } catch (err) {
       // Error is handled by Redux slice
       console.error('Registration failed:', err);
     }
+  };
+
+  const handleCloseSuccessDialog = () => {
+    const email = getValues('email');
+    const mobile = getValues('mobile');
+    setShowSuccessDialog(false);
+    navigate('/auth/otp-verification', {
+      state: { email, mobile },
+    });
   };
 
   // Render step content
@@ -714,6 +731,69 @@ const Register: React.FC = () => {
           </MuiLink>
         </Typography>
       </Box>
+      {/* Success Dialog */}
+      <Dialog
+        open={showSuccessDialog}
+        onClose={() => { }} // Disable closing by clicking outside
+        aria-labelledby="alert-dialog-title"
+        aria-describedby="alert-dialog-description"
+        maxWidth="sm"
+        fullWidth
+      >
+        <DialogTitle id="alert-dialog-title" sx={{ textAlign: 'center', bgcolor: 'success.main', color: 'white', py: 2 }}>
+          <CheckCircle sx={{ fontSize: 48, mb: 1, display: 'block', mx: 'auto' }} />
+          Registration Successful!
+        </DialogTitle>
+        <DialogContent sx={{ mt: 3 }}>
+          <DialogContentText id="alert-dialog-description" textAlign="center" paragraph>
+            Your account has been created successfully.
+          </DialogContentText>
+          <Alert severity="warning" sx={{ mb: 3 }}>
+            Please take a screenshot of your credentials below for future reference.
+          </Alert>
+
+          <Paper
+            elevation={0}
+            sx={{
+              p: 3,
+              bgcolor: 'grey.100',
+              border: '1px dashed',
+              borderColor: 'grey.400',
+              borderRadius: 2,
+            }}
+          >
+            <Stack spacing={2}>
+              <Box>
+                <Typography variant="caption" color="text.secondary" display="block">
+                  Email Address
+                </Typography>
+                <Typography variant="h6" fontWeight={600} fontFamily="monospace">
+                  {getValues('email')}
+                </Typography>
+              </Box>
+              <Box>
+                <Typography variant="caption" color="text.secondary" display="block">
+                  Password
+                </Typography>
+                <Typography variant="h6" fontWeight={600} fontFamily="monospace">
+                  {getValues('password')}
+                </Typography>
+              </Box>
+            </Stack>
+          </Paper>
+        </DialogContent>
+        <DialogActions sx={{ p: 3, pt: 0, justifyContent: 'center' }}>
+          <Button
+            onClick={handleCloseSuccessDialog}
+            variant="contained"
+            size="large"
+            autoFocus
+            fullWidth
+          >
+            I have taken a screenshot, Continue to Verify
+          </Button>
+        </DialogActions>
+      </Dialog>
     </AuthLayout>
   );
 };

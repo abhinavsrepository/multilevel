@@ -19,6 +19,7 @@ export interface LoginResponse {
       profilePicture?: string;
       rank: string;
       kycStatus: string;
+      referralCode: string;
     };
   };
 }
@@ -90,4 +91,5 @@ export interface AuthUser {
   profilePicture?: string;
   rank: string;
   kycStatus: string;
+  referralCode: string;
 }

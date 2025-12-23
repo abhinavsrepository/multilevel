@@ -3,7 +3,7 @@ import { Property, PropertyFilters } from '../../types/property.types';
 
 // Base query with auth token
 const baseQuery = fetchBaseQuery({
-  baseUrl: import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000/api/v1',
+  baseUrl: import.meta.env.VITE_API_BASE_URL || 'https://mlm-backend-ljan.onrender.com/api/v1',
   prepareHeaders: (headers) => {
     const token = localStorage.getItem('token');
     if (token) {
@@ -31,13 +31,21 @@ export const propertyService = createApi({
     // Search properties with filters
     searchProperties: builder.mutation<
       { data: Property[]; total: number; page: number; pageSize: number },
-      { filters?: PropertyFilters; page?: number; pageSize?: number }
+      { filters?: PropertyFilters; page?: number; pageSize?: number; search?: string }
     >({
-      query: (data) => ({
-        url: '/properties/search',
-        method: 'POST',
-        body: data,
-      }),
+      query: (data) => {
+        const { filters, page, pageSize, search } = data;
+        return {
+          url: '/properties/search',
+          method: 'GET',
+          params: {
+            ...filters,
+            search,
+            page,
+            size: pageSize,
+          },
+        };
+      },
       invalidatesTags: ['Properties'],
     }),
 
@@ -159,17 +167,17 @@ export const propertyService = createApi({
 
     // Get available cities
     getAvailableCities: builder.query<{ data: string[] }, void>({
-      query: () => '/properties/filters/cities',
+      query: () => '/properties/metadata/cities',
     }),
 
     // Get available property types
     getPropertyTypes: builder.query<{ data: string[] }, void>({
-      query: () => '/properties/filters/types',
+      query: () => '/properties/metadata/types',
     }),
 
     // Get property amenities
     getPropertyAmenities: builder.query<{ data: string[] }, void>({
-      query: () => '/properties/filters/amenities',
+      query: () => '/properties/metadata/amenities',
     }),
 
     // Calculate ROI

@@ -122,7 +122,7 @@ exports.register = async (req, res) => {
             placementUserId: sponsor ? sponsor.id : null,
             placement: placement ? placement.toUpperCase() : 'AUTO',
             role: role || 'MEMBER',
-            status: 'ACTIVE'
+            status: 'INACTIVE' // User becomes ACTIVE only after first sale
         });
 
         if (user) {
@@ -198,8 +198,8 @@ exports.login = async (req, res) => {
         });
 
         if (user && (await user.validatePassword(password))) {
-            // Check if user is active
-            if (user.status !== 'ACTIVE') {
+            // Block suspended and blocked users, but allow inactive users to login
+            if (user.status === 'SUSPENDED' || user.status === 'BLOCKED') {
                 return res.status(403).json({
                     success: false,
                     message: `Your account is ${user.status.toLowerCase()}. Please contact support.`

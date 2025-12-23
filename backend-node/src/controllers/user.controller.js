@@ -157,7 +157,27 @@ exports.getDashboard = async (req, res) => {
 
             // 3. Team Stats
             safeQuery(() => User.count({ where: { sponsorId: userId } }), 0),
-            safeQuery(() => User.count({ where: { placementUserId: userId } }), 0),
+            safeQuery(async () => {
+                try {
+                    const query = `
+                        WITH RECURSIVE downline AS (
+                            SELECT id FROM users WHERE placement_user_id = :userId
+                            UNION ALL
+                            SELECT u.id FROM users u
+                            INNER JOIN downline d ON u.placement_user_id = d.id
+                        )
+                        SELECT count(*) as count FROM downline;
+                    `;
+                    const result = await sequelize.query(query, {
+                        replacements: { userId },
+                        type: sequelize.QueryTypes.SELECT
+                    });
+                    return parseInt(result[0].count);
+                } catch (e) {
+                    console.error('Team size query error:', e);
+                    return 0;
+                }
+            }, 0),
 
             // 4. User Details (for BV)
             safeQuery(() => User.findByPk(userId, { attributes: ['leftBv', 'rightBv', 'rank', 'referralCode'] })),
@@ -367,7 +387,11 @@ exports.getDashboard = async (req, res) => {
             stats: {
                 totalInvestment: totalInvestment || 0,
                 totalEarnings: wallet ? parseFloat(wallet.totalEarned) : 0,
-                availableBalance: wallet ? parseFloat(wallet.commissionBalance) : 0, // Using commission balance as available
+                availableBalance: wallet ? (
+                    parseFloat(wallet.commissionBalance || 0) +
+                    parseFloat(wallet.roiBalance || 0) +
+                    parseFloat(wallet.rentalIncomeBalance || 0)
+                ) : 0,
                 teamSize: teamSize || 0,
                 activeProperties: investmentsCount || 0,
                 todayIncome: todayCommissions || 0,

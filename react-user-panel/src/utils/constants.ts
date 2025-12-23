@@ -149,11 +149,11 @@ export const USER_STATUS_LABELS = {
 } as const;
 
 export const USER_STATUS_COLORS = {
-  [USER_STATUS.ACTIVE]: 'success',
-  [USER_STATUS.INACTIVE]: 'default',
-  [USER_STATUS.SUSPENDED]: 'warning',
-  [USER_STATUS.PENDING]: 'info',
-  [USER_STATUS.BLOCKED]: 'error',
+  [USER_STATUS.ACTIVE]: 'success',      // Green - User has made at least one sale
+  [USER_STATUS.INACTIVE]: 'error',      // Red - User has not made any sales yet
+  [USER_STATUS.SUSPENDED]: 'warning',   // Yellow - Temporarily suspended
+  [USER_STATUS.PENDING]: 'info',        // Blue - Awaiting verification
+  [USER_STATUS.BLOCKED]: 'error',       // Red - Permanently blocked
 } as const;
 
 // KYC Status

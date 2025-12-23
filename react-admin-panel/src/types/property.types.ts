@@ -73,7 +73,7 @@ export interface Property {
   nearbyFacilities: NearbyFacility[];
 
   // Status
-  status: 'AVAILABLE' | 'BOOKING_OPEN' | 'BOOKING_CLOSED' | 'SOLD_OUT' | 'UNDER_CONSTRUCTION' | 'COMPLETED';
+  status: 'AVAILABLE' | 'BOOKING_OPEN' | 'FEW_SLOTS_LEFT' | 'SOLD_OUT' | 'UPCOMING' | 'INACTIVE';
   launchDate?: string;
   bookingCloseDate?: string;
   expectedCompletionDate?: string;

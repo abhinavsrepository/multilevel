@@ -128,9 +128,13 @@ app.use('/api/v1/site-visits', siteVisitRoutes);
 // Static files
 app.use('/uploads', express.static(path.join(__dirname, '../uploads')));
 
-// Serve admin panel static files
+// Serve user panel static files
+const userPanelPath = path.join(__dirname, '../../react-user-panel/dist');
+app.use(express.static(userPanelPath));
+
+// Serve admin panel static files under /admin
 const adminPanelPath = path.join(__dirname, '../../react-admin-panel/dist');
-app.use(express.static(adminPanelPath));
+app.use('/admin', express.static(adminPanelPath));
 
 // SPA fallback - serve index.html for all non-API routes
 // This ensures React Router can handle routing on refresh
@@ -141,10 +145,23 @@ app.use((req, res, next) => {
         return next();
     }
 
-    // Serve index.html for all other routes
-    res.sendFile(path.join(adminPanelPath, 'index.html'), (err) => {
+    // Serve admin panel index.html for /admin routes
+    if (req.path.startsWith('/admin')) {
+        return res.sendFile(path.join(adminPanelPath, 'index.html'), (err) => {
+            if (err) {
+                logger.error('Error serving admin panel index.html', {
+                    error: err.message,
+                    path: req.path
+                });
+                next(err);
+            }
+        });
+    }
+
+    // Serve user panel index.html for all other routes
+    res.sendFile(path.join(userPanelPath, 'index.html'), (err) => {
         if (err) {
-            logger.error('Error serving admin panel index.html', {
+            logger.error('Error serving user panel index.html', {
                 error: err.message,
                 path: req.path
             });

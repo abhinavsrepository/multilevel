@@ -62,12 +62,12 @@ router.get('/price-range', getPropertiesByPriceRange);
 router.get('/investment-range', getPropertiesByInvestmentRange);
 
 // Filter Facets
-router.get('/filters/types', getPropertyTypes);
-router.get('/filters/cities', getAvailableCities);
-router.get('/filters/states', getAvailableStates);
-router.get('/filters/amenities', getAvailableAmenities);
-router.get('/filters/price-range', getPriceRangeStats);
-router.get('/filters/investment-range', getInvestmentRangeStats);
+router.get('/metadata/types', getPropertyTypes);
+router.get('/metadata/cities', getAvailableCities);
+router.get('/metadata/states', getAvailableStates);
+router.get('/metadata/amenities', getAvailableAmenities);
+router.get('/metadata/price-range', getPriceRangeStats);
+router.get('/metadata/investment-range', getInvestmentRangeStats);
 
 // Property Comparison
 router.get('/compare', compareProperties);

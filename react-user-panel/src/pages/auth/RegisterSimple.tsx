@@ -17,6 +17,11 @@ import {
   Link as MuiLink,
   useTheme,
   alpha,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  Divider,
 } from '@mui/material';
 import {
   Person,
@@ -30,6 +35,8 @@ import {
   VerifiedUser,
   PhotoCamera,
   Delete,
+  CameraAlt,
+  Warning,
 } from '@mui/icons-material';
 import { useNavigate, Link } from 'react-router-dom';
 import { useAppDispatch } from '@/redux/store';
@@ -71,6 +78,9 @@ const RegisterSimple: React.FC = () => {
   const [sponsorValidating, setSponsorValidating] = useState(false);
   const [sponsorVerified, setSponsorVerified] = useState(false);
   const [sponsorError, setSponsorError] = useState<string | null>(null);
+  const [showSuccessDialog, setShowSuccessDialog] = useState(false);
+  const [registeredUserId, setRegisteredUserId] = useState<string>('');
+  const [registeredUsername, setRegisteredUsername] = useState<string>('');
 
   // Handle input change
   const handleChange = (field: string) => (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -199,19 +209,29 @@ const RegisterSimple: React.FC = () => {
 
       const result = await dispatch(registerUser(registrationData)).unwrap();
 
-      // After successful registration, redirect to OTP verification
-      navigate('/otp-verification', {
-        state: {
-          email: formData.email,
-          mobile: formData.mobileNo,
-          from: 'registration'
-        }
-      });
+      // Store user info for the success dialog
+      setRegisteredUserId(result.user?.userId || result.user?.id || 'N/A');
+      setRegisteredUsername(result.user?.username || formData.email);
+
+      // Show success dialog
+      setShowSuccessDialog(true);
     } catch (err: any) {
       setError(err.message || 'Registration failed. Please try again.');
     } finally {
       setLoading(false);
     }
+  };
+
+  // Handle continuing to OTP verification
+  const handleContinueToOTP = () => {
+    setShowSuccessDialog(false);
+    navigate('/otp-verification', {
+      state: {
+        email: formData.email,
+        mobile: formData.mobileNo,
+        from: 'registration'
+      }
+    });
   };
 
   return (
@@ -576,6 +596,161 @@ const RegisterSimple: React.FC = () => {
           </Box>
         </Box>
       </Paper>
+
+      {/* Success Dialog */}
+      <Dialog
+        open={showSuccessDialog}
+        maxWidth="sm"
+        fullWidth
+        PaperProps={{
+          sx: {
+            borderRadius: 3,
+            background: `linear-gradient(135deg, ${alpha(theme.palette.success.main, 0.05)} 0%, ${alpha(theme.palette.primary.main, 0.05)} 100%)`,
+          }
+        }}
+      >
+        <DialogTitle sx={{ textAlign: 'center', pt: 4 }}>
+          <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 2 }}>
+            <Box
+              sx={{
+                width: 80,
+                height: 80,
+                borderRadius: '50%',
+                background: `linear-gradient(135deg, ${theme.palette.success.main} 0%, ${theme.palette.success.dark} 100%)`,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                animation: 'pulse 1.5s ease-in-out infinite',
+                '@keyframes pulse': {
+                  '0%, 100%': { transform: 'scale(1)' },
+                  '50%': { transform: 'scale(1.05)' },
+                },
+              }}
+            >
+              <CheckCircle sx={{ fontSize: 48, color: 'white' }} />
+            </Box>
+            <Typography variant="h4" fontWeight={700} color="success.main">
+              Registration Successful!
+            </Typography>
+          </Box>
+        </DialogTitle>
+
+        <DialogContent sx={{ px: 4, py: 3 }}>
+          <Alert
+            severity="warning"
+            icon={<Warning />}
+            sx={{
+              mb: 3,
+              fontWeight: 600,
+              '& .MuiAlert-message': {
+                width: '100%',
+                textAlign: 'center',
+              }
+            }}
+          >
+            IMPORTANT: Please take a screenshot of this information!
+          </Alert>
+
+          <Paper
+            elevation={3}
+            sx={{
+              p: 3,
+              background: `linear-gradient(135deg, ${alpha(theme.palette.primary.main, 0.1)} 0%, ${alpha(theme.palette.secondary.main, 0.1)} 100%)`,
+              border: `2px solid ${theme.palette.primary.main}`,
+              borderRadius: 2,
+            }}
+          >
+            <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', mb: 2 }}>
+              <CameraAlt sx={{ mr: 1, color: theme.palette.warning.main }} />
+              <Typography variant="h6" fontWeight={700} color="primary">
+                Your Registration Details
+              </Typography>
+            </Box>
+
+            <Divider sx={{ my: 2 }} />
+
+            <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+              <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <Typography variant="body1" color="text.secondary" fontWeight={600}>
+                  User ID:
+                </Typography>
+                <Chip
+                  label={registeredUserId}
+                  color="primary"
+                  sx={{
+                    fontSize: '1rem',
+                    fontWeight: 700,
+                    px: 2,
+                    py: 2.5,
+                  }}
+                />
+              </Box>
+
+              <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <Typography variant="body1" color="text.secondary" fontWeight={600}>
+                  Username:
+                </Typography>
+                <Typography variant="body1" fontWeight={700}>
+                  {registeredUsername}
+                </Typography>
+              </Box>
+
+              <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <Typography variant="body1" color="text.secondary" fontWeight={600}>
+                  Email:
+                </Typography>
+                <Typography variant="body1" fontWeight={700}>
+                  {formData.email}
+                </Typography>
+              </Box>
+
+              <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <Typography variant="body1" color="text.secondary" fontWeight={600}>
+                  Mobile:
+                </Typography>
+                <Typography variant="body1" fontWeight={700}>
+                  {formData.mobileNo}
+                </Typography>
+              </Box>
+            </Box>
+          </Paper>
+
+          <Box
+            sx={{
+              mt: 3,
+              p: 2,
+              backgroundColor: alpha(theme.palette.info.main, 0.1),
+              borderRadius: 2,
+              border: `1px solid ${alpha(theme.palette.info.main, 0.3)}`,
+            }}
+          >
+            <Typography variant="body2" color="text.secondary" textAlign="center">
+              Please save this information securely. You will need your User ID for future reference.
+            </Typography>
+          </Box>
+        </DialogContent>
+
+        <DialogActions sx={{ p: 3, pt: 0 }}>
+          <Button
+            fullWidth
+            variant="contained"
+            size="large"
+            onClick={handleContinueToOTP}
+            sx={{
+              py: 1.5,
+              fontSize: '1rem',
+              fontWeight: 700,
+              textTransform: 'uppercase',
+              background: 'linear-gradient(135deg, #7c3aed 0%, #a855f7 100%)',
+              '&:hover': {
+                background: 'linear-gradient(135deg, #6d28d9 0%, #9333ea 100%)',
+              },
+            }}
+          >
+            Continue to Verification
+          </Button>
+        </DialogActions>
+      </Dialog>
     </Box>
   );
 };

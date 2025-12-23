@@ -74,14 +74,14 @@ export interface TeamMember {
  * Get income dashboard stats
  */
 export const getIncomeDashboard = async (): Promise<ApiResponse<IncomeDashboard>> => {
-  return apiGet<ApiResponse<IncomeDashboard>>('/income/dashboard');
+  return apiGet<ApiResponse<IncomeDashboard>>('/incomes/dashboard');
 };
 
 /**
  * Get level overview with eligibility
  */
 export const getLevelOverview = async (): Promise<ApiResponse<LevelOverview[]>> => {
-  return apiGet<ApiResponse<LevelOverview[]>>('/income/level-overview');
+  return apiGet<ApiResponse<LevelOverview[]>>('/incomes/level-overview');
 };
 
 /**
@@ -95,7 +95,7 @@ export const getIncomeHistory = async (params?: {
   startDate?: string;
   endDate?: string;
 }): Promise<ApiResponse<{ data: Income[]; total: number }>> => {
-  return apiGet<ApiResponse<{ data: Income[]; total: number }>>('/income/history', params);
+  return apiGet<ApiResponse<{ data: Income[]; total: number }>>('/incomes/history', params);
 };
 
 /**
@@ -106,7 +106,7 @@ export const getDailyIncome = async (days: number = 30): Promise<ApiResponse<{
   totalIncome: number;
   byType: { [key: string]: number };
 }[]>> => {
-  return apiGet<ApiResponse<any>>('/income/daily', { days });
+  return apiGet<ApiResponse<any>>('/incomes/daily', { days });
 };
 
 /**
@@ -115,5 +115,5 @@ export const getDailyIncome = async (days: number = 30): Promise<ApiResponse<{
 export const getTeamHierarchy = async (params?: {
   maxDepth?: number;
 }): Promise<ApiResponse<TeamMember>> => {
-  return apiGet<ApiResponse<TeamMember>>('/income/team-hierarchy', params);
+  return apiGet<ApiResponse<TeamMember>>('/incomes/team-hierarchy', params);
 };

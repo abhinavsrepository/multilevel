@@ -59,16 +59,37 @@ exports.getLevelBonusEligibility = async (req, res) => {
         const directSaleDate = directSalesData?.latestDate || null;
         const levelBonusEligible = hasDirectSale; // Assuming eligibility depends on having a direct sale
 
+        // Calculate Active Directs (Users sponsored by this user who are ACTIVE)
+        const activeDirectsCount = await User.count({
+            where: {
+                sponsorUserId: userId,
+                status: 'ACTIVE'
+            }
+        });
+
+        // Calculate Max Unlocked Level
+        // 1 Active Direct  = Unlocks Level 1 & 2
+        // 3 Active Directs = Unlocks Level 3
+        // 5 Active Directs = Unlocks All (20)
+        let maxUnlockedLevel = 0;
+        if (activeDirectsCount >= 5) maxUnlockedLevel = 20;
+        else if (activeDirectsCount >= 3) maxUnlockedLevel = 5; // Level 3+
+        else if (activeDirectsCount >= 1) maxUnlockedLevel = 2; // Level 1 & 2
+
+        const eligibilityData = {
+            hasDirectSale,
+            levelBonusEligible,
+            directSaleDate,
+            status: levelBonusEligible ? 'UNLOCKED' : 'LOCKED',
+            directSalesCount,
+            activeDirectsCount,
+            maxUnlockedLevel
+        };
+
         return res.status(200).json({
             success: true,
             data: {
-                eligibility: {
-                    hasDirectSale,
-                    levelBonusEligible,
-                    directSaleDate,
-                    status: levelBonusEligible ? 'UNLOCKED' : 'LOCKED',
-                    directSalesCount
-                },
+                eligibility: eligibilityData,
                 stats: {
                     totalCount: parseInt(stats.totalCount) || 0,
                     totalAmount: parseFloat(stats.totalAmount) || 0,

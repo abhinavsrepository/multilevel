@@ -65,6 +65,7 @@ const PropertiesList: React.FC = () => {
       const params: any = {
         page,
         limit: size,
+        adminView: 'true',
       };
 
       // Add filters
@@ -226,19 +227,29 @@ const PropertiesList: React.FC = () => {
       label: 'Change Status',
       children: [
         {
-          key: 'active',
-          label: 'Active',
-          onClick: () => handleStatusChange(record.id!, 'ACTIVE'),
+          key: 'available',
+          label: 'Available',
+          onClick: () => handleStatusChange(record.id!, 'AVAILABLE'),
         },
         {
-          key: 'inactive',
-          label: 'Inactive',
-          onClick: () => handleStatusChange(record.id!, 'INACTIVE'),
+          key: 'booking_open',
+          label: 'Booking Open',
+          onClick: () => handleStatusChange(record.id!, 'BOOKING_OPEN'),
+        },
+        {
+          key: 'upcoming',
+          label: 'Upcoming',
+          onClick: () => handleStatusChange(record.id!, 'UPCOMING'),
         },
         {
           key: 'sold_out',
           label: 'Sold Out',
           onClick: () => handleStatusChange(record.id!, 'SOLD_OUT'),
+        },
+        {
+          key: 'inactive',
+          label: 'Inactive',
+          onClick: () => handleStatusChange(record.id!, 'INACTIVE'),
         },
       ],
     },
@@ -331,18 +342,21 @@ const PropertiesList: React.FC = () => {
       key: 'status',
       width: 120,
       filters: [
-        { text: 'Active', value: 'ACTIVE' },
-        { text: 'Inactive', value: 'INACTIVE' },
+        { text: 'Available', value: 'AVAILABLE' },
+        { text: 'Booking Open', value: 'BOOKING_OPEN' },
+        { text: 'Upcoming', value: 'UPCOMING' },
         { text: 'Sold Out', value: 'SOLD_OUT' },
-        { text: 'Under Maintenance', value: 'UNDER_MAINTENANCE' },
+        { text: 'Inactive', value: 'INACTIVE' },
       ],
       render: (status) => {
         let color = 'default';
-        if (status === 'ACTIVE') color = 'success';
-        if (status === 'INACTIVE') color = 'error';
-        if (status === 'SOLD_OUT') color = 'warning';
-        if (status === 'UNDER_MAINTENANCE') color = 'processing';
-        return <Tag color={color}>{status.replace('_', ' ')}</Tag>;
+        if (status === 'AVAILABLE') color = 'success';
+        if (status === 'BOOKING_OPEN') color = 'processing';
+        if (status === 'UPCOMING') color = 'purple';
+        if (status === 'SOLD_OUT') color = 'error';
+        if (status === 'INACTIVE') color = 'default';
+        const label = status ? status.replace(/_/g, ' ') : 'UNKNOWN';
+        return <Tag color={color}>{label}</Tag>;
       },
     },
     {
@@ -460,10 +474,11 @@ const PropertiesList: React.FC = () => {
                 value={statusFilter || undefined}
                 onChange={(value) => setStatusFilter(value || '')}
               >
-                <Option value="ACTIVE">Active</Option>
-                <Option value="INACTIVE">Inactive</Option>
+                <Option value="AVAILABLE">Available</Option>
+                <Option value="BOOKING_OPEN">Booking Open</Option>
+                <Option value="UPCOMING">Upcoming</Option>
                 <Option value="SOLD_OUT">Sold Out</Option>
-                <Option value="UNDER_MAINTENANCE">Under Maintenance</Option>
+                <Option value="INACTIVE">Inactive</Option>
               </Select>
             </Col>
             <Col xs={24} sm={12} md={6}>

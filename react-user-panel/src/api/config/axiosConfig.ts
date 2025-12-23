@@ -4,7 +4,7 @@ import { toast } from 'react-toastify';
 // Determine base URL
 const getBaseUrl = () => {
   // For local development, use proxy
-  if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+  if (typeof window !== 'undefined' && (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')) {
     return '/api/v1';
   }
 

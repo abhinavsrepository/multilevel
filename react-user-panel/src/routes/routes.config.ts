@@ -153,27 +153,27 @@ export const routesConfig: RouteConfig[] = [
   },
   {
     path: '/register',
-    element: RegisterSimple,
-    layout: 'blank',
+    element: Register,
+    layout: 'auth',
     protected: false,
     breadcrumb: 'Register',
     title: 'Register',
   },
   {
     path: '/auth/register',
-    element: RegisterSimple,
-    layout: 'blank',
-    protected: false,
-    breadcrumb: 'Register',
-    title: 'Register',
-  },
-  {
-    path: '/register-full',
     element: Register,
     layout: 'auth',
     protected: false,
     breadcrumb: 'Register',
     title: 'Register',
+  },
+  {
+    path: '/register-simple',
+    element: RegisterSimple,
+    layout: 'blank',
+    protected: false,
+    breadcrumb: 'Register Simple',
+    title: 'Register Simple',
   },
   {
     path: '/otp-verification',
@@ -421,6 +421,14 @@ export const routesConfig: RouteConfig[] = [
     breadcrumb: 'Reward Status',
     title: 'Reward Status',
   },
+  {
+    path: '/incomes/summary',
+    element: IncomeSummary,
+    layout: 'dashboard',
+    protected: true,
+    breadcrumb: 'Income Summary',
+    title: 'Income Summary',
+  },
 
   // ==================== Topup Routes ====================
   {
@@ -438,16 +446,6 @@ export const routesConfig: RouteConfig[] = [
     protected: true,
     breadcrumb: 'Topup History',
     title: 'Topup History',
-  },
-
- 
-  {
-    path: '/incomes/summary',
-    element: IncomeSummary,
-    layout: 'dashboard',
-    protected: true,
-    breadcrumb: 'Income Summary',
-    title: 'Income Summary',
   },
 
   // ==================== Bonanza Routes ====================

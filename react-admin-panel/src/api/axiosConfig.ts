@@ -1,3 +1,4 @@
+
 import axios, { AxiosInstance, InternalAxiosRequestConfig, AxiosResponse, AxiosError } from 'axios';
 
 
@@ -13,6 +14,7 @@ const getBaseUrl = () => {
 };
 
 const API_BASE_URL = getBaseUrl();
+
 
 const axiosInstance: AxiosInstance = axios.create({
   baseURL: API_BASE_URL,

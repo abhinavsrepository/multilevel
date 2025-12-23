@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import {
     Box,
     Card,
@@ -51,6 +51,9 @@ const ReferralRegistrationForm: React.FC<ReferralRegistrationFormProps> = ({ onS
     const [showSuccessDialog, setShowSuccessDialog] = useState(false);
     const [registeredCredentials, setRegisteredCredentials] = useState<{ email: string, password: string } | null>(null);
 
+    // Use ref to store debounce timer to prevent race conditions
+    const debounceTimerRef = useRef<NodeJS.Timeout | null>(null);
+
     const [formData, setFormData] = useState({
         sponsorId: '',
         sponsorName: '',
@@ -98,7 +101,9 @@ const ReferralRegistrationForm: React.FC<ReferralRegistrationFormProps> = ({ onS
                             setValidatingSponsor(true);
                             try {
                                 const response = await validateSponsor(userReferralCode);
-                                if (response.success && response.data?.valid) {
+                                console.log('Auto-fill validation response:', response);
+
+                                if (response.success && response.data?.valid && response.data?.sponsor) {
                                     setFormData(prev => ({
                                         ...prev,
                                         sponsorName: response.data.sponsor?.name || userName
@@ -159,38 +164,83 @@ const ReferralRegistrationForm: React.FC<ReferralRegistrationFormProps> = ({ onS
         setFormData(prev => ({ ...prev, dob: date }));
     };
 
-    const handleSponsorIdChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    // Improved sponsor validation with proper debounce and error handling
+    const handleSponsorIdChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
         const sponsorId = e.target.value.trim();
+
+        // Update form data immediately
         setFormData(prev => ({ ...prev, sponsorId, sponsorName: '' }));
         setSponsorError(null);
 
+        // Clear previous debounce timer to prevent race conditions
+        if (debounceTimerRef.current) {
+            clearTimeout(debounceTimerRef.current);
+        }
+
+        // If empty, stop here
         if (!sponsorId) {
+            setValidatingSponsor(false);
             return;
         }
 
-        // Validate sponsor after 500ms delay (debounce)
+        // Show loading indicator immediately
         setValidatingSponsor(true);
-        setTimeout(async () => {
+
+        // Debounce validation by 500ms
+        debounceTimerRef.current = setTimeout(async () => {
             try {
+                console.log('Validating sponsor ID:', sponsorId);
                 const response = await validateSponsor(sponsorId);
-                if (response.success && response.data?.isValid) {
+                console.log('Validation response:', response);
+
+                // Check if validation succeeded
+                if (response.success && response.data?.valid && response.data?.sponsor) {
+                    // Valid sponsor found
                     setFormData(prev => ({
                         ...prev,
-                        sponsorName: response.data.name || ''
+                        sponsorName: response.data.sponsor?.name || ''
                     }));
                     setSponsorError(null);
+                } else if (response.success === false && response.data?.valid === false) {
+                    // Backend explicitly said invalid
+                    setSponsorError(response.message || 'Sponsor not found');
+                    setFormData(prev => ({ ...prev, sponsorName: '' }));
                 } else {
+                    // Unexpected response format
+                    console.warn('Unexpected validation response:', response);
                     setSponsorError('Invalid sponsor ID');
                     setFormData(prev => ({ ...prev, sponsorName: '' }));
                 }
             } catch (err: any) {
-                setSponsorError(err.response?.data?.message || 'Failed to validate sponsor');
+                console.error('Sponsor validation error:', err);
+
+                // Extract error message from response
+                let errorMessage = 'Sponsor not found';
+
+                if (err.response?.data?.message) {
+                    errorMessage = err.response.data.message;
+                } else if (err.response?.status === 404) {
+                    errorMessage = 'Sponsor not found';
+                } else if (err.message) {
+                    errorMessage = err.message;
+                }
+
+                setSponsorError(errorMessage);
                 setFormData(prev => ({ ...prev, sponsorName: '' }));
             } finally {
                 setValidatingSponsor(false);
             }
         }, 500);
-    };
+    }, []);
+
+    // Cleanup debounce timer on unmount
+    useEffect(() => {
+        return () => {
+            if (debounceTimerRef.current) {
+                clearTimeout(debounceTimerRef.current);
+            }
+        };
+    }, []);
 
     const handleSelectChange = (e: any) => { // SelectChangeEvent is generic, using any for simplicity if types not handy
         const name = e.target.name as string;
@@ -224,6 +274,10 @@ const ReferralRegistrationForm: React.FC<ReferralRegistrationFormProps> = ({ onS
         }
         if (!formData.sponsorId) {
             setError("Sponsor ID is required");
+            return;
+        }
+        if (sponsorError) {
+            setError("Please enter a valid sponsor ID");
             return;
         }
         if (!formData.acceptTerms) {
@@ -521,7 +575,7 @@ const ReferralRegistrationForm: React.FC<ReferralRegistrationFormProps> = ({ onS
                         <Button
                             type="submit"
                             variant="contained"
-                            disabled={loading}
+                            disabled={loading || !!sponsorError}
                             sx={{
                                 bgcolor: '#4caf50', // Green button likely from theme or standard success
                                 '&:hover': { bgcolor: '#388e3c' },

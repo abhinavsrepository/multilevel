@@ -26,9 +26,9 @@ const ManualCommissionModal: React.FC<Props> = ({ visible, onCancel, userId, onS
 
     const fetchProperties = async () => {
         try {
-            const res = await propertyApi.getProperties({ page: 1, limit: 100 });
+            const res = await propertyApi.getProperties({ page: 1, size: 100 });
             if (res.data.success) {
-                setProperties(res.data.data);
+                setProperties(res.data.data.content);
             }
         } catch (error) {
             console.error(error);

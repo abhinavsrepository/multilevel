@@ -31,10 +31,10 @@ const PendingApprovals = lazy(() => import('@/pages/investments/PendingApprovals
 const CommissionsList = lazy(() => import('@/pages/commissions/CommissionsList'));
 const CommissionDetail = lazy(() => import('@/pages/commissions/CommissionDetail'));
 const CommissionSettings = lazy(() => import('@/pages/commissions/CommissionSettings'));
-
 const DirectBonus = lazy(() => import('@/pages/incomes/DirectBonus'));
 const LevelBonus = lazy(() => import('@/pages/incomes/LevelBonus'));
 const MatchingBonus = lazy(() => import('@/pages/incomes/MatchingBonus'));
+const ClubBonus = lazy(() => import('@/pages/incomes/ClubBonus'));
 const ROIBonus = lazy(() => import('@/pages/incomes/ROIBonus'));
 const RewardStatus = lazy(() => import('@/pages/incomes/RewardStatus'));
 const IncomeSummary = lazy(() => import('@/pages/incomes/IncomeSummary'));
@@ -143,6 +143,7 @@ const AppRoutes: React.FC = () => {
             <Route path="incomes/direct-bonus" element={<DirectBonus />} />
             <Route path="incomes/level-bonus" element={<LevelBonus />} />
             <Route path="incomes/matching-bonus" element={<MatchingBonus />} />
+            <Route path="incomes/club-bonus" element={<ClubBonus />} />
             <Route path="incomes/roi-bonus" element={<ROIBonus />} />
             <Route path="incomes/reward-status" element={<RewardStatus />} />
             <Route path="incomes/summary" element={<IncomeSummary />} />

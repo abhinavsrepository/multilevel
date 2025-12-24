@@ -26,6 +26,8 @@ interface Payout {
   };
   requestedAmount: string;
   netAmount: string;
+  adminCharge?: string;
+  tdsAmount?: string;
   paymentMethod: string;
   status: string;
   requestedAt: string;
@@ -114,8 +116,20 @@ const AllPayouts: React.FC = () => {
       key: 'amount',
       render: (_: any, record: Payout) => (
         <Space direction="vertical" size={0}>
-          <Text>Paid: ₹{parseFloat(record.netAmount).toFixed(2)}</Text>
-          <Text type="secondary" style={{ fontSize: '12px' }}>Gross: ₹{parseFloat(record.requestedAmount).toFixed(2)}</Text>
+          <Text>Gross: ₹{parseFloat(record.requestedAmount).toFixed(2)}</Text>
+          <Text type="secondary" style={{ fontSize: '12px' }}>Net: ₹{parseFloat(record.netAmount).toFixed(2)}</Text>
+        </Space>
+      ),
+    },
+    {
+      title: 'Deductions',
+      key: 'deductions',
+      render: (_: any, record: Payout) => (
+        <Space direction="vertical" size={0}>
+          <Text type="danger" style={{ fontSize: '12px' }}>Admin: ₹{parseFloat(record.adminCharge || '0').toFixed(2)}</Text>
+          <div title="TDS is deducted at Source (Income Generation), not at Payout.">
+            <Text type="secondary" style={{ fontSize: '12px' }}>TDS: ₹{parseFloat(record.tdsAmount || '0').toFixed(2)} *</Text>
+          </div>
         </Space>
       ),
     },

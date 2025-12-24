@@ -3,7 +3,7 @@ import axiosInstance, { api } from './axiosConfig';
 export interface Income {
     id: number;
     userId: number;
-    incomeType: 'DIRECT' | 'LEVEL' | 'MATCHING' | 'ROI' | 'REWARD';
+    incomeType: 'DIRECT' | 'LEVEL' | 'MATCHING' | 'ROI' | 'REWARD' | 'CLUB_BONUS';
     amount: number;
     description: string;
     status: 'PENDING' | 'APPROVED' | 'PAID' | 'REJECTED';

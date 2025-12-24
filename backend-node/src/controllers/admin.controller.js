@@ -13,8 +13,7 @@ exports.getAllUsers = async (req, res) => {
             where[Op.or] = [
                 { username: { [Op.iLike]: `%${search}%` } },
                 { email: { [Op.iLike]: `%${search}%` } },
-                { firstName: { [Op.iLike]: `%${search}%` } },
-                { lastName: { [Op.iLike]: `%${search}%` } }
+                { fullName: { [Op.iLike]: `%${search}%` } }
             ];
         }
 

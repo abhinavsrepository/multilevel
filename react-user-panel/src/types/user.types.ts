@@ -74,6 +74,7 @@ export interface RankProgress {
       current: number;
       required: number;
       percentage: number;
+      validVolume?: number;
     };
     personalInvestment: {
       current: number;
@@ -84,6 +85,21 @@ export interface RankProgress {
       leftActive: boolean;
       rightActive: boolean;
       achieved: boolean;
+    };
+    balancing?: {
+      strongestLeg: {
+        volume: number;
+        cappedVolume: number;
+        required: number;
+        percentage: number;
+      };
+      otherLegs: {
+        volume: number;
+        required: number;
+        percentage: number;
+      };
+      totalValidVolume: number;
+      target: number;
     };
   };
   overallProgress: number;

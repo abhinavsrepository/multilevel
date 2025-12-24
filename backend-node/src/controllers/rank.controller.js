@@ -1,4 +1,5 @@
 const { Rank, UserRank, User, sequelize } = require('../models');
+const RankService = require('../services/rank.service');
 const catchAsync = require('../utils/catchAsync');
 const AppError = require('../utils/appError');
 
@@ -158,73 +159,99 @@ exports.getUserRankProgress = catchAsync(async (req, res, next) => {
         order: [['displayOrder', 'ASC']]
     });
 
-    // 4. Calculate Progress
+    // 4. Calculate Progress & 40:60 Rule
     let progress = {};
     let overallProgress = 0;
     let guidance = [];
+    let balancingData = null;
 
     if (!nextRank) {
-        // Max rank achieved
         overallProgress = 100;
-        guidance.push("Congratulations! You have achieved the highest rank.");
-        progress = {
-            message: "Max Rank Achieved"
-        };
+        progress = { message: "Max Rank Achieved" };
     } else {
-        // Calculate Direct Referrals Progress
+        // --- 40:60 Logic Implementation ---
+
+        // Get volumes from RankService
+        const legVolumes = await RankService.getDirectLegVolumes(userId);
+        const volumes = legVolumes.map(l => l.volume);
+
+        const totalTeamBusiness = volumes.reduce((a, b) => a + b, 0);
+        const strongestLegVolume = Math.max(...volumes, 0);
+        const otherLegsVolume = totalTeamBusiness - strongestLegVolume;
+
+        // Targets
+        const target = parseFloat(nextRank.target || nextRank.requiredTeamInvestment || 0); // Assuming one of these holds the volume target
+
+        // 40:60 Calculation
+        const maxFromStrongLeg = target * 0.6;
+        const validFromStrongLeg = Math.min(strongestLegVolume, maxFromStrongLeg);
+
+        // For 'Other Legs', the requirement is implicit:
+        // IF StrongLeg > 60%, the excess doesn't count. 
+        // So effectively, you need 40% from others eventually to reach 100%.
+        // But for *current progress*, we just sum valid parts.
+
+        const validTotalVolume = validFromStrongLeg + otherLegsVolume;
+        const progressPercentage = target > 0 ? Math.min((validTotalVolume / target) * 100, 100) : 100;
+
+        balancingData = {
+            strongestLeg: {
+                volume: strongestLegVolume,
+                cappedVolume: validFromStrongLeg,
+                required: maxFromStrongLeg, // Visual guide for the user
+                percentage: (strongestLegVolume / maxFromStrongLeg) * 100
+                // Note: This percentage can go > 100% to show overflow
+            },
+            otherLegs: {
+                volume: otherLegsVolume,
+                required: target * 0.4, // Min 40% needed from others
+                percentage: (otherLegsVolume / (target * 0.4)) * 100
+            },
+            totalValidVolume,
+            target
+        };
+
+        // Standard Requirements
         const directsCount = await User.count({ where: { sponsorUserId: userId } });
         const requiredDirects = nextRank.requiredDirectReferrals || 0;
         const directsPct = requiredDirects > 0 ? Math.min((directsCount / requiredDirects) * 100, 100) : 100;
 
-        // Calculate Team Business Progress
-        const currentTeamBusiness = parseFloat(user.totalTeamBusiness || 0);
-        const requiredTeamBusiness = parseFloat(nextRank.requiredTeamInvestment || 0);
-        const teamBusinessPct = requiredTeamBusiness > 0 ? Math.min((currentTeamBusiness / requiredTeamBusiness) * 100, 100) : 100;
-
-        // Calculate Personal Investment Progress
         const currentPersonalInvestment = parseFloat(user.totalInvestment || 0);
         const requiredPersonalInvestment = parseFloat(nextRank.requiredPersonalInvestment || 0);
         const personalInvestmentPct = requiredPersonalInvestment > 0 ? Math.min((currentPersonalInvestment / requiredPersonalInvestment) * 100, 100) : 100;
 
-        // Populate Progress Object
         progress = {
-            directReferrals: {
-                current: directsCount,
-                required: requiredDirects,
-                percentage: parseFloat(directsPct.toFixed(1))
-            },
+            directReferrals: { current: directsCount, required: requiredDirects, percentage: parseFloat(directsPct.toFixed(1)) },
             teamInvestment: {
-                current: currentTeamBusiness,
-                required: requiredTeamBusiness,
-                percentage: parseFloat(teamBusinessPct.toFixed(1))
+                current: totalTeamBusiness,
+                required: target,
+                percentage: parseFloat(progressPercentage.toFixed(1)), // Use 40:60 adjusted percentage
+                validVolume: validTotalVolume
             },
-            personalInvestment: {
-                current: currentPersonalInvestment,
-                required: requiredPersonalInvestment,
-                percentage: parseFloat(personalInvestmentPct.toFixed(1))
-            }
+            personalInvestment: { current: currentPersonalInvestment, required: requiredPersonalInvestment, percentage: parseFloat(personalInvestmentPct.toFixed(1)) },
+            balancing: balancingData
         };
 
-        // Calculate Overall Score
         let activeCriteriaCount = 0;
         let totalPct = 0;
 
+        // Weighting - Team Business (Balancing) is usually the hardest part, let's weight equally for now
         if (requiredDirects > 0) { activeCriteriaCount++; totalPct += directsPct; }
-        if (requiredTeamBusiness > 0) { activeCriteriaCount++; totalPct += teamBusinessPct; }
+        if (target > 0) { activeCriteriaCount++; totalPct += progressPercentage; }
         if (requiredPersonalInvestment > 0) { activeCriteriaCount++; totalPct += personalInvestmentPct; }
 
         overallProgress = activeCriteriaCount > 0 ? (totalPct / activeCriteriaCount) : 0;
         overallProgress = parseFloat(overallProgress.toFixed(1));
 
-        // Generate Guidance
-        if (progress.directReferrals.current < progress.directReferrals.required) {
+        // Guidance
+        if (progress.directReferrals.current < progress.directReferrals.required)
             guidance.push(`Recruit ${progress.directReferrals.required - progress.directReferrals.current} more direct members.`);
-        }
-        if (progress.teamInvestment.current < progress.teamInvestment.required) {
-            guidance.push(`Increase Team Business by ${progress.teamInvestment.required - progress.teamInvestment.current}.`);
-        }
-        if (progress.personalInvestment.current < progress.personalInvestment.required) {
-            guidance.push(`Increase Personal Investment by ${progress.personalInvestment.required - progress.personalInvestment.current}.`);
+
+        if (validTotalVolume < target) {
+            guidance.push(`Increase Balanced Team Business by ${(target - validTotalVolume).toFixed(2)}.`);
+            if (otherLegsVolume < (target * 0.4)) {
+                guidance.push(`Focus on weaker legs! You need ${(target * 0.4 - otherLegsVolume).toFixed(2)} more from non-strongest legs.`);
+            }
         }
     }
 

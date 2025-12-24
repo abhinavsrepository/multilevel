@@ -6,8 +6,17 @@ exports.updateProfile = async (req, res) => {
         const user = await User.findByPk(req.user.id);
 
         if (user) {
-            user.firstName = req.body.firstName || user.firstName;
-            user.lastName = req.body.lastName || user.lastName;
+            // Fix: Update fullName directly as virtual fields firstName/lastName have no-op setters
+            if (req.body.firstName !== undefined || req.body.lastName !== undefined) {
+                const currentFirstName = user.firstName; // Uses virtual getter
+                const currentLastName = user.lastName;   // Uses virtual getter
+                
+                const newFirstName = req.body.firstName !== undefined ? req.body.firstName : currentFirstName;
+                const newLastName = req.body.lastName !== undefined ? req.body.lastName : currentLastName;
+                
+                user.fullName = `${newFirstName} ${newLastName}`.trim();
+            }
+
             user.phoneNumber = req.body.phoneNumber || user.phoneNumber;
 
             if (req.body.email && req.body.email !== user.email) {
@@ -28,6 +37,7 @@ exports.updateProfile = async (req, res) => {
                     email: updatedUser.email,
                     firstName: updatedUser.firstName,
                     lastName: updatedUser.lastName,
+                    fullName: updatedUser.fullName,
                     phoneNumber: updatedUser.phoneNumber,
                     role: updatedUser.role
                 }
@@ -180,7 +190,7 @@ exports.getDashboard = async (req, res) => {
             }, 0),
 
             // 4. User Details (for BV)
-            safeQuery(() => User.findByPk(userId, { attributes: ['leftBv', 'rightBv', 'rank', 'referralCode'] })),
+            safeQuery(() => User.findByPk(userId, { attributes: ['leftBv', 'rightBv', 'rank', 'referralCode', 'fullName'] })),
 
             // 5. Recent Activities
             safeQuery(() => ActivityLog.findAll({
@@ -378,7 +388,7 @@ exports.getDashboard = async (req, res) => {
 
         const dashboardData = {
             user: {
-                fullName: `${req.user.firstName} ${req.user.lastName}`,
+                fullName: req.user.fullName, // Use direct fullName from authenticated user
                 userId: req.user.username, // Using username as ID for display
                 rank: user?.rank || 'Associate',
                 profilePicture: req.user.profilePhoto || req.user.profilePicture || null,

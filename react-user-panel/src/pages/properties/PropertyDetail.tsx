@@ -318,7 +318,7 @@ const PropertyDetail: React.FC = () => {
                         : 'bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200'
                       }`}
                   >
-                    {currentProperty.status.replace(/_/g, ' ')}
+                    {currentProperty.status ? currentProperty.status.replace(/_/g, ' ') : 'N/A'}
                   </span>
                   <span className="px-3 py-1 bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 rounded-full text-sm font-semibold">
                     {currentProperty.propertyType}

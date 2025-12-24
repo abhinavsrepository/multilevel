@@ -111,12 +111,6 @@ const Sidebar: React.FC = () => {
           icon: <Home />,
           path: '/properties',
         },
-        {
-          id: 'property-categories',
-          label: 'Categories',
-          icon: <FaBuilding />,
-          path: '/properties/categories',
-        },
       ],
     },
     {

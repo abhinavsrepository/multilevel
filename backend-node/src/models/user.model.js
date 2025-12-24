@@ -145,11 +145,6 @@ module.exports = (sequelize, DataTypes) => {
             type: DataTypes.STRING,
             defaultValue: 'PENDING'
         },
-        totalTeamBusiness: {
-            type: DataTypes.DECIMAL(15, 2),
-            defaultValue: 0,
-            field: 'total_team_business'
-        },
         emailVerified: {
             type: DataTypes.BOOLEAN,
             defaultValue: false,

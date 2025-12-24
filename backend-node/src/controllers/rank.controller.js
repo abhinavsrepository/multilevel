@@ -124,7 +124,7 @@ exports.getUserRankProgress = catchAsync(async (req, res, next) => {
 
     // 1. Get User with latest stats
     const user = await User.findByPk(userId, {
-        attributes: ['id', 'totalTeamBusiness', 'totalInvestment', 'username']
+        attributes: ['id', 'username', 'leftBv', 'rightBv', 'personalBv', 'teamBv']
     });
 
     if (!user) {
@@ -252,7 +252,7 @@ exports.getAdminUserRankProgress = catchAsync(async (req, res, next) => {
 
     // 1. Get User with latest stats
     const user = await User.findByPk(userId, {
-        attributes: ['id', 'totalTeamBusiness', 'totalInvestment', 'username']
+        attributes: ['id', 'username', 'leftBv', 'rightBv', 'personalBv', 'teamBv']
     });
 
     if (!user) {

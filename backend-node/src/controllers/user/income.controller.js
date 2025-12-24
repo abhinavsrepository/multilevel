@@ -228,7 +228,7 @@ exports.getIncomeHistory = async (req, res) => {
                 {
                     model: User,
                     as: 'fromUser',
-                    attributes: ['id', 'username', 'firstName', 'lastName']
+                    attributes: ['id', 'username', 'fullName']
                 }
             ]
         });
@@ -327,7 +327,7 @@ exports.getTeamHierarchy = async (req, res) => {
             if (currentDepth > maxDepth) return [];
 
             const members = await User.findAll({
-                attributes: ['id', 'username', 'firstName', 'lastName', 'email', 'status', 'createdAt'],
+                attributes: ['id', 'username', 'fullName', 'email', 'status', 'createdAt'],
                 where: { sponsorId },
                 include: [
                     {

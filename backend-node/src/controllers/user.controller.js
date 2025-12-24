@@ -10,10 +10,10 @@ exports.updateProfile = async (req, res) => {
             if (req.body.firstName !== undefined || req.body.lastName !== undefined) {
                 const currentFirstName = user.firstName; // Uses virtual getter
                 const currentLastName = user.lastName;   // Uses virtual getter
-                
+
                 const newFirstName = req.body.firstName !== undefined ? req.body.firstName : currentFirstName;
                 const newLastName = req.body.lastName !== undefined ? req.body.lastName : currentLastName;
-                
+
                 user.fullName = `${newFirstName} ${newLastName}`.trim();
             }
 
@@ -297,6 +297,8 @@ exports.getDashboard = async (req, res) => {
         // Process Charts Data - Earnings Trend
         // Group by date and separate commission and ROI
         const earningsMap = {};
+        console.log('Raw Earnings Trend Data:', JSON.stringify(earningsTrend, null, 2)); // DEBUG LOG
+
         earningsTrend.forEach(e => {
             const date = e.get('date');
             if (!earningsMap[date]) {
@@ -314,6 +316,7 @@ exports.getDashboard = async (req, res) => {
             }
         });
         const processedEarningsTrend = Object.values(earningsMap);
+        console.log('Processed Earnings Trend:', processedEarningsTrend); // DEBUG LOG
 
         const processedCommissionBreakdown = commissionBreakdown.map((c, index) => {
             const colors = ['#6366f1', '#10b981', '#f59e0b', '#ef4444'];
@@ -324,6 +327,9 @@ exports.getDashboard = async (req, res) => {
                 color: colors[index % colors.length]
             };
         });
+        console.log('Processed Commission Breakdown:', processedCommissionBreakdown); // DEBUG LOG
+
+        // ... (rest of the file)
 
         const processedPortfolio = portfolioDistribution.map((p, index) => {
             const colors = ['#3b82f6', '#8b5cf6', '#ec4899'];

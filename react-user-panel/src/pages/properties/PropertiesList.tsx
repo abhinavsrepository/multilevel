@@ -305,26 +305,26 @@ const PropertiesList: React.FC = () => {
                         Property Type
                       </label>
                       <div className="space-y-2">
-                        {(typesData?.data || []).map((type) => (
+                        {(typesData?.data || []).map((typeData) => (
                           <label
-                            key={type}
+                            key={typeData.type}
                             className="flex items-center gap-2 cursor-pointer group"
                           >
                             <div className="relative">
-                              {filters.propertyType?.includes(type as PropertyType) ? (
+                              {filters.propertyType?.includes(typeData.type as PropertyType) ? (
                                 <FiCheckSquare className="w-5 h-5 text-blue-600" />
                               ) : (
                                 <FiSquare className="w-5 h-5 text-gray-400 group-hover:text-blue-600" />
                               )}
                               <input
                                 type="checkbox"
-                                checked={filters.propertyType?.includes(type as PropertyType)}
-                                onChange={() => toggleArrayFilter('propertyType', type)}
+                                checked={filters.propertyType?.includes(typeData.type as PropertyType)}
+                                onChange={() => toggleArrayFilter('propertyType', typeData.type)}
                                 className="sr-only"
                               />
                             </div>
                             <span className="text-sm text-gray-700 dark:text-gray-300">
-                              {type}
+                              {typeData.type}
                             </span>
                           </label>
                         ))}
@@ -338,26 +338,26 @@ const PropertiesList: React.FC = () => {
                         Location
                       </label>
                       <div className="space-y-2 max-h-48 overflow-y-auto">
-                        {(citiesData?.data || []).map((city) => (
+                        {(citiesData?.data || []).map((cityData) => (
                           <label
-                            key={city}
+                            key={`${cityData.city}-${cityData.state}`}
                             className="flex items-center gap-2 cursor-pointer group"
                           >
                             <div className="relative">
-                              {filters.city?.includes(city) ? (
+                              {filters.city?.includes(cityData.city) ? (
                                 <FiCheckSquare className="w-5 h-5 text-blue-600" />
                               ) : (
                                 <FiSquare className="w-5 h-5 text-gray-400 group-hover:text-blue-600" />
                               )}
                               <input
                                 type="checkbox"
-                                checked={filters.city?.includes(city)}
-                                onChange={() => toggleArrayFilter('city', city)}
+                                checked={filters.city?.includes(cityData.city)}
+                                onChange={() => toggleArrayFilter('city', cityData.city)}
                                 className="sr-only"
                               />
                             </div>
                             <span className="text-sm text-gray-700 dark:text-gray-300">
-                              {city}
+                              {cityData.city}, {cityData.state}
                             </span>
                           </label>
                         ))}
@@ -485,26 +485,26 @@ const PropertiesList: React.FC = () => {
                         Amenities
                       </label>
                       <div className="space-y-2 max-h-48 overflow-y-auto">
-                        {(amenitiesData?.data || []).map((amenity) => (
+                        {(amenitiesData?.data || []).map((amenityData) => (
                           <label
-                            key={amenity}
+                            key={amenityData.amenity}
                             className="flex items-center gap-2 cursor-pointer group"
                           >
                             <div className="relative">
-                              {filters.amenities?.includes(amenity) ? (
+                              {filters.amenities?.includes(amenityData.amenity) ? (
                                 <FiCheckSquare className="w-5 h-5 text-blue-600" />
                               ) : (
                                 <FiSquare className="w-5 h-5 text-gray-400 group-hover:text-blue-600" />
                               )}
                               <input
                                 type="checkbox"
-                                checked={filters.amenities?.includes(amenity)}
-                                onChange={() => toggleArrayFilter('amenities', amenity)}
+                                checked={filters.amenities?.includes(amenityData.amenity)}
+                                onChange={() => toggleArrayFilter('amenities', amenityData.amenity)}
                                 className="sr-only"
                               />
                             </div>
                             <span className="text-sm text-gray-700 dark:text-gray-300">
-                              {amenity}
+                              {amenityData.amenity}
                             </span>
                           </label>
                         ))}

@@ -219,7 +219,7 @@ exports.getDashboard = async (req, res) => {
                 group: ['incomeType']
             }), []),
 
-            // 8. Earnings Trend (Line Chart - Last 7 days)
+            // 8. Earnings Trend (Line Chart - Last 365 days)
             safeQuery(() => Income.findAll({
                 attributes: [
                     [sequelize.fn('DATE', sequelize.col('created_at')), 'date'],
@@ -229,7 +229,7 @@ exports.getDashboard = async (req, res) => {
                 where: {
                     userId,
                     createdAt: {
-                        [Op.gte]: new Date(new Date().setDate(new Date().getDate() - 7))
+                        [Op.gte]: new Date(new Date().setDate(new Date().getDate() - 365))
                     }
                 },
                 group: [sequelize.fn('DATE', sequelize.col('created_at')), 'incomeType'],
@@ -246,10 +246,10 @@ exports.getDashboard = async (req, res) => {
                 group: ['propertyId']
             }), []),
 
-            // 10. Team Growth (Bar Chart - Last 6 months) - Left/Right Leg
+            // 10. Team Growth (Bar Chart - Last 12 months) - Left/Right Leg
             safeQuery(async () => {
-                const sixMonthsAgo = new Date();
-                sixMonthsAgo.setMonth(sixMonthsAgo.getMonth() - 6);
+                const twelveMonthsAgo = new Date();
+                twelveMonthsAgo.setMonth(twelveMonthsAgo.getMonth() - 12);
 
                 const leftLegData = await User.findAll({
                     attributes: [
@@ -259,7 +259,7 @@ exports.getDashboard = async (req, res) => {
                     where: {
                         placementUserId: userId,
                         placementSide: 'LEFT',
-                        createdAt: { [Op.gte]: sixMonthsAgo }
+                        createdAt: { [Op.gte]: twelveMonthsAgo }
                     },
                     group: [sequelize.fn('TO_CHAR', sequelize.col('created_at'), 'YYYY-MM')],
                     raw: true
@@ -273,7 +273,7 @@ exports.getDashboard = async (req, res) => {
                     where: {
                         placementUserId: userId,
                         placementSide: 'RIGHT',
-                        createdAt: { [Op.gte]: sixMonthsAgo }
+                        createdAt: { [Op.gte]: twelveMonthsAgo }
                     },
                     group: [sequelize.fn('TO_CHAR', sequelize.col('created_at'), 'YYYY-MM')],
                     raw: true
@@ -297,8 +297,6 @@ exports.getDashboard = async (req, res) => {
         // Process Charts Data - Earnings Trend
         // Group by date and separate commission and ROI
         const earningsMap = {};
-        console.log('Raw Earnings Trend Data:', JSON.stringify(earningsTrend, null, 2)); // DEBUG LOG
-
         earningsTrend.forEach(e => {
             const date = e.get('date');
             if (!earningsMap[date]) {
@@ -316,7 +314,6 @@ exports.getDashboard = async (req, res) => {
             }
         });
         const processedEarningsTrend = Object.values(earningsMap);
-        console.log('Processed Earnings Trend:', processedEarningsTrend); // DEBUG LOG
 
         const processedCommissionBreakdown = commissionBreakdown.map((c, index) => {
             const colors = ['#6366f1', '#10b981', '#f59e0b', '#ef4444'];
@@ -327,7 +324,6 @@ exports.getDashboard = async (req, res) => {
                 color: colors[index % colors.length]
             };
         });
-        console.log('Processed Commission Breakdown:', processedCommissionBreakdown); // DEBUG LOG
 
         // ... (rest of the file)
 

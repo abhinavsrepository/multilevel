@@ -218,3 +218,39 @@ exports.getCommissionsByType = async (req, res) => {
         res.status(500).json({ success: false, message: 'Server Error', error: error.message });
     }
 };
+
+exports.distributeCommission = async (req, res) => {
+    try {
+        const { username, amount, remarks } = req.body;
+        const commissionService = require('../services/commission.service');
+
+        // Find user by username
+        const user = await User.findOne({ where: { username } });
+        if (!user) {
+            return res.status(404).json({ success: false, message: 'User not found' });
+        }
+
+        // Create a mock investment object
+        const mockInvestment = {
+            id: `MANUAL-${Date.now()}`,
+            userId: user.id,
+            investmentAmount: amount,
+            totalPaid: amount,
+            status: 'COMPLETED',
+            remarks: remarks || 'Manual Distribution'
+        };
+
+        // Trigger Calculation
+        await commissionService.calculateLevelCommission(mockInvestment);
+
+        res.json({
+            success: true,
+            message: `Commission distribution triggered for ${username} on amount ₹${amount}`
+        });
+
+    } catch (error) {
+        console.error('Manual Distribution Error:', error);
+        res.status(500).json({ success: false, message: 'Distribution failed', error: error.message });
+    }
+};
+

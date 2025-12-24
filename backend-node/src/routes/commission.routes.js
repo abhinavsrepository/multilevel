@@ -13,5 +13,6 @@ router.get('/trends', protect, commissionController.getCommissionTrends);
 // Settings routes (Admin only)
 router.get('/settings', protect, authorize('ADMIN'), commissionSettingsController.getCommissionRules);
 router.post('/settings', protect, authorize('ADMIN'), commissionSettingsController.updateCommissionRules);
+router.post('/admin/distribute', protect, authorize('ADMIN'), commissionController.distributeCommission);
 
 module.exports = router;

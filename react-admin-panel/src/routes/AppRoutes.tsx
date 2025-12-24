@@ -30,6 +30,7 @@ const PendingApprovals = lazy(() => import('@/pages/investments/PendingApprovals
 
 const CommissionsList = lazy(() => import('@/pages/commissions/CommissionsList'));
 const CommissionDetail = lazy(() => import('@/pages/commissions/CommissionDetail'));
+const ManualDistribution = lazy(() => import('@/pages/commissions/ManualDistribution'));
 const CommissionSettings = lazy(() => import('@/pages/commissions/CommissionSettings'));
 const DirectBonus = lazy(() => import('@/pages/incomes/DirectBonus'));
 const LevelBonus = lazy(() => import('@/pages/incomes/LevelBonus'));
@@ -137,6 +138,7 @@ const AppRoutes: React.FC = () => {
             {/* Commissions */}
             <Route path="commissions" element={<CommissionsList />} />
             <Route path="commissions/settings" element={<CommissionSettings />} />
+            <Route path="commissions/manual" element={<ManualDistribution />} />
             <Route path="commissions/:id" element={<CommissionDetail />} />
 
             {/* Incomes */}

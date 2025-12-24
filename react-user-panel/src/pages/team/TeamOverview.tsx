@@ -76,11 +76,11 @@ const TeamOverview: React.FC = () => {
         }
 
         if (growthRes.success && growthRes.data) {
-          setGrowth(growthRes.data);
+          setGrowth(Array.isArray(growthRes.data) ? growthRes.data : []);
         }
 
         if (levelRes.success && levelRes.data) {
-          setLevelBreakdown(levelRes.data);
+          setLevelBreakdown(Array.isArray(levelRes.data) ? levelRes.data : []);
         }
       } catch (err: any) {
         setError(err.message || 'Failed to load team data');
@@ -107,6 +107,7 @@ const TeamOverview: React.FC = () => {
    * Prepare growth chart data
    */
   const getGrowthChartData = () => {
+    if (!Array.isArray(growth)) return [];
     return growth.map((g) => ({
       date: new Date(g.date).toLocaleDateString('en-IN', { month: 'short', year: 'numeric' }),
       total: g.total,

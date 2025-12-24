@@ -229,7 +229,7 @@ const PropertyCard: React.FC<PropertyCardProps> = ({
           <div className="flex items-center text-gray-600 dark:text-gray-400 text-sm">
             <FiMapPin className="w-4 h-4 mr-1 flex-shrink-0" />
             <span className="truncate">
-              {property.location.city}, {property.location.state}
+              {property.city || property.location?.city || 'Unknown'}, {property.state || property.location?.state || 'Unknown'}
             </span>
           </div>
         </div>
@@ -239,7 +239,7 @@ const PropertyCard: React.FC<PropertyCardProps> = ({
           <div>
             <p className="text-xs text-gray-500 dark:text-gray-400 mb-1">Total Price</p>
             <p className="text-lg font-bold text-gray-900 dark:text-white">
-              {formatCurrency(property.price)}
+              {property.price ? formatCurrency(property.price) : 'N/A'}
             </p>
           </div>
           <div>
@@ -247,7 +247,7 @@ const PropertyCard: React.FC<PropertyCardProps> = ({
             <div className="flex items-center">
               <FiTrendingUp className="w-4 h-4 text-green-500 mr-1" />
               <p className="text-lg font-bold text-green-600 dark:text-green-400">
-                {property.expectedROI}%
+                {property.expectedROI || property.expectedRoiPercent || '0'}%
               </p>
             </div>
           </div>
@@ -258,58 +258,60 @@ const PropertyCard: React.FC<PropertyCardProps> = ({
           <div>
             <p className="text-xs text-gray-500 dark:text-gray-400 mb-1">Min Investment</p>
             <p className="text-sm font-semibold text-gray-900 dark:text-white">
-              {formatCurrency(property.minInvestment)}
+              {property.minInvestment ? formatCurrency(property.minInvestment) : 'N/A'}
             </p>
           </div>
           <div>
             <p className="text-xs text-gray-500 dark:text-gray-400 mb-1">BV Value</p>
             <p className="text-sm font-semibold text-blue-600 dark:text-blue-400">
-              {property.bvValue.toLocaleString()} BV
+              {property.bvValue ? property.bvValue.toLocaleString() : '0'} BV
             </p>
           </div>
         </div>
 
         {/* Booking Progress */}
-        <div className="mb-4">
-          <div className="flex items-center justify-between mb-2">
-            <p className="text-xs text-gray-600 dark:text-gray-400 font-medium">
-              Booking Progress
-            </p>
-            <p className="text-xs font-semibold text-gray-900 dark:text-white">
-              {property.bookingInfo.bookingProgress}%
-            </p>
+        {property.bookingInfo && (
+          <div className="mb-4">
+            <div className="flex items-center justify-between mb-2">
+              <p className="text-xs text-gray-600 dark:text-gray-400 font-medium">
+                Booking Progress
+              </p>
+              <p className="text-xs font-semibold text-gray-900 dark:text-white">
+                {property.bookingInfo.bookingProgress || 0}%
+              </p>
+            </div>
+            <div className="h-2 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
+              <motion.div
+                className="h-full bg-gradient-to-r from-blue-500 to-blue-600 rounded-full"
+                initial={{ width: 0 }}
+                animate={{ width: `${property.bookingInfo.bookingProgress || 0}%` }}
+                transition={{ duration: 1, delay: 0.2 }}
+              />
+            </div>
+            <div className="flex items-center justify-between mt-1">
+              <p className="text-xs text-gray-500 dark:text-gray-400">
+                {property.bookingInfo.bookedSlots || 0} / {property.bookingInfo.totalSlots || 0} slots booked
+              </p>
+              <p className="text-xs text-green-600 dark:text-green-400 font-medium">
+                {property.bookingInfo.availableSlots || 0} left
+              </p>
+            </div>
           </div>
-          <div className="h-2 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
-            <motion.div
-              className="h-full bg-gradient-to-r from-blue-500 to-blue-600 rounded-full"
-              initial={{ width: 0 }}
-              animate={{ width: `${property.bookingInfo.bookingProgress}%` }}
-              transition={{ duration: 1, delay: 0.2 }}
-            />
-          </div>
-          <div className="flex items-center justify-between mt-1">
-            <p className="text-xs text-gray-500 dark:text-gray-400">
-              {property.bookingInfo.bookedSlots} / {property.bookingInfo.totalSlots} slots booked
-            </p>
-            <p className="text-xs text-green-600 dark:text-green-400 font-medium">
-              {property.bookingInfo.availableSlots} left
-            </p>
-          </div>
-        </div>
+        )}
 
         {/* Additional Info */}
         <div className="grid grid-cols-3 gap-2 mb-4 text-xs text-gray-600 dark:text-gray-400">
           <div className="flex items-center">
             <FiUsers className="w-3.5 h-3.5 mr-1" />
-            <span>{property.investmentStats.totalInvestorsCount} investors</span>
+            <span>{property.investmentStats?.totalInvestorsCount || 0} investors</span>
           </div>
           <div className="flex items-center">
             <FiCalendar className="w-3.5 h-3.5 mr-1" />
-            <span>{property.roiTenure}Y tenure</span>
+            <span>{property.roiTenure || property.roiTenureMonths ? Math.round((property.roiTenure || property.roiTenureMonths) / 12) : 0}Y tenure</span>
           </div>
           <div className="flex items-center">
             <FiDollarSign className="w-3.5 h-3.5 mr-1" />
-            <span>{property.annualAppreciation}% p.a.</span>
+            <span>{property.annualAppreciation || property.appreciationRateAnnual || 0}% p.a.</span>
           </div>
         </div>
 

@@ -20,6 +20,12 @@ exports.calculateLevelCommission = async (investment) => {
         const directSponsor = await User.findByPk(investor.sponsorUserId);
         if (!directSponsor) return;
 
+        // Implementation of Terms & Conditions: Income not generated if KYC not approved or not activated
+        if (directSponsor.kycStatus !== 'APPROVED' || !directSponsor.isActivated) {
+            console.log(`Income not generated for ${directSponsor.username}: KYC or Activation missing.`);
+            return;
+        }
+
         const TDS_RATE = 5; // 5% Standard TDS
 
         // =================================================================

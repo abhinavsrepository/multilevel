@@ -84,4 +84,6 @@ export const userApi = {
   // Get user tickets
   getUserTickets: (userId: number, params: any) =>
     api.get(`/admin/users/${userId}/tickets`, { params }),
+
+  addManualCommission: (data: any) => api.post('/admin/commissions/manual', data),
 };

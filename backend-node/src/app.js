@@ -47,6 +47,7 @@ const documentRoutes = require('./routes/document.routes');
 const siteVisitRoutes = require('./routes/site-visit.routes');
 const healthRoutes = require('./routes/health.routes');
 const clubBonusRoutes = require('./routes/club-bonus.routes');
+const propertySaleRoutes = require('./routes/property-sale.routes');
 
 const app = express();
 
@@ -126,6 +127,7 @@ app.use('/api/v1/bookings', bookingRoutes);
 app.use('/api/v1/documents', documentRoutes);
 app.use('/api/v1/site-visits', siteVisitRoutes);
 app.use('/api/v1/club-bonus', clubBonusRoutes);
+app.use('/api/v1/property-sales', propertySaleRoutes);
 
 // Static files
 app.use('/uploads', express.static(path.join(__dirname, '../uploads')));

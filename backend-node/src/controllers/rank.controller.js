@@ -122,7 +122,16 @@ exports.getAvailableRanks = catchAsync(async (req, res, next) => {
 exports.getUserRankProgress = catchAsync(async (req, res, next) => {
     const userId = req.user.id;
 
-    // Get current rank
+    // 1. Get User with latest stats
+    const user = await User.findByPk(userId, {
+        attributes: ['id', 'totalTeamBusiness', 'totalInvestment', 'username']
+    });
+
+    if (!user) {
+        return next(new AppError('User not found', 404));
+    }
+
+    // 2. Get current rank
     const currentRankRecord = await UserRank.findOne({
         where: { userId: userId, isCurrent: true },
         include: [{ model: Rank, as: 'Rank' }]
@@ -132,14 +141,14 @@ exports.getUserRankProgress = catchAsync(async (req, res, next) => {
     if (currentRankRecord) {
         currentRank = currentRankRecord.Rank;
     } else {
-        // Fallback to lowest rank or null
+        // Fallback: Get rank with lowest displayOrder (usually 'Associate' or 'Member')
         const lowestRank = await Rank.findOne({
             order: [['displayOrder', 'ASC']]
         });
         currentRank = lowestRank || { name: 'Unranked', displayOrder: 0 };
     }
 
-    // Find next rank
+    // 3. Find next rank
     const { Op } = require('sequelize');
     const nextRank = await Rank.findOne({
         where: {
@@ -149,23 +158,179 @@ exports.getUserRankProgress = catchAsync(async (req, res, next) => {
         order: [['displayOrder', 'ASC']]
     });
 
-    // Mock progress data since this is a manual system
-    const progress = {
-        directReferrals: { current: 0, required: nextRank?.requiredDirectReferrals || 0, percentage: 0 },
-        teamInvestment: { current: 0, required: nextRank?.requiredTeamInvestment || 0, percentage: 0 },
-        personalInvestment: { current: 0, required: nextRank?.requiredPersonalInvestment || 0, percentage: 0 },
-        activeLegs: { leftActive: false, rightActive: false, achieved: false }
-    };
+    // 4. Calculate Progress
+    let progress = {};
+    let overallProgress = 0;
+    let guidance = [];
 
-    const overallProgress = 0;
+    if (!nextRank) {
+        // Max rank achieved
+        overallProgress = 100;
+        guidance.push("Congratulations! You have achieved the highest rank.");
+        progress = {
+            message: "Max Rank Achieved"
+        };
+    } else {
+        // Calculate Direct Referrals Progress
+        const directsCount = await User.count({ where: { sponsorUserId: userId } });
+        const requiredDirects = nextRank.requiredDirectReferrals || 0;
+        const directsPct = requiredDirects > 0 ? Math.min((directsCount / requiredDirects) * 100, 100) : 100;
+
+        // Calculate Team Business Progress
+        const currentTeamBusiness = parseFloat(user.totalTeamBusiness || 0);
+        const requiredTeamBusiness = parseFloat(nextRank.requiredTeamInvestment || 0);
+        const teamBusinessPct = requiredTeamBusiness > 0 ? Math.min((currentTeamBusiness / requiredTeamBusiness) * 100, 100) : 100;
+
+        // Calculate Personal Investment Progress
+        const currentPersonalInvestment = parseFloat(user.totalInvestment || 0);
+        const requiredPersonalInvestment = parseFloat(nextRank.requiredPersonalInvestment || 0);
+        const personalInvestmentPct = requiredPersonalInvestment > 0 ? Math.min((currentPersonalInvestment / requiredPersonalInvestment) * 100, 100) : 100;
+
+        // Populate Progress Object
+        progress = {
+            directReferrals: {
+                current: directsCount,
+                required: requiredDirects,
+                percentage: parseFloat(directsPct.toFixed(1))
+            },
+            teamInvestment: {
+                current: currentTeamBusiness,
+                required: requiredTeamBusiness,
+                percentage: parseFloat(teamBusinessPct.toFixed(1))
+            },
+            personalInvestment: {
+                current: currentPersonalInvestment,
+                required: requiredPersonalInvestment,
+                percentage: parseFloat(personalInvestmentPct.toFixed(1))
+            }
+        };
+
+        // Calculate Overall Score
+        let activeCriteriaCount = 0;
+        let totalPct = 0;
+
+        if (requiredDirects > 0) { activeCriteriaCount++; totalPct += directsPct; }
+        if (requiredTeamBusiness > 0) { activeCriteriaCount++; totalPct += teamBusinessPct; }
+        if (requiredPersonalInvestment > 0) { activeCriteriaCount++; totalPct += personalInvestmentPct; }
+
+        overallProgress = activeCriteriaCount > 0 ? (totalPct / activeCriteriaCount) : 0;
+        overallProgress = parseFloat(overallProgress.toFixed(1));
+
+        // Generate Guidance
+        if (progress.directReferrals.current < progress.directReferrals.required) {
+            guidance.push(`Recruit ${progress.directReferrals.required - progress.directReferrals.current} more direct members.`);
+        }
+        if (progress.teamInvestment.current < progress.teamInvestment.required) {
+            guidance.push(`Increase Team Business by ${progress.teamInvestment.required - progress.teamInvestment.current}.`);
+        }
+        if (progress.personalInvestment.current < progress.personalInvestment.required) {
+            guidance.push(`Increase Personal Investment by ${progress.personalInvestment.required - progress.personalInvestment.current}.`);
+        }
+    }
 
     res.status(200).json({
         success: true,
         data: {
-            currentRank,
-            nextRank,
+            currentRank: {
+                name: currentRank.name,
+                displayOrder: currentRank.displayOrder
+            },
+            nextRank: nextRank ? {
+                name: nextRank.name,
+                displayOrder: nextRank.displayOrder,
+                reward: nextRank.oneTimeBonus
+            } : null,
             progress,
-            overallProgress
+            overallProgress,
+            guidance
+        }
+    });
+});
+
+exports.getAdminUserRankProgress = catchAsync(async (req, res, next) => {
+    const userId = req.params.userId;
+
+    // 1. Get User with latest stats
+    const user = await User.findByPk(userId, {
+        attributes: ['id', 'totalTeamBusiness', 'totalInvestment', 'username']
+    });
+
+    if (!user) {
+        return next(new AppError('User not found', 404));
+    }
+
+    // 2. Get current rank
+    const currentRankRecord = await UserRank.findOne({
+        where: { userId: userId, isCurrent: true },
+        include: [{ model: Rank, as: 'Rank' }]
+    });
+
+    let currentRank;
+    if (currentRankRecord) {
+        currentRank = currentRankRecord.Rank;
+    } else {
+        const lowestRank = await Rank.findOne({ order: [['displayOrder', 'ASC']] });
+        currentRank = lowestRank || { name: 'Unranked', displayOrder: 0 };
+    }
+
+    // 3. Find next rank
+    const { Op } = require('sequelize');
+    const nextRank = await Rank.findOne({
+        where: {
+            displayOrder: { [Op.gt]: currentRank.displayOrder || 0 },
+            isActive: true
+        },
+        order: [['displayOrder', 'ASC']]
+    });
+
+    // 4. Calculate Progress
+    let progress = {};
+    let overallProgress = 0;
+    let guidance = [];
+
+    if (!nextRank) {
+        overallProgress = 100;
+        progress = { message: "Max Rank Achieved" };
+    } else {
+        const directsCount = await User.count({ where: { sponsorUserId: userId } });
+        const requiredDirects = nextRank.requiredDirectReferrals || 0;
+        const directsPct = requiredDirects > 0 ? Math.min((directsCount / requiredDirects) * 100, 100) : 100;
+
+        const currentTeamBusiness = parseFloat(user.totalTeamBusiness || 0);
+        const requiredTeamBusiness = parseFloat(nextRank.requiredTeamInvestment || 0);
+        const teamBusinessPct = requiredTeamBusiness > 0 ? Math.min((currentTeamBusiness / requiredTeamBusiness) * 100, 100) : 100;
+
+        const currentPersonalInvestment = parseFloat(user.totalInvestment || 0);
+        const requiredPersonalInvestment = parseFloat(nextRank.requiredPersonalInvestment || 0);
+        const personalInvestmentPct = requiredPersonalInvestment > 0 ? Math.min((currentPersonalInvestment / requiredPersonalInvestment) * 100, 100) : 100;
+
+        progress = {
+            directReferrals: { current: directsCount, required: requiredDirects, percentage: parseFloat(directsPct.toFixed(1)) },
+            teamInvestment: { current: currentTeamBusiness, required: requiredTeamBusiness, percentage: parseFloat(teamBusinessPct.toFixed(1)) },
+            personalInvestment: { current: currentPersonalInvestment, required: requiredPersonalInvestment, percentage: parseFloat(personalInvestmentPct.toFixed(1)) }
+        };
+
+        let activeCriteriaCount = 0;
+        let totalPct = 0;
+        if (requiredDirects > 0) { activeCriteriaCount++; totalPct += directsPct; }
+        if (requiredTeamBusiness > 0) { activeCriteriaCount++; totalPct += teamBusinessPct; }
+        if (requiredPersonalInvestment > 0) { activeCriteriaCount++; totalPct += personalInvestmentPct; }
+
+        overallProgress = activeCriteriaCount > 0 ? (totalPct / activeCriteriaCount) : 0;
+        overallProgress = parseFloat(overallProgress.toFixed(1));
+
+        if (progress.directReferrals.current < progress.directReferrals.required) guidance.push(`Needs ${progress.directReferrals.required - progress.directReferrals.current} more direct members.`);
+        if (progress.teamInvestment.current < progress.teamInvestment.required) guidance.push(`Needs ${progress.teamInvestment.required - progress.teamInvestment.current} more Team Business.`);
+    }
+
+    res.status(200).json({
+        success: true,
+        data: {
+            currentRank: { name: currentRank.name, displayOrder: currentRank.displayOrder },
+            nextRank: nextRank ? { name: nextRank.name, displayOrder: nextRank.displayOrder } : null,
+            progress,
+            overallProgress,
+            guidance
         }
     });
 });

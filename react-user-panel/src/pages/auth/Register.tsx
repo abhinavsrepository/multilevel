@@ -109,9 +109,9 @@ type RegisterFormData = yup.InferType<typeof registerSchema>;
 interface SponsorInfo {
   sponsorId: string;
   name: string;
-  rank: string;
-  contact: string;
-  isValid: boolean;
+  rank?: string;
+  contact?: string;
+  valid: boolean;
 }
 
 /**
@@ -197,13 +197,19 @@ const Register: React.FC = () => {
 
     try {
       const response = await validateSponsor(sponsorIdValue.trim());
-      if (response.success && response.data) {
-        setSponsorInfo(response.data);
-        if (!response.data.isValid) {
-          setSponsorError('Invalid sponsor ID');
-        }
+      if (response.success && response.data && response.data.valid) {
+        // Extract sponsor information from the response
+        const sponsorData: SponsorInfo = {
+          sponsorId: response.data.sponsor?.userId || sponsorIdValue.trim(),
+          name: response.data.sponsor?.name || 'Verified Sponsor',
+          rank: 'Member', // Default rank as backend doesn't return this yet
+          contact: response.data.sponsor?.email || '',
+          valid: true
+        };
+        setSponsorInfo(sponsorData);
       } else {
-        setSponsorError('Failed to validate sponsor ID');
+        setSponsorError(response.data?.valid === false ? 'Invalid sponsor ID' : 'Failed to validate sponsor ID');
+        setSponsorInfo(null);
       }
     } catch (err: any) {
       setSponsorError(err.response?.data?.message || 'Failed to validate sponsor ID');
@@ -223,7 +229,7 @@ const Register: React.FC = () => {
     } else if (activeStep === 1) {
       isValid = await trigger(['sponsorId', 'placement']);
       // Also check if sponsor is validated
-      if (isValid && !sponsorInfo?.isValid) {
+      if (isValid && !sponsorInfo?.valid) {
         setSponsorError('Please validate sponsor ID first');
         isValid = false;
       }
@@ -371,7 +377,7 @@ const Register: React.FC = () => {
                 placeholder="Enter sponsor ID"
                 startIcon={<GroupAdd fontSize="small" sx={{ opacity: 0.6 }} />}
                 endIcon={
-                  sponsorInfo?.isValid ? (
+                  sponsorInfo?.valid ? (
                     <CheckCircle color="success" />
                   ) : sponsorError ? (
                     <Cancel color="error" />
@@ -399,7 +405,7 @@ const Register: React.FC = () => {
             )}
 
             {/* Sponsor Details */}
-            {sponsorInfo?.isValid && (
+            {sponsorInfo?.valid && (
               <Paper
                 elevation={0}
                 sx={{

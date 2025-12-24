@@ -56,6 +56,7 @@ const DashboardLayout: React.FC = () => {
     return () => window.removeEventListener('resize', checkMobile);
   }, []);
 
+  // Reorganized menu items for compact view
   const menuItems: MenuProps['items'] = [
     {
       key: '/dashboard',
@@ -65,130 +66,94 @@ const DashboardLayout: React.FC = () => {
     {
       key: 'users-menu',
       icon: <UserOutlined />,
-      label: 'Users',
+      label: 'User Management',
       children: [
         { key: '/users', label: 'All Users' },
         { key: '/users/add', label: 'Add User' },
+        { key: '/registrations', label: 'Registrations' },
       ],
-    },
-    {
-      key: '/registrations',
-      icon: <UserAddOutlined />,
-      label: 'Registrations',
     },
     {
       key: 'properties-menu',
       icon: <HomeOutlined />,
-      label: 'Properties',
+      label: 'Property Management',
       children: [
         { key: '/properties', label: 'All Properties' },
         { key: '/properties/add', label: 'Add Property' },
+        { key: '/bonanza', label: 'Bonanza Campaigns' },
       ],
     },
     {
       key: 'investments-menu',
       icon: <WalletOutlined />,
-      label: 'Investments',
+      label: 'Investment Management',
       children: [
         { key: '/investments', label: 'All Investments' },
         { key: '/investments/pending', label: 'Pending Approvals' },
       ],
     },
     {
-      key: 'commissions-menu',
+      key: 'financial-menu',
       icon: <DollarOutlined />,
-      label: 'Commissions',
+      label: 'Financial Management',
       children: [
-        { key: '/commissions', label: 'All Commissions' },
-        { key: '/commissions/settings', label: 'Settings' },
+        { key: '/commissions', label: 'Commissions' },
+        { key: '/commissions/settings', label: 'Commission Settings' },
+        { key: '/payouts/pending', label: 'Pending Payouts' },
+        { key: '/payouts', label: 'All Payouts' },
+        { key: '/deposits', label: 'Deposits' },
+        { key: '/withdrawals', label: 'Withdrawals' },
+        { key: '/epins', label: 'E-Pins' },
+        { key: '/topup/new', label: 'New Topup' },
+        { key: '/topup/history', label: 'Topup History' },
       ],
     },
     {
       key: 'incomes',
       icon: <RiseOutlined />,
-      label: 'Incomes Detail',
+      label: 'Income Details',
       children: [
+        { key: '/incomes/summary', label: 'Income Summary' },
         { key: '/incomes/direct-bonus', label: 'Direct Bonus' },
         { key: '/incomes/level-bonus', label: 'Level Bonus' },
         { key: '/incomes/matching-bonus', label: 'Matching Bonus' },
         { key: '/incomes/roi-bonus', label: 'ROI Bonus' },
         { key: '/incomes/reward-status', label: 'Reward Status' },
-        { key: '/incomes/summary', label: 'Income Summary' },
       ],
     },
     {
       key: 'team',
       icon: <TeamOutlined />,
-      label: 'Team Detail',
+      label: 'Team Management',
       children: [
         { key: '/team/tree-view', label: 'Tree View' },
-        { key: '/team/level-tree-view', label: 'Team Level Tree View' },
-        { key: '/team/direct-referral', label: 'Direct Referral' },
+        { key: '/team/level-tree-view', label: 'Level Tree View' },
+        { key: '/team/direct-referral', label: 'Direct Referrals' },
         { key: '/team/total-downline', label: 'Total Downline' },
-        { key: '/team/level-downline', label: 'Team Level Downline' },
+        { key: '/team/level-downline', label: 'Level Downline' },
         { key: '/team/downline-business', label: 'Downline Business' },
-      ],
-    },
-    {
-      key: 'payouts-menu',
-      icon: <DollarOutlined />,
-      label: 'Payouts',
-      children: [
-        { key: '/payouts/pending', label: 'Pending Payouts' },
-        { key: '/payouts', label: 'All Payouts' },
-      ],
-    },
-    {
-      key: '/deposits',
-      icon: <WalletOutlined />,
-      label: 'Deposits',
-    },
-    {
-      key: '/withdrawals',
-      icon: <DollarOutlined />,
-      label: 'Withdrawals',
-    },
-    {
-      key: '/epins',
-      icon: <FileTextOutlined />,
-      label: 'E-Pins',
-    },
-    {
-      key: '/bonanza',
-      icon: <TrophyOutlined />,
-      label: 'Bonanza Campaigns',
-    },
-    {
-      key: 'topup-menu',
-      icon: <DollarOutlined />,
-      label: 'New Topup',
-      children: [
-        { key: '/topup/new', label: 'New Topup' },
-        { key: '/topup/history', label: 'Topup Detail' },
+        { key: '/ranks/settings', label: 'Rank Settings' },
+        { key: '/ranks/achievements', label: 'Rank Achievements' },
       ],
     },
     {
       key: 'kyc-management',
       icon: <FileTextOutlined />,
-      label: 'KYC',
+      label: 'KYC Management',
       children: [
         { key: '/kyc/pending', label: 'Pending KYC' },
         { key: '/kyc', label: 'All KYC' },
       ],
     },
     {
-      key: '/notifications',
+      key: 'communications',
       icon: <BellOutlined />,
-      label: 'Notifications',
+      label: 'Communications',
       children: [
-        { key: '/notifications/send', label: 'Send Broadcast' },
-        { key: '/notifications/history', label: 'History' },
+        { key: '/notifications/send', label: 'Send Notification' },
+        { key: '/notifications/history', label: 'Notification History' },
+        { key: '/support', label: 'Support Tickets' },
       ],
-    },
-    {
-      key: '/support',
-      icon: <MessageOutlined />,
-      label: 'Support',
     },
     {
       key: '/reports',
@@ -196,27 +161,14 @@ const DashboardLayout: React.FC = () => {
       label: 'Reports',
     },
     {
-      key: '/ranks',
-      icon: <TrophyOutlined />,
-      label: 'Ranks',
-      children: [
-        { key: '/ranks/settings', label: 'Rank Settings' },
-        { key: '/ranks/achievements', label: 'Achievements' },
-      ],
-    },
-    {
-      key: '/audit-logs',
-      icon: <AuditOutlined />,
-      label: 'Audit Logs',
-    },
-    {
-      key: '/settings',
+      key: 'system',
       icon: <SettingOutlined />,
-      label: 'Settings',
+      label: 'System',
       children: [
-        { key: '/settings/general', label: 'General' },
+        { key: '/settings/general', label: 'General Settings' },
         { key: '/settings/admins', label: 'Admin Users' },
         { key: '/settings/plan', label: 'Level Plan Settings' },
+        { key: '/audit-logs', label: 'Audit Logs' },
       ],
     },
   ];

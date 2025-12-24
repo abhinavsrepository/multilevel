@@ -135,11 +135,11 @@ const RegisterSimple: React.FC = () => {
 
     try {
       const response = await validateSponsor(formData.sponsorId.trim());
-      if (response.success && response.data) {
+      if (response.success && response.data && response.data.valid) {
         setSponsorVerified(true);
-        setFormData({ ...formData, sponsorName: response.data.name || 'Verified Sponsor' });
+        setFormData({ ...formData, sponsorName: response.data.sponsor?.name || 'Verified Sponsor' });
       } else {
-        setSponsorError('Invalid Sponsor ID');
+        setSponsorError(response.data?.valid === false ? 'Invalid Sponsor ID' : 'Failed to validate sponsor');
         setSponsorVerified(false);
       }
     } catch (err: any) {

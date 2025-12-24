@@ -184,7 +184,8 @@ const PropertyDetail: React.FC = () => {
 
 
 
-  const formatCurrency = (amount: number) => {
+  const formatCurrency = (amount: number | null | undefined) => {
+    if (amount === null || amount === undefined) return '₹0';
     return new Intl.NumberFormat('en-IN', {
       style: 'currency',
       currency: 'INR',
@@ -192,8 +193,11 @@ const PropertyDetail: React.FC = () => {
     }).format(amount);
   };
 
-  const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString('en-IN', {
+  const formatDate = (dateString: string | null | undefined) => {
+    if (!dateString) return 'N/A';
+    const date = new Date(dateString);
+    if (isNaN(date.getTime())) return 'Invalid Date';
+    return date.toLocaleDateString('en-IN', {
       year: 'numeric',
       month: 'long',
       day: 'numeric',
@@ -364,7 +368,7 @@ const PropertyDetail: React.FC = () => {
               <div>
                 <p className="text-sm text-gray-600 dark:text-gray-400 mb-1">BV Value</p>
                 <p className="text-lg font-bold text-blue-600 dark:text-blue-400">
-                  {currentProperty.bvValue.toLocaleString()} BV
+                  {currentProperty.bvValue?.toLocaleString() || '0'} BV
                 </p>
               </div>
             </div>
@@ -874,7 +878,7 @@ const PropertyDetail: React.FC = () => {
                       min={currentProperty.minInvestment}
                       max={currentProperty.maxInvestmentPerUser}
                       step="1000"
-                      placeholder={`Min ${currentProperty.minInvestment.toLocaleString()}`}
+                      placeholder={`Min ${currentProperty.minInvestment?.toLocaleString() || '0'}`}
                       className="w-full pl-8 pr-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white font-semibold focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                     />
                   </div>
@@ -941,7 +945,7 @@ const PropertyDetail: React.FC = () => {
                 <div className="flex items-center justify-between">
                   <span className="text-gray-600 dark:text-gray-400">Total Views</span>
                   <span className="font-semibold text-gray-900 dark:text-white">
-                    {currentProperty.views.toLocaleString()}
+                    {currentProperty.views?.toLocaleString() || '0'}
                   </span>
                 </div>
                 <div className="flex items-center justify-between">

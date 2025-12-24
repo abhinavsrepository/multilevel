@@ -21,5 +21,6 @@ router
     .delete(rankController.deleteRank);
 
 router.post('/assign', rankController.assignRankToUser);
+router.get('/users/:userId/progress', rankController.getAdminUserRankProgress);
 
 module.exports = router;

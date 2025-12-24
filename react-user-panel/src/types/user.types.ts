@@ -42,6 +42,7 @@ export interface UserStats {
   activeProperties: number;
   todayIncome: number;
   directReferrals: number;
+  nextRankProgress?: number;
 }
 
 export interface Rank {

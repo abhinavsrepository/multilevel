@@ -108,4 +108,17 @@ router.get('/club-bonus/qualifications/:userId/:month/:year', clubBonusAdminCont
 router.post('/club-bonus/check-qualification', clubBonusAdminController.checkQualification);
 router.get('/club-bonus/statistics', clubBonusAdminController.getStatistics);
 
+// Property Sales Routes
+const propertySaleAdminController = require('../controllers/admin/property-sale.admin.controller');
+router.get('/property-sales', propertySaleAdminController.getAllSales);
+router.get('/property-sales/pending', propertySaleAdminController.getPendingSales);
+router.get('/property-sales/pending-commission', propertySaleAdminController.getPendingCommissionSales);
+router.get('/property-sales/statistics', propertySaleAdminController.getSaleStatistics);
+router.get('/property-sales/:id', propertySaleAdminController.getSaleDetails);
+router.put('/property-sales/:id/approve', propertySaleAdminController.approveSale);
+router.put('/property-sales/:id/reject', propertySaleAdminController.rejectSale);
+router.put('/property-sales/:id/activate-commission', propertySaleAdminController.activateCommission);
+
+router.post('/commissions/manual', adminController.addManualCommission);
+
 module.exports = router;

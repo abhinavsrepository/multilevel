@@ -73,4 +73,7 @@ export const rankApi = {
     getAchievementStats: () => api.get<any>('/rank-achievements/stats'),
     awardRank: (userId: number, rankId: number, notes?: string) =>
         api.post('/rank-achievements/award', { userId, rankId, notes }),
+
+    // Progress
+    getRankProgress: (userId: number | string) => api.get<any>(`/ranks/users/${userId}/progress`),
 };

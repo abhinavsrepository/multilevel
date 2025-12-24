@@ -170,6 +170,7 @@ const Profile: React.FC = () => {
   const getKYCStatusColor = (status: string) => {
     const colors: Record<string, string> = {
       VERIFIED: 'text-green-600 bg-green-100 dark:bg-green-900 dark:text-green-200',
+      APPROVED: 'text-green-600 bg-green-100 dark:bg-green-900 dark:text-green-200',
       PENDING: 'text-yellow-600 bg-yellow-100 dark:bg-yellow-900 dark:text-yellow-200',
       REJECTED: 'text-red-600 bg-red-100 dark:bg-red-900 dark:text-red-200',
       NOT_UPLOADED: 'text-gray-600 bg-gray-100 dark:bg-gray-700 dark:text-gray-300',
@@ -181,6 +182,7 @@ const Profile: React.FC = () => {
   const getKYCStatusIcon = (status: string) => {
     const icons: Record<string, React.ReactNode> = {
       VERIFIED: <FiCheck className="w-4 h-4" />,
+      APPROVED: <FiCheck className="w-4 h-4" />,
       PENDING: <FiClock className="w-4 h-4" />,
       REJECTED: <FiX className="w-4 h-4" />,
       NOT_UPLOADED: <FiAlertCircle className="w-4 h-4" />,
@@ -334,6 +336,10 @@ const Profile: React.FC = () => {
                     >
                       {user.isActive ? 'Active' : 'Inactive'}
                     </span>
+                  </div>
+                  {/* Rank Progress Bar Widget */}
+                  <div className="mt-6 w-full">
+                    <RankProgressWidget />
                   </div>
                 </div>
               </div>
@@ -531,6 +537,34 @@ const Profile: React.FC = () => {
                     <p className="text-gray-900 dark:text-white">
                       {stats.rightLeg.toLocaleString()} members
                     </p>
+                  </div>
+                  {/* Leg Balance Status */}
+                  <div className="md:col-span-2">
+                    <label className="text-sm font-semibold text-gray-600 dark:text-gray-400 mb-2 block">
+                      Leg Balance Status (Strong vs Weak)
+                    </label>
+                    <div className="flex items-center gap-4">
+                      <div className="flex-1">
+                        <div className="flex justify-between text-xs mb-1">
+                          <span>Left Leg ({stats.leftLeg})</span>
+                          <span>Right Leg ({stats.rightLeg})</span>
+                        </div>
+                        <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-4 flex overflow-hidden">
+                          <div
+                            className="bg-blue-500 h-full transition-all duration-500"
+                            style={{ width: `${(stats.leftLeg / (stats.leftLeg + stats.rightLeg || 1)) * 100}%` }}
+                          ></div>
+                          <div
+                            className="bg-green-500 h-full transition-all duration-500"
+                            style={{ width: `${(stats.rightLeg / (stats.leftLeg + stats.rightLeg || 1)) * 100}%` }}
+                          ></div>
+                        </div>
+                        <div className="flex justify-between text-xs mt-1 text-gray-500">
+                          <span>{(stats.leftLeg / (stats.leftLeg + stats.rightLeg || 1) * 100).toFixed(0)}%</span>
+                          <span>{(stats.rightLeg / (stats.leftLeg + stats.rightLeg || 1) * 100).toFixed(0)}%</span>
+                        </div>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </motion.div>
@@ -795,7 +829,10 @@ const Profile: React.FC = () => {
                           </td>
                           <td className="px-4 py-3">
                             {doc.status === 'NOT_UPLOADED' ? (
-                              <button className="text-blue-600 hover:text-blue-700 text-sm font-semibold">
+                              <button
+                                onClick={() => window.location.href = '/kyc/upload'} // Simple redirect using window.location or could use useNavigate if imported
+                                className="text-blue-600 hover:text-blue-700 text-sm font-semibold"
+                              >
                                 Upload
                               </button>
                             ) : (

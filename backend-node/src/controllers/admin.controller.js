@@ -268,7 +268,7 @@ exports.activateUser = async (req, res) => {
         const user = await User.findByPk(req.params.id);
         if (!user) return res.status(404).json({ success: false, message: 'User not found' });
 
-        await user.update({ status: 'ACTIVE' });
+        await user.update({ status: 'ACTIVE', isActivated: true });
         await notificationService.sendNotification(user.id, 'Account Activated', 'Your account has been activated.', 'ACCOUNT');
 
         res.json({ success: true, message: 'User activated successfully' });
@@ -618,7 +618,7 @@ exports.approveKyc = async (req, res) => {
 
         // Update user status if needed (simplified)
         const user = await User.findByPk(kyc.userId);
-        await user.update({ kycStatus: 'FULL', kycLevel: 'FULL' }); // Assuming full approval
+        await user.update({ kycStatus: 'APPROVED', kycLevel: 'FULL' }); // Assuming full approval
 
         await notificationService.sendKycStatusEmail(user, 'APPROVED');
 
@@ -777,6 +777,40 @@ exports.getUserPayouts = async (req, res) => {
 
 exports.getUserTickets = async (req, res) => {
     res.json({ success: true, data: [] });
+};
+
+// Manual Commission Distribution
+exports.addManualCommission = async (req, res) => {
+    try {
+        const { userId, propertyId, amount, type, description } = req.body;
+
+        const user = await User.findByPk(userId);
+        if (!user) return res.status(404).json({ success: false, message: 'User not found' });
+
+        const commission = await Commission.create({
+            userId,
+            commissionId: `MANUAL-${Date.now()}`,
+            commissionType: type || 'MANUAL_ADJUSTMENT',
+            level: 0,
+            amount,
+            propertyId: propertyId || null,
+            description: description || 'Manual commission adjustment by admin',
+            status: 'CREDITED',
+            createdBy: req.user.username
+        });
+
+        // Credit to Wallet
+        const wallet = await Wallet.findOne({ where: { userId } });
+        if (wallet) {
+            await wallet.increment('commissionBalance', { by: amount });
+            await wallet.increment('totalCommission', { by: amount });
+        }
+
+        res.json({ success: true, message: 'Manual commission added successfully', data: commission });
+    } catch (error) {
+        console.error('Manual Commission Error:', error);
+        res.status(500).json({ success: false, message: 'Server Error', error: error.message });
+    }
 };
 
 exports.getPendingPayouts = async (req, res) => {

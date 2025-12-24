@@ -128,7 +128,7 @@ module.exports = (sequelize, DataTypes) => {
             defaultValue: 'Associate'
         },
         kycStatus: {
-            type: DataTypes.STRING,
+            type: DataTypes.ENUM('PENDING', 'APPROVED', 'REJECTED'),
             defaultValue: 'PENDING',
             field: 'kyc_status'
         },
@@ -144,6 +144,16 @@ module.exports = (sequelize, DataTypes) => {
         status: {
             type: DataTypes.STRING,
             defaultValue: 'PENDING'
+        },
+        isActivated: {
+            type: DataTypes.BOOLEAN,
+            defaultValue: false,
+            field: 'is_activated'
+        },
+        totalTeamBusiness: {
+            type: DataTypes.DECIMAL(15, 2),
+            defaultValue: 0,
+            field: 'total_team_business'
         },
         emailVerified: {
             type: DataTypes.BOOLEAN,

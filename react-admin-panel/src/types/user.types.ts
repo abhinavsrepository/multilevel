@@ -47,9 +47,10 @@ export interface User {
   commissionWallet: number;
   rentalWallet: number;
   roiWallet: number;
+  tdsDeducted?: number; // Added for Governance view
 
   // KYC
-  kycStatus: 'PENDING' | 'BASIC' | 'FULL' | 'PREMIUM' | 'REJECTED';
+  kycStatus: 'PENDING' | 'BASIC' | 'FULL' | 'PREMIUM' | 'REJECTED' | 'APPROVED' | 'VERIFIED';
   kycLevel?: string;
 
   // Status

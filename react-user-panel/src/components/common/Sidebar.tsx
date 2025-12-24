@@ -91,7 +91,7 @@ const Sidebar: React.FC = () => {
   const drawerWidth = collapsed ? 70 : 260;
   const mobileSidebarOpen = !collapsed;
 
-  // Navigation menu items
+  // Navigation menu items - Reorganized for compact view
   const menuItems: MenuItem[] = [
     {
       id: 'dashboard',
@@ -100,34 +100,40 @@ const Sidebar: React.FC = () => {
       path: '/dashboard',
     },
     {
-      id: 'properties',
-      label: 'Properties',
+      id: 'properties-investments',
+      label: 'Properties & Investments',
       icon: <Apartment />,
       path: '/properties',
       children: [
         {
           id: 'all-properties',
-          label: 'All Properties',
+          label: 'Browse Properties',
           icon: <Home />,
           path: '/properties',
+        },
+        {
+          id: 'my-investments',
+          label: 'My Investments',
+          icon: <TrendingUp />,
+          path: '/investments',
+        },
+        {
+          id: 'bonanza',
+          label: 'Campaigns & Bonanza',
+          icon: <EmojiEvents />,
+          path: '/bonanza',
         },
       ],
     },
     {
-      id: 'my-investments',
-      label: 'My Investments',
-      icon: <TrendingUp />,
-      path: '/investments',
-    },
-    {
-      id: 'wallet',
-      label: 'Wallet',
+      id: 'financial',
+      label: 'Financial',
       icon: <AccountBalance />,
       path: '/wallet',
       children: [
         {
           id: 'wallet-overview',
-          label: 'Overview',
+          label: 'Wallet Overview',
           icon: <FaWallet />,
           path: '/wallet',
         },
@@ -139,30 +145,48 @@ const Sidebar: React.FC = () => {
         },
         {
           id: 'wallet-deposit',
-          label: 'Deposit',
+          label: 'Deposit Funds',
           icon: <AttachMoney />,
           path: '/wallet/deposit',
         },
         {
           id: 'wallet-withdraw',
-          label: 'Withdraw',
+          label: 'Withdraw Funds',
           icon: <Paid />,
           path: '/wallet/withdraw',
+        },
+        {
+          id: 'commissions',
+          label: 'Commissions',
+          icon: <MonetizationOn />,
+          path: '/commissions',
+        },
+        {
+          id: 'topup-new',
+          label: 'New Topup',
+          icon: <AttachMoney />,
+          path: '/topup',
+        },
+        {
+          id: 'topup-history',
+          label: 'Topup History',
+          icon: <Assessment />,
+          path: '/topup/history',
         },
       ],
     },
     {
-      id: 'commissions',
-      label: 'Commissions',
-      icon: <Paid />,
-      path: '/commissions',
-    },
-    {
       id: 'incomes',
-      label: 'Incomes Detail',
+      label: 'Income Details',
       icon: <TrendingUp />,
       path: '/incomes',
       children: [
+        {
+          id: 'income-summary',
+          label: 'Income Summary',
+          icon: <Assessment />,
+          path: '/incomes/summary',
+        },
         {
           id: 'direct-bonus',
           label: 'Direct Bonus',
@@ -193,43 +217,11 @@ const Sidebar: React.FC = () => {
           icon: <Stars />,
           path: '/incomes/reward-status',
         },
-        {
-          id: 'income-summary',
-          label: 'Income Summary',
-          icon: <Assessment />,
-          path: '/incomes/summary',
-        },
       ],
     },
     {
-      id: 'topup',
-      label: 'New Topup',
-      icon: <AttachMoney />,
-      path: '/topup',
-      children: [
-        {
-          id: 'new-topup',
-          label: 'New Topup',
-          icon: <AttachMoney />,
-          path: '/topup',
-        },
-        {
-          id: 'topup-history',
-          label: 'Topup History',
-          icon: <Assessment />,
-          path: '/topup/history',
-        },
-      ],
-    },
-    {
-      id: 'bonanza',
-      label: 'Bonanza Campaigns',
-      icon: <EmojiEvents />,
-      path: '/bonanza',
-    },
-    {
-      id: 'team',
-      label: 'Team Detail',
+      id: 'team-network',
+      label: 'Team & Network',
       icon: <Groups />,
       path: '/team',
       children: [
@@ -241,13 +233,13 @@ const Sidebar: React.FC = () => {
         },
         {
           id: 'level-tree-view',
-          label: 'Team Level Tree View',
+          label: 'Level Tree View',
           icon: <Diversity3 />,
           path: '/team/level-tree-view',
         },
         {
           id: 'direct-referral',
-          label: 'Direct Referral',
+          label: 'Direct Referrals',
           icon: <PersonAdd />,
           path: '/team/direct-referral',
         },
@@ -259,7 +251,7 @@ const Sidebar: React.FC = () => {
         },
         {
           id: 'level-downline',
-          label: 'Team Level Downline',
+          label: 'Level Downline',
           icon: <GroupWork />,
           path: '/team/level-downline',
         },
@@ -269,13 +261,13 @@ const Sidebar: React.FC = () => {
           icon: <Business />,
           path: '/team/downline-business',
         },
+        {
+          id: 'rank',
+          label: 'My Rank',
+          icon: <EmojiEvents />,
+          path: '/rank',
+        },
       ],
-    },
-    {
-      id: 'rank',
-      label: 'Rank',
-      icon: <EmojiEvents />,
-      path: '/rank',
     },
     {
       id: 'referral',
@@ -310,17 +302,17 @@ const Sidebar: React.FC = () => {
       ],
     },
     {
-      id: 'kyc',
-      label: 'KYC',
-      icon: <VerifiedUser />,
-      path: '/kyc',
-    },
-    {
-      id: 'support',
-      label: 'Support',
+      id: 'account-support',
+      label: 'Account & Support',
       icon: <Support />,
       path: '/support',
       children: [
+        {
+          id: 'kyc',
+          label: 'KYC Verification',
+          icon: <VerifiedUser />,
+          path: '/kyc',
+        },
         {
           id: 'support-tickets',
           label: 'My Tickets',
@@ -333,6 +325,18 @@ const Sidebar: React.FC = () => {
           icon: <FaFileAlt />,
           path: '/support/create',
         },
+        {
+          id: 'notifications',
+          label: 'Notifications',
+          icon: <Notifications />,
+          path: '/notifications',
+        },
+        {
+          id: 'settings',
+          label: 'Settings',
+          icon: <Settings />,
+          path: '/settings',
+        },
       ],
     },
     {
@@ -340,18 +344,6 @@ const Sidebar: React.FC = () => {
       label: 'Reports',
       icon: <Assessment />,
       path: '/reports',
-    },
-    {
-      id: 'notifications',
-      label: 'Notifications',
-      icon: <Notifications />,
-      path: '/notifications',
-    },
-    {
-      id: 'settings',
-      label: 'Settings',
-      icon: <Settings />,
-      path: '/settings',
     },
   ];
 

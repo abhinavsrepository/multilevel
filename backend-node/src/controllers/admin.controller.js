@@ -268,7 +268,7 @@ exports.activateUser = async (req, res) => {
         const user = await User.findByPk(req.params.id);
         if (!user) return res.status(404).json({ success: false, message: 'User not found' });
 
-        await user.update({ status: 'ACTIVE', isActivated: true });
+        await user.update({ status: 'ACTIVE', activationDate: new Date() });
         await notificationService.sendNotification(user.id, 'Account Activated', 'Your account has been activated.', 'ACCOUNT');
 
         res.json({ success: true, message: 'User activated successfully' });

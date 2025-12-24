@@ -91,8 +91,8 @@ const RankService = {
         console.log(`Checking Rank Update for User ID: ${userId}`);
 
         const user = await User.findByPk(userId);
-        if (!user || !user.isActivated || user.status !== 'ACTIVE') {
-            console.log('User inactive or not activated. distinct skipping.');
+        if (!user || user.status !== 'ACTIVE') {
+            console.log('User inactive or not activated. Skipping.');
             return;
         }
 

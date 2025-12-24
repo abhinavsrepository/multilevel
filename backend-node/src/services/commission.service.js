@@ -21,7 +21,7 @@ exports.calculateLevelCommission = async (investment) => {
         if (!directSponsor) return;
 
         // Implementation of Terms & Conditions: Income not generated if KYC not approved or not activated
-        if (directSponsor.kycStatus !== 'APPROVED' || !directSponsor.isActivated) {
+        if (directSponsor.kycStatus !== 'APPROVED' || directSponsor.status !== 'ACTIVE') {
             console.log(`Income not generated for ${directSponsor.username}: KYC or Activation missing.`);
             return;
         }

@@ -51,7 +51,13 @@ const RankSettings: React.FC = () => {
 
   const handleEdit = (rank: Rank) => {
     setEditingRank(rank);
-    form.setFieldsValue(rank);
+    const formValues = {
+      ...rank,
+      benefits: Array.isArray(rank.benefits)
+        ? rank.benefits.map((b: any) => typeof b === 'string' ? b : b.value || JSON.stringify(b))
+        : []
+    };
+    form.setFieldsValue(formValues);
     setIsModalVisible(true);
   };
 
@@ -68,6 +74,12 @@ const RankSettings: React.FC = () => {
   const handleModalOk = async () => {
     try {
       const values = await form.validateFields();
+
+      // Transform benefits back to structure if needed
+      if (values.benefits && Array.isArray(values.benefits)) {
+        values.benefits = values.benefits.map((b: string) => ({ type: 'REWARD', value: b }));
+      }
+
       if (editingRank) {
         await rankApi.updateRank(editingRank.id, values);
         message.success('Rank updated successfully');

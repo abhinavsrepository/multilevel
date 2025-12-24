@@ -47,6 +47,22 @@ async function startServer() {
             logger.info(`✓ API URL: http://localhost:${PORT}/api/v1`);
             logger.info('✓ Server is ready to accept connections');
             logger.info('='.repeat(50));
+
+            // Start cron jobs
+            logger.info('Starting scheduled jobs...');
+            try {
+                const { startRankRewardJobs } = require('./jobs/rank-rewards.job');
+                const { startClubBonusJob } = require('./jobs/club-bonus.job');
+
+                startRankRewardJobs();
+                startClubBonusJob();
+
+                logger.info('✓ All scheduled jobs started successfully');
+            } catch (jobError) {
+                logger.error('Error starting scheduled jobs', {
+                    error: jobError.message
+                });
+            }
         });
 
         // Graceful shutdown handler

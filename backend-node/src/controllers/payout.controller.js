@@ -26,10 +26,11 @@ exports.requestWithdrawal = async (req, res) => {
             return res.status(400).json({ success: false, message: 'Insufficient withdrawable balance' });
         }
 
-        // Calculate deductions (e.g., 5% TDS, 2% Admin)
-        const tdsAmount = amount * 0.05;
-        const adminCharge = amount * 0.02;
-        const netAmount = amount - tdsAmount - adminCharge;
+        // Calculate deductions
+        // TDS is already deducted at Source (Income Generation). Only Admin Charge applies here.
+        const tdsAmount = 0;
+        const adminCharge = amount * 0.02; // 2% Service Fee
+        const netAmount = amount - adminCharge;
 
         // Create payout request
         const payout = await Payout.create({
@@ -235,10 +236,10 @@ exports.updatePayoutAmount = async (req, res) => {
             await wallet.decrement('totalWithdrawn', { by: refund });
         }
 
-        // Recalculate TDS and Admin Charge based on new amount
-        const tdsAmount = newAmount * 0.05;
+        // Recalculate Admin Charge (TDS is 0 as per new policy)
+        const tdsAmount = 0;
         const adminCharge = newAmount * 0.02;
-        const netAmount = newAmount - tdsAmount - adminCharge;
+        const netAmount = newAmount - adminCharge;
 
         payout.requestedAmount = newAmount;
         payout.tdsAmount = tdsAmount;

@@ -77,7 +77,7 @@ export interface Rank {
   oneTimeBonus: number;
   monthlyLeadershipBonus: number;
   commissionBoost: number;
-  benefits?: Record<string, any>;
+  benefits?: any[];
   active: boolean;
 }
 

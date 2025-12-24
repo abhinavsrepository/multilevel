@@ -354,7 +354,7 @@ const AllRanks: React.FC = () => {
                             />
                           </ListItemIcon>
                           <ListItemText
-                            primary={benefit}
+                            primary={typeof benefit === 'string' ? benefit : benefit.value}
                             primaryTypographyProps={{
                               variant: 'caption',
                               sx: { opacity: isAchieved ? 1 : 0.7 },

@@ -46,6 +46,7 @@ const bookingRoutes = require('./routes/booking.routes');
 const documentRoutes = require('./routes/document.routes');
 const siteVisitRoutes = require('./routes/site-visit.routes');
 const healthRoutes = require('./routes/health.routes');
+const clubBonusRoutes = require('./routes/club-bonus.routes');
 
 const app = express();
 
@@ -124,6 +125,7 @@ app.use('/api/v1/dashboard', dashboardRoutes);
 app.use('/api/v1/bookings', bookingRoutes);
 app.use('/api/v1/documents', documentRoutes);
 app.use('/api/v1/site-visits', siteVisitRoutes);
+app.use('/api/v1/club-bonus', clubBonusRoutes);
 
 // Static files
 app.use('/uploads', express.static(path.join(__dirname, '../uploads')));
@@ -178,5 +180,9 @@ app.use(errorHandler);
 
 // Log that app is configured
 logger.info('Express app configured with all routes and middleware');
+
+// Initialize Cron Jobs
+const initMonthlyClubJob = require('./jobs/monthly-club.job');
+initMonthlyClubJob();
 
 module.exports = app;

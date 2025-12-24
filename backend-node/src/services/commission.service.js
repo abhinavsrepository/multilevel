@@ -1,136 +1,142 @@
-const { Commission, LevelCommissionRule, User, Wallet } = require('../models');
+const { Commission, User, Wallet, Income, SystemSettings } = require('../models');
 const { Op } = require('sequelize');
 
 exports.calculateLevelCommission = async (investment) => {
     try {
-        console.log(`Calculating level commission for investment: ${investment.id}`);
+        console.log(`Calculating Ecogram commissions for investment: ${investment.id}`);
 
-        // 1. Fetch all active commission rules
-        const rules = await LevelCommissionRule.findAll({
-            where: { isActive: true },
-            order: [['level', 'ASC']]
-        });
+        const amount = parseFloat(investment.investmentAmount || investment.totalPaid || 0);
+        if (amount <= 0) return;
 
-        if (rules.length === 0) return;
-
-        // 2. Get the investor (user who made the investment)
+        // 1. Fetch Investor and Sponsor
         const investor = await User.findByPk(investment.userId);
         if (!investor) return;
 
-        // 3. Traverse upline
-        let currentUpline = await User.findByPk(investor.sponsorUserId);
+        if (!investor.sponsorUserId) {
+            console.log(`No sponsor for user ${investor.username}, skipping commissions.`);
+            return;
+        }
+
+        const directSponsor = await User.findByPk(investor.sponsorUserId);
+        if (!directSponsor) return;
+
+        const TDS_RATE = 5; // 5% Standard TDS
+
+        // =================================================================
+        // 1. DIRECT INCENTIVE (5%)
+        // =================================================================
+
+        const DIRECT_INCENTIVE_PERCENT = 5;
+        const directGrossAmount = (amount * DIRECT_INCENTIVE_PERCENT) / 100;
+
+        if (directSponsor.status === 'ACTIVE') {
+
+            // Calculate Deductions
+            const tdsAmount = (directGrossAmount * TDS_RATE) / 100;
+            const netAmount = directGrossAmount - tdsAmount;
+
+            await Income.create({
+                userId: directSponsor.id,
+                amount: directGrossAmount, // Store Gross
+                tdsAmount: tdsAmount,
+                netAmount: netAmount,
+                incomeType: 'DIRECT_BONUS',
+                status: 'APPROVED',
+                fromUserId: investor.id,
+                referenceType: 'INVESTMENT',
+                referenceId: investment.id,
+                percentage: DIRECT_INCENTIVE_PERCENT,
+                baseAmount: amount,
+                remarks: `Direct Incentive from ${investor.username} (Net: ${netAmount})`,
+                processedAt: new Date()
+            });
+
+            // Update Wallet with NET AMOUNT
+            const wallet = await Wallet.findOne({ where: { userId: directSponsor.id } });
+            if (wallet) {
+                await wallet.increment('commissionBalance', { by: netAmount });
+                await wallet.increment('totalEarned', { by: netAmount }); // Should totalEarned be Gross or Net? Usually Gross in Reports, Net in Wallet. 
+                // However, incrementing totalEarned by Net ensures balance consistency if totalEarned tracks strictly "money user got". 
+                // Let's stick to incrementing by netAmount to be safe, or we track gross separately.
+                // Standard: Wallet Balance += Net. Total Income Report might sum Gross from Income Table.
+            }
+            console.log(`Direct Incentive of ${netAmount} (Net) credited to ${directSponsor.username}`);
+        } else {
+            console.log(`Direct Incentive skipped for ${directSponsor.username} (Not Active)`);
+        }
+
+        // =================================================================
+        // 2. TEAM SALES BONUS (TSB) - Level Wise
+        // =================================================================
+
+        const TSB_POOL_PERCENT = 15;
+        const tsbPoolAmount = (amount * TSB_POOL_PERCENT) / 100;
+
+        const tsbDistribution = {
+            1: { percent: 30, requiredDirects: 1 },
+            2: { percent: 20, requiredDirects: 1 },
+            3: { percent: 15, requiredDirects: 2 },
+            // 4-10 handled in loop
+        };
+
+        let currentUpline = directSponsor;
         let currentLevel = 1;
+        const MAX_LEVEL = 10;
 
-        // Map rules by level for easy access
-        const rulesMap = {};
-        rules.forEach(rule => {
-            rulesMap[rule.level] = rule;
-        });
+        while (currentUpline && currentLevel <= MAX_LEVEL) {
 
-        const maxLevel = Math.max(...rules.map(r => r.level));
+            let levelConfig = tsbDistribution[currentLevel];
+            if (!levelConfig && currentLevel >= 4 && currentLevel <= 10) {
+                levelConfig = { percent: 5, requiredDirects: 3 };
+            }
 
-        while (currentUpline && currentLevel <= maxLevel) {
-            const rule = rulesMap[currentLevel];
-
-            if (rule) {
-                // --- UNLOCK RULE IMPLEMENTATION ---
-                // "Associate's own Direct Referral Count (which unlocks the payout levels)."
-                const directCount = await User.count({
-                    where: {
-                        sponsorUserId: currentUpline.id, // Fixed: Use sponsorUserId (FK) instead of sponsorId (String Code)
-                        status: 'ACTIVE' // Explicitly checking for ACTIVE directs as is standard in MLM
-                    }
-                });
-
-                // Apply Unlock Rule based on Active Directs
-                // 1 Active Direct  = Unlocks Level 1 & 2
-                // 3 Active Directs = Unlocks Level 3 (and implied 4, 5 pending further clarification, setting typically to 5)
-                // 5 Active Directs = Unlocks All Levels (e.g. 10)
-
-                let allowedDepth = 0;
-                if (directCount >= 5) allowedDepth = 20; // Unlocks "All Pending Levels"
-                else if (directCount >= 3) allowedDepth = 5; // Unlocks Level 3 (and possibly up to 5)
-                else if (directCount >= 1) allowedDepth = 2; // Unlocks Level 1 & 2
-                else allowedDepth = 0;
-
-                let isEligible = true;
-                let rejectionReason = '';
-
-                // If the level of the selling agent (Relative to Upline) is deeper than Upline's Allowed Depth
-                if (currentLevel > allowedDepth) {
-                    isEligible = false;
-                    rejectionReason = `Level ${currentLevel} locked. Requires more direct referrals (Current: ${directCount}, Allowed Depth: ${allowedDepth}).`;
-                }
-
-                // Check rank qualification if required (and if still eligible)
-                if (isEligible && rule.requiredRank && currentUpline.rank !== rule.requiredRank) {
-                    // We can treat rank as a blocker or just a warning. Existing code only warned.
-                    // To follow strict compliance, we should probably block or at least log failure.
-                    // Given the prompt emphasized the Direct Count rule, we will keep rank as secondary check.
-                    // Let's strict check rank too if defined.
-                    console.log(`User ${currentUpline.id} does not meet rank requirement for level ${currentLevel}`);
-                    // un-comment below to enforce rank
-                    // isEligible = false;
-                    // rejectionReason = `Rank ${rule.requiredRank} required.`;
-                }
-
-                let commissionAmount = 0;
-                let percentage = 0;
-
-                if (rule.commissionType === 'PERCENTAGE') {
-                    percentage = parseFloat(rule.value);
-                    commissionAmount = (parseFloat(investment.investmentAmount) * percentage) / 100;
-                } else {
-                    commissionAmount = parseFloat(rule.value);
-                }
-
-                if (commissionAmount > 0) {
-                    // Create Commission Record (Logged even if blocked, for visibility)
-                    const status = isEligible ? 'EARNED' : 'BLOCKED';
-
-                    // Use description to show the user why it was blocked or approved
-                    const description = isEligible
-                        ? `Level ${currentLevel} commission from ${investor.username}`
-                        : `Payout Blocked: ${rejectionReason}`;
-
-                    await Commission.create({
-                        commissionId: `COM-${Date.now()}-${currentUpline.id}-${currentLevel}`,
-                        userId: currentUpline.id,
-                        fromUserId: investor.id,
-                        commissionType: `LEVEL_${currentLevel}`,
-                        level: currentLevel,
-                        amount: commissionAmount,
-                        percentage: percentage > 0 ? percentage : null,
-                        baseAmount: investment.investmentAmount,
-                        propertyId: investment.propertyId,
-                        investmentId: investment.investmentId,
-                        description: description,
-                        status: status,
-                        calculationDetails: {
-                            directs: directCount,
-                            allowedLevel: allowedDepth,
-                            reason: rejectionReason,
-                            ruleLevel: currentLevel
-                        },
-                        createdAt: new Date(),
-                        updatedAt: new Date()
+            if (levelConfig) {
+                if (currentUpline.status === 'ACTIVE') {
+                    const directCount = await User.count({
+                        where: {
+                            sponsorUserId: currentUpline.id,
+                            status: 'ACTIVE'
+                        }
                     });
 
-                    if (isEligible) {
-                        // Update Wallet if eligible
+                    if (directCount >= levelConfig.requiredDirects) {
+                        const shareGrossAmount = (tsbPoolAmount * levelConfig.percent) / 100;
+
+                        // Calculate Deductions
+                        const tdsAmount = (shareGrossAmount * TDS_RATE) / 100;
+                        const netAmount = shareGrossAmount - tdsAmount;
+
+                        await Income.create({
+                            userId: currentUpline.id,
+                            amount: shareGrossAmount, // Gross
+                            tdsAmount: tdsAmount,
+                            netAmount: netAmount,
+                            incomeType: 'TSB_BONUS',
+                            status: 'APPROVED',
+                            fromUserId: investor.id,
+                            level: currentLevel,
+                            referenceType: 'INVESTMENT',
+                            referenceId: investment.id,
+                            percentage: (TSB_POOL_PERCENT * levelConfig.percent) / 100,
+                            baseAmount: amount,
+                            remarks: `TSB Level ${currentLevel} from ${investor.username} (Net: ${netAmount})`,
+                            processedAt: new Date()
+                        });
+
+                        // Update Wallet with NET AMOUNT
                         const wallet = await Wallet.findOne({ where: { userId: currentUpline.id } });
                         if (wallet) {
-                            await wallet.increment('commissionBalance', { by: commissionAmount });
-                            await wallet.increment('totalEarned', { by: commissionAmount });
+                            await wallet.increment('commissionBalance', { by: netAmount });
+                            await wallet.increment('totalEarned', { by: netAmount });
                         }
-                        console.log(`Commission of ${commissionAmount} credited to ${currentUpline.id} for level ${currentLevel}`);
+
+                        console.log(`TSB Level ${currentLevel} (${netAmount} Net) credited to ${currentUpline.username}`);
                     } else {
-                        console.log(`Commission blocked for ${currentUpline.id} at level ${currentLevel}. Reason: ${rejectionReason}`);
+                        console.log(`TSB Level ${currentLevel} skipped for ${currentUpline.username}. Required Directs: ${levelConfig.requiredDirects}, Has: ${directCount}`);
                     }
                 }
             }
 
-            // Move to next upline
             if (currentUpline.sponsorUserId) {
                 currentUpline = await User.findByPk(currentUpline.sponsorUserId);
             } else {
@@ -140,6 +146,6 @@ exports.calculateLevelCommission = async (investment) => {
         }
 
     } catch (error) {
-        console.error('Error calculating level commission:', error);
+        console.error('Error calculating Ecogram commissions:', error);
     }
 };

@@ -57,7 +57,7 @@ export interface Rank {
   oneTimeBonus: number;
   monthlyBonus: number;
   commissionBoost: number;
-  benefits: string[];
+  benefits: Array<string | { type: string; value: string }>;
 }
 
 export interface RankProgress {

@@ -25,6 +25,7 @@ module.exports = (sequelize, DataTypes) => {
                 'MATCHING',
                 'RANK_BONUS',
                 'LEADERSHIP',
+                'CLUB_INCOME',
                 'OTHER'
             ),
             allowNull: false,
@@ -70,6 +71,25 @@ module.exports = (sequelize, DataTypes) => {
         status: {
             type: DataTypes.ENUM('PENDING', 'APPROVED', 'PAID', 'CANCELLED', 'REJECTED'),
             defaultValue: 'APPROVED'
+        },
+        tdsAmount: {
+            type: DataTypes.DECIMAL(15, 2),
+            allowNull: true,
+            defaultValue: 0.00,
+            field: 'tds_amount',
+            comment: 'Tax Deducted at Source'
+        },
+        serviceCharge: {
+            type: DataTypes.DECIMAL(15, 2),
+            allowNull: true,
+            defaultValue: 0.00,
+            field: 'service_charge'
+        },
+        netAmount: {
+            type: DataTypes.DECIMAL(15, 2),
+            allowNull: true,
+            field: 'net_amount',
+            comment: 'Amount credited to wallet after deductions'
         },
         isWithdrawn: {
             type: DataTypes.BOOLEAN,

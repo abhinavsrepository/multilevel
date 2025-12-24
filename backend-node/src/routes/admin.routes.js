@@ -95,4 +95,17 @@ router.get('/analytics/financial', adminAnalyticsController.getFinancialAnalytic
 router.get('/analytics/activities', adminAnalyticsController.getRecentActivities);
 router.get('/analytics/charts/:chartType', adminAnalyticsController.getChartData);
 
+// Club Bonus Routes
+const clubBonusAdminController = require('../controllers/admin/club-bonus.admin.controller');
+router.post('/club-bonus/trigger', clubBonusAdminController.triggerDistribution);
+router.post('/club-bonus/initialize', clubBonusAdminController.initializeDefaultTiers);
+router.get('/club-bonus/tiers', clubBonusAdminController.getClubTiers);
+router.post('/club-bonus/tiers', clubBonusAdminController.createClubTier);
+router.put('/club-bonus/tiers/:id', clubBonusAdminController.updateClubTier);
+router.delete('/club-bonus/tiers/:id', clubBonusAdminController.deleteClubTier);
+router.get('/club-bonus/qualifications', clubBonusAdminController.getQualifications);
+router.get('/club-bonus/qualifications/:userId/:month/:year', clubBonusAdminController.getUserQualification);
+router.post('/club-bonus/check-qualification', clubBonusAdminController.checkQualification);
+router.get('/club-bonus/statistics', clubBonusAdminController.getStatistics);
+
 module.exports = router;

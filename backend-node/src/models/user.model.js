@@ -65,36 +65,6 @@ module.exports = (sequelize, DataTypes) => {
             get() { return this.getDataValue('mobile'); },
             set(val) { this.setDataValue('mobile', val); }
         },
-        // Personal Information
-        dateOfBirth: {
-            type: DataTypes.DATEONLY,
-            allowNull: true,
-            field: 'date_of_birth'
-        },
-        gender: {
-            type: DataTypes.STRING,
-            allowNull: true
-        },
-        address: {
-            type: DataTypes.TEXT,
-            allowNull: true
-        },
-        city: {
-            type: DataTypes.STRING,
-            allowNull: true
-        },
-        state: {
-            type: DataTypes.STRING,
-            allowNull: true
-        },
-        pincode: {
-            type: DataTypes.STRING,
-            allowNull: true
-        },
-        country: {
-            type: DataTypes.STRING,
-            defaultValue: 'India'
-        },
         referralCode: {
             type: DataTypes.STRING,
             unique: true,
@@ -153,30 +123,9 @@ module.exports = (sequelize, DataTypes) => {
             defaultValue: 0,
             field: 'team_bv'
         },
-        // Financial Tracking
-        totalInvestment: {
-            type: DataTypes.DECIMAL(15, 2),
-            defaultValue: 0,
-            field: 'total_investment'
-        },
-        totalEarnings: {
-            type: DataTypes.DECIMAL(15, 2),
-            defaultValue: 0,
-            field: 'total_earnings'
-        },
-        totalWithdrawn: {
-            type: DataTypes.DECIMAL(15, 2),
-            defaultValue: 0,
-            field: 'total_withdrawn'
-        },
         rank: {
             type: DataTypes.STRING,
             defaultValue: 'Associate'
-        },
-        rankAchievedDate: {
-            type: DataTypes.DATE,
-            allowNull: true,
-            field: 'rank_achieved_date'
         },
         kycStatus: {
             type: DataTypes.ENUM('PENDING', 'APPROVED', 'REJECTED'),
@@ -210,22 +159,6 @@ module.exports = (sequelize, DataTypes) => {
             type: DataTypes.BOOLEAN,
             defaultValue: false,
             field: 'mobile_verified'
-        },
-        // Activation & Login
-        activationDate: {
-            type: DataTypes.DATE,
-            allowNull: true,
-            field: 'activation_date'
-        },
-        lastLoginAt: {
-            type: DataTypes.DATE,
-            allowNull: true,
-            field: 'last_login_at'
-        },
-        lastLoginIp: {
-            type: DataTypes.STRING,
-            allowNull: true,
-            field: 'last_login_ip'
         },
 
         // OTP & Security Fields (Mapped to new columns)

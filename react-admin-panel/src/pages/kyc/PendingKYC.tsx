@@ -115,7 +115,7 @@ const PendingKYC: React.FC = () => {
     if (url.startsWith('http')) return url;
     // Assuming backend serves uploads at /uploads
     // Adjust base URL as needed based on your backend config
-    const baseUrl = import.meta.env.VITE_API_URL?.replace('/api/v1', '') || 'http://localhost:5000';
+    const baseUrl = import.meta.env.VITE_API_URL?.replace('/api/v1', '') || 'https://mlm-backend-ljan.onrender.com';
     // Remove 'src/' or 'public/' if present in path from backend
     const cleanPath = url.replace(/^src[\\/]/, '').replace(/^public[\\/]/, '');
     return `${baseUrl}/${cleanPath.replace(/\\/g, '/')}`;

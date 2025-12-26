@@ -156,6 +156,74 @@ module.exports = (sequelize, DataTypes) => {
             allowNull: true,
             field: 'admin_remarks',
             comment: 'Admin notes on the sale'
+        },
+        // Proclaim Sale Enhancement Fields
+        saleType: {
+            type: DataTypes.ENUM('PRIMARY_BOOKING', 'FULL_PAYMENT'),
+            allowNull: true,
+            defaultValue: 'FULL_PAYMENT',
+            field: 'sale_type',
+            comment: 'Type of sale: PRIMARY_BOOKING (25% down) or FULL_PAYMENT'
+        },
+        plotSize: {
+            type: DataTypes.DECIMAL(10, 2),
+            allowNull: true,
+            field: 'plot_size',
+            comment: 'Plot size in square feet'
+        },
+        pricePerSqFt: {
+            type: DataTypes.DECIMAL(10, 2),
+            allowNull: true,
+            field: 'price_per_sq_ft',
+            comment: 'Price per square foot (₹550-₹1499 range)'
+        },
+        isSelfCode: {
+            type: DataTypes.BOOLEAN,
+            defaultValue: false,
+            field: 'is_self_code',
+            comment: 'Whether this is a self-code sale (Associate = Buyer)'
+        },
+        projectedDirectIncentive: {
+            type: DataTypes.DECIMAL(15, 2),
+            allowNull: true,
+            field: 'projected_direct_incentive',
+            comment: 'Pre-calculated 5% direct incentive (for UI display)'
+        },
+        projectedTSB: {
+            type: DataTypes.DECIMAL(15, 2),
+            allowNull: true,
+            field: 'projected_tsb',
+            comment: 'Pre-calculated Team Sales Bonus amount (for UI display)'
+        },
+        actualDirectIncentive: {
+            type: DataTypes.DECIMAL(15, 2),
+            allowNull: true,
+            field: 'actual_direct_incentive',
+            comment: 'Actual direct incentive paid after commission activation'
+        },
+        actualTSB: {
+            type: DataTypes.DECIMAL(15, 2),
+            allowNull: true,
+            field: 'actual_tsb',
+            comment: 'Actual TSB distributed after commission activation'
+        },
+        distributionMonth: {
+            type: DataTypes.STRING(7),
+            allowNull: true,
+            field: 'distribution_month',
+            comment: 'Month of distribution (YYYY-MM format) for monthly payout tracking'
+        },
+        isDistributed: {
+            type: DataTypes.BOOLEAN,
+            defaultValue: false,
+            field: 'is_distributed',
+            comment: 'Whether commission has been distributed for this sale'
+        },
+        distributedAt: {
+            type: DataTypes.DATE,
+            allowNull: true,
+            field: 'distributed_at',
+            comment: 'When commission was distributed'
         }
     }, {
         tableName: 'property_sales',
@@ -189,6 +257,18 @@ module.exports = (sequelize, DataTypes) => {
             },
             {
                 fields: ['created_at']
+            },
+            {
+                fields: ['sale_type']
+            },
+            {
+                fields: ['is_self_code']
+            },
+            {
+                fields: ['distribution_month']
+            },
+            {
+                fields: ['is_distributed']
             }
         ]
     });

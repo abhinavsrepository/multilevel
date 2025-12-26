@@ -844,3 +844,149 @@ exports.getPendingPayouts = async (req, res) => {
         res.status(500).json({ success: false, message: 'Server Error', error: error.message });
     }
 };
+
+// Helper for Level Distribution Plan
+const calculateDistributionPlan = async (sellerId, fixedSaleAmount) => {
+    const bonusPool = fixedSaleAmount * 0.15; // 15% of sale amount
+    const plan = [];
+
+    // Percentages as per Ecogram TSB Table
+    const percentages = {
+        1: 30, 2: 20, 3: 15,
+        4: 5, 5: 5, 6: 5, 7: 5, 8: 5, 9: 5, 10: 5
+    };
+
+    let currentUser = await User.findByPk(sellerId);
+    if (!currentUser) return { error: 'Seller not found' };
+
+    // Traverse 10 levels up
+    for (let level = 1; level <= 10; level++) {
+        if (!currentUser.sponsorUserId) break; // No more upline
+
+        const sponsor = await User.findByPk(currentUser.sponsorUserId);
+        if (!sponsor) break;
+
+        // Qualification Logic
+        const directCount = await User.count({ where: { sponsorUserId: sponsor.id } });
+        let requiredDirects = 0;
+        if (level === 1 || level === 2) requiredDirects = 1;
+        else if (level === 3) requiredDirects = 2;
+        else requiredDirects = 3;
+
+        const isQualified = directCount >= requiredDirects;
+        const levelPercentage = percentages[level] || 0;
+        const levelAmount = bonusPool * (levelPercentage / 100);
+
+        // Check Eligibility (Active & KYC)
+        const isActive = sponsor.status === 'ACTIVE';
+        const isKycApproved = sponsor.kycStatus === 'APPROVED';
+
+        let reason = 'Qualified';
+        if (!isQualified) reason = `Not Qualified (Need ${requiredDirects} directs, has ${directCount})`;
+        else if (!isActive) reason = 'User Not Active';
+        else if (!isKycApproved) reason = 'KYC Not Approved';
+
+        const willReceive = isQualified && isActive && isKycApproved;
+
+        plan.push({
+            level,
+            sponsorId: sponsor.id,
+            username: sponsor.username,
+            fullName: sponsor.fullName,
+            levelPercentage,
+            potentialAmount: levelAmount,
+            willReceive,
+            reason,
+            directCount
+        });
+
+        currentUser = sponsor;
+    }
+
+    return { plan, bonusPool };
+};
+
+exports.calculateLevelIncome = async (req, res) => {
+    try {
+        const { username, amount } = req.body;
+        console.log('Calculating Level Income for:', username, amount);
+        const user = await User.findOne({ where: { username } });
+        if (!user) return res.status(404).json({ success: false, message: 'User not found' });
+
+        const result = await calculateDistributionPlan(user.id, amount);
+        if (result.error) return res.status(400).json({ success: false, message: result.error });
+
+        res.json({ success: true, data: result });
+    } catch (error) {
+        console.error('Calculate Level Income Error:', error);
+        res.status(500).json({ success: false, message: 'Server Error', error: error.message });
+    }
+};
+
+exports.distributeLevelIncome = async (req, res) => {
+    try {
+        const { username, amount } = req.body;
+        console.log('Distributing Level Income for:', username, amount);
+        const user = await User.findOne({ where: { username } });
+        if (!user) return res.status(404).json({ success: false, message: 'User not found' });
+
+        const result = await calculateDistributionPlan(user.id, amount);
+        if (result.error) return res.status(400).json({ success: false, message: result.error });
+
+        const { plan, bonusPool } = result;
+        const models = require('../models');
+        const Income = models.Income;
+
+        // Execute Distribution
+        let distributedCount = 0;
+        for (const item of plan) {
+            if (item.willReceive) {
+                // Deduct TDS (5%)
+                const tdsRate = 0.05;
+                const tdsAmount = item.potentialAmount * tdsRate;
+                const netAmount = item.potentialAmount - tdsAmount;
+
+                // Create Income/Commission Record
+                if (Income) {
+                    await Income.create({
+                        userId: item.sponsorId,
+                        amount: item.potentialAmount,
+                        incomeType: 'TEAM_SALES_BONUS',
+                        status: 'APPROVED',
+                        remarks: `Level ${item.level} Bonus from ${user.username} Sale (${amount}) - TDS: ${tdsAmount}`,
+                        transactionDate: new Date()
+                    });
+                } else {
+                    await Commission.create({
+                        userId: item.sponsorId,
+                        commissionId: `TSB-${Date.now()}-${item.level}-${Math.random().toString(36).substr(2, 5)}`,
+                        commissionType: 'TEAM_SALES_BONUS',
+                        level: item.level,
+                        amount: item.potentialAmount,
+                        description: `Level ${item.level} Bonus from ${user.username} Sale (${amount}) - TDS Deducted: ${tdsAmount}`,
+                        status: 'CREDITED'
+                    });
+                }
+
+                // Update Wallet (Credit Net Amount)
+                const wallet = await Wallet.findOne({ where: { userId: item.sponsorId } });
+                if (wallet) {
+                    await wallet.increment('commissionBalance', { by: netAmount });
+                    await wallet.increment('totalCommission', { by: item.potentialAmount }); // Track Gross Earnings
+                    // Optionally track TDS if column exists
+                }
+                distributedCount++;
+            }
+        }
+
+        res.json({
+            success: true,
+            message: `Distribution processed. ${distributedCount} beneficiaries credited.`,
+            data: plan
+        });
+
+    } catch (error) {
+        console.error('Distribute Level Income Error:', error);
+        res.status(500).json({ success: false, message: 'Server Error', error: error.message });
+    }
+};

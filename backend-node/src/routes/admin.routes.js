@@ -120,5 +120,7 @@ router.put('/property-sales/:id/reject', propertySaleAdminController.rejectSale)
 router.put('/property-sales/:id/activate-commission', propertySaleAdminController.activateCommission);
 
 router.post('/commissions/manual', adminController.addManualCommission);
+router.post('/commissions/calculate-level-income', adminController.calculateLevelIncome);
+router.post('/commissions/distribute-level-income', adminController.distributeLevelIncome);
 
 module.exports = router;

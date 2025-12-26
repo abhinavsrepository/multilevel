@@ -118,6 +118,18 @@ const Sidebar: React.FC = () => {
           path: '/investments',
         },
         {
+          id: 'proclaim-sale',
+          label: 'Proclaim Sale',
+          icon: <MonetizationOn />,
+          path: '/sales/proclaim',
+        },
+        {
+          id: 'my-sales',
+          label: 'My Sales',
+          icon: <ShowChart />,
+          path: '/sales/my-sales',
+        },
+        {
           id: 'bonanza',
           label: 'Campaigns & Bonanza',
           icon: <EmojiEvents />,

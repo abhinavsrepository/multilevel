@@ -82,9 +82,11 @@ router.get('/:id', getPropertyById);
 router.get('/:id/similar', getSimilarProperties);
 router.get('/:id/stats', getPropertyStats);
 router.get('/:id/recent-investments', getPropertyRecentInvestments);
+router.get('/:id/investments', getPropertyRecentInvestments); // Alias for recent-investments
 router.get('/:id/documents', getPropertyDocuments);
 router.get('/:id/images', getPropertyImages);
 router.get('/:id/videos', getPropertyVideos);
+router.post('/:id/view', getPropertyById); // Track property view - using getPropertyById as placeholder
 
 // ==================== Protected Routes ====================
 

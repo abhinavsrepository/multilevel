@@ -374,32 +374,34 @@ const PropertyDetail: React.FC = () => {
             </div>
 
             {/* Booking Progress */}
-            <div className="mt-6">
-              <div className="flex items-center justify-between mb-2">
-                <p className="text-sm font-semibold text-gray-700 dark:text-gray-300">
-                  Booking Progress
-                </p>
-                <p className="text-sm font-semibold text-gray-900 dark:text-white">
-                  {currentProperty.bookingInfo.bookingProgress}%
-                </p>
+            {currentProperty.bookingInfo && (
+              <div className="mt-6">
+                <div className="flex items-center justify-between mb-2">
+                  <p className="text-sm font-semibold text-gray-700 dark:text-gray-300">
+                    Booking Progress
+                  </p>
+                  <p className="text-sm font-semibold text-gray-900 dark:text-white">
+                    {currentProperty.bookingInfo.bookingProgress}%
+                  </p>
+                </div>
+                <div className="h-3 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
+                  <motion.div
+                    className="h-full bg-gradient-to-r from-blue-500 to-blue-600 rounded-full"
+                    initial={{ width: 0 }}
+                    animate={{ width: `${currentProperty.bookingInfo.bookingProgress}%` }}
+                    transition={{ duration: 1, delay: 0.3 }}
+                  />
+                </div>
+                <div className="flex items-center justify-between mt-2">
+                  <p className="text-sm text-gray-600 dark:text-gray-400">
+                    {currentProperty.bookingInfo.bookedSlots} / {currentProperty.bookingInfo.totalSlots} slots booked
+                  </p>
+                  <p className="text-sm text-green-600 dark:text-green-400 font-semibold">
+                    {currentProperty.bookingInfo.availableSlots} slots available
+                  </p>
+                </div>
               </div>
-              <div className="h-3 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
-                <motion.div
-                  className="h-full bg-gradient-to-r from-blue-500 to-blue-600 rounded-full"
-                  initial={{ width: 0 }}
-                  animate={{ width: `${currentProperty.bookingInfo.bookingProgress}%` }}
-                  transition={{ duration: 1, delay: 0.3 }}
-                />
-              </div>
-              <div className="flex items-center justify-between mt-2">
-                <p className="text-sm text-gray-600 dark:text-gray-400">
-                  {currentProperty.bookingInfo.bookedSlots} / {currentProperty.bookingInfo.totalSlots} slots booked
-                </p>
-                <p className="text-sm text-green-600 dark:text-green-400 font-semibold">
-                  {currentProperty.bookingInfo.availableSlots} slots available
-                </p>
-              </div>
-            </div>
+            )}
           </motion.div>
 
           {/* Tabs */}

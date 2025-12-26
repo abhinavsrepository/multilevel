@@ -9,6 +9,15 @@ router.use(protect);
 // Submit a new property sale
 router.post('/', propertySaleController.createSale);
 
+// Proclaim a property sale (Associate selling to buyer)
+router.post('/proclaim', propertySaleController.proclaimSale);
+
+// Calculate projected earnings for a potential sale
+router.post('/calculate-earnings', propertySaleController.calculateProjectedEarnings);
+
+// Get user's sale statistics
+router.get('/stats', propertySaleController.getUserSaleStats);
+
 // Get my sales (as employee)
 router.get('/my-sales', propertySaleController.getMySales);
 

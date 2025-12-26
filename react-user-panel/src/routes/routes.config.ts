@@ -43,6 +43,10 @@ const MyInvestments = lazy(() => import('@/pages/investments/MyInvestments'));
 const InvestmentDetail = lazy(() => import('@/pages/investments/InvestmentDetail'));
 const Portfolio = lazy(() => import('@/pages/investments/Portfolio'));
 
+// ==================== Property Sales ====================
+const ProclaimSale = lazy(() => import('@/pages/sales/ProclaimSale'));
+const MySales = lazy(() => import('@/pages/sales/MySales'));
+
 // ==================== Wallet ====================
 const Wallet = lazy(() => import('@/pages/wallet/Wallet'));
 const Transactions = lazy(() => import('@/pages/wallet/Transactions'));
@@ -302,6 +306,24 @@ export const routesConfig: RouteConfig[] = [
     protected: true,
     breadcrumb: 'Portfolio',
     title: 'Portfolio',
+  },
+
+  // ==================== Property Sales Routes ====================
+  {
+    path: '/sales/proclaim',
+    element: ProclaimSale,
+    layout: 'dashboard',
+    protected: true,
+    breadcrumb: 'Proclaim Sale',
+    title: 'Proclaim Property Sale',
+  },
+  {
+    path: '/sales/my-sales',
+    element: MySales,
+    layout: 'dashboard',
+    protected: true,
+    breadcrumb: 'My Sales',
+    title: 'My Property Sales',
   },
 
   // ==================== Wallet Routes ====================

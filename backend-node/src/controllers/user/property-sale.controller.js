@@ -163,4 +163,101 @@ exports.getSaleDetails = async (req, res, next) => {
     }
 };
 
+/**
+ * @desc    Proclaim a property sale
+ * @route   POST /api/v1/property-sales/proclaim
+ * @access  Private (Activated Members with KYC)
+ */
+exports.proclaimSale = async (req, res, next) => {
+    try {
+        const associateUserId = req.user.id;
+
+        const saleData = {
+            propertyId: req.body.propertyId,
+            saleType: req.body.saleType || 'FULL_PAYMENT',
+            plotSize: req.body.plotSize,
+            pricePerSqFt: req.body.pricePerSqFt,
+            paymentReceipt: req.body.paymentReceipt,
+            buyerDetails: req.body.buyerDetails,
+            remarks: req.body.remarks
+        };
+
+        // Validation
+        if (!saleData.propertyId || !saleData.plotSize || !saleData.pricePerSqFt) {
+            return res.status(400).json({
+                success: false,
+                message: 'Property ID, Plot Size, and Price per Sq Ft are required'
+            });
+        }
+
+        if (!saleData.paymentReceipt) {
+            return res.status(400).json({
+                success: false,
+                message: 'Payment receipt is mandatory for verification'
+            });
+        }
+
+        if (!saleData.buyerDetails || !saleData.buyerDetails.fullName || !saleData.buyerDetails.mobile) {
+            return res.status(400).json({
+                success: false,
+                message: 'Buyer full name and mobile number are required'
+            });
+        }
+
+        const result = await propertySaleService.proclaimSale(saleData, associateUserId);
+
+        res.status(201).json(result);
+    } catch (error) {
+        console.error('Error proclaiming sale:', error);
+        next(error);
+    }
+};
+
+/**
+ * @desc    Calculate projected earnings for a sale
+ * @route   POST /api/v1/property-sales/calculate-earnings
+ * @access  Private
+ */
+exports.calculateProjectedEarnings = async (req, res, next) => {
+    try {
+        const saleParams = {
+            plotSize: req.body.plotSize,
+            pricePerSqFt: req.body.pricePerSqFt,
+            saleType: req.body.saleType || 'FULL_PAYMENT'
+        };
+
+        if (!saleParams.plotSize || !saleParams.pricePerSqFt) {
+            return res.status(400).json({
+                success: false,
+                message: 'Plot size and price per sq ft are required'
+            });
+        }
+
+        const result = await propertySaleService.calculateProjectedEarnings(saleParams);
+
+        res.status(200).json(result);
+    } catch (error) {
+        console.error('Error calculating earnings:', error);
+        next(error);
+    }
+};
+
+/**
+ * @desc    Get user's sale statistics
+ * @route   GET /api/v1/property-sales/stats
+ * @access  Private
+ */
+exports.getUserSaleStats = async (req, res, next) => {
+    try {
+        const userId = req.user.id;
+
+        const result = await propertySaleService.getUserSaleStats(userId);
+
+        res.status(200).json(result);
+    } catch (error) {
+        console.error('Error fetching user sale stats:', error);
+        next(error);
+    }
+};
+
 module.exports = exports;

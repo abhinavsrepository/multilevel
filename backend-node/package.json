@@ -13,7 +13,8 @@
     "sync:db:ordered": "node sync-database-ordered.js",
     "sync:db:safe": "node sync-database-safe.js",
     "cleanup:partial": "node cleanup-partial-sync.js",
-    "migrate:property-enum": "node fix-property-status-enum.js"
+    "migrate:property-enum": "node fix-property-status-enum.js",
+    "migrate:proclaim-sale": "node run-migration.js"
   },
   "keywords": [],
   "author": "",

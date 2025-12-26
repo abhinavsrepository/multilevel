@@ -4,6 +4,9 @@ const { Op } = require('sequelize');
 /**
  * Get dashboard income stats
  */
+/**
+ * Get dashboard income stats
+ */
 exports.getDashboardStats = async (req, res) => {
     try {
         const userId = req.user.id;
@@ -20,24 +23,39 @@ exports.getDashboardStats = async (req, res) => {
             });
         }
 
-        // Get today's income
+        // Helper to get sum for date range
+        const getSum = async (startDate) => {
+            return await Income.sum('amount', {
+                where: {
+                    userId,
+                    status: 'APPROVED',
+                    createdAt: { [Op.gte]: startDate }
+                }
+            }) || 0;
+        };
+
+        // Today
         const todayStart = new Date();
         todayStart.setHours(0, 0, 0, 0);
+        const todayIncome = await getSum(todayStart);
 
-        const todayIncome = await Income.sum('amount', {
-            where: {
-                userId,
-                status: 'APPROVED',
-                createdAt: { [Op.gte]: todayStart }
-            }
-        }) || 0;
+        // This Week
+        const weekStart = new Date();
+        weekStart.setDate(weekStart.getDate() - weekStart.getDay());
+        weekStart.setHours(0, 0, 0, 0);
+        const thisWeekIncome = await getSum(weekStart);
 
-        // Get income by type
-        const incomeByType = await Income.findAll({
+        // This Month
+        const monthStart = new Date();
+        monthStart.setDate(1);
+        monthStart.setHours(0, 0, 0, 0);
+        const thisMonthIncome = await getSum(monthStart);
+
+        // Get income by type (Grouped)
+        const incomeByTypeRaw = await Income.findAll({
             attributes: [
                 'incomeType',
-                [sequelize.fn('SUM', sequelize.col('amount')), 'totalAmount'],
-                [sequelize.fn('COUNT', sequelize.col('id')), 'count']
+                [sequelize.fn('SUM', sequelize.col('amount')), 'totalAmount']
             ],
             where: {
                 userId,
@@ -46,12 +64,17 @@ exports.getDashboardStats = async (req, res) => {
             group: ['incomeType']
         });
 
+        // Convert to Map { TYPE: Amount }
+        const incomeByType = {};
+        incomeByTypeRaw.forEach(item => {
+            incomeByType[item.incomeType] = parseFloat(item.get('totalAmount'));
+        });
+
         // Get level-wise income
-        const levelIncome = await Income.findAll({
+        const levelIncomeRaw = await Income.findAll({
             attributes: [
                 'level',
-                [sequelize.fn('SUM', sequelize.col('amount')), 'totalAmount'],
-                [sequelize.fn('COUNT', sequelize.col('id')), 'count']
+                [sequelize.fn('SUM', sequelize.col('amount')), 'totalAmount']
             ],
             where: {
                 userId,
@@ -63,21 +86,31 @@ exports.getDashboardStats = async (req, res) => {
             order: [['level', 'ASC']]
         });
 
+        const levelWiseIncome = levelIncomeRaw.map(item => ({
+            level: item.level,
+            income: parseFloat(item.get('totalAmount'))
+        }));
+
         res.json({
             success: true,
             data: {
+                walletBalances: {
+                    commissionBalance: parseFloat(wallet.commissionBalance),
+                    levelProfitBalance: parseFloat(wallet.levelProfitBalance),
+                    cashbackBalance: parseFloat(wallet.cashbackBalance),
+                    repurchaseBalance: parseFloat(wallet.repurchaseBalance),
+                    coinBalance: parseFloat(wallet.coinBalance),
+                    dailyIncome: parseFloat(wallet.dailyIncome),
+                    roiBalance: parseFloat(wallet.roiBalance)
+                },
                 totalIncome: parseFloat(wallet.totalEarned),
-                availableBalance: parseFloat(wallet.commissionBalance),
-                totalWithdrawn: parseFloat(wallet.totalWithdrawn),
+                availableBalance: parseFloat(wallet.commissionBalance), // redundant but keep for compat if needed
+                totalEarnings: parseFloat(wallet.totalEarned),
                 todayIncome: parseFloat(todayIncome),
-                dailyIncome: parseFloat(wallet.dailyIncome),
-                levelProfitBalance: parseFloat(wallet.levelProfitBalance),
-                cashbackBalance: parseFloat(wallet.cashbackBalance),
-                repurchaseBalance: parseFloat(wallet.repurchaseBalance),
-                coinBalance: parseFloat(wallet.coinBalance),
-                roiBalance: parseFloat(wallet.roiBalance),
+                thisWeekIncome: parseFloat(thisWeekIncome),
+                thisMonthIncome: parseFloat(thisMonthIncome),
                 incomeByType,
-                levelIncome
+                levelWiseIncome
             }
         });
     } catch (error) {

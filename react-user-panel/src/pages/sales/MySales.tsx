@@ -30,7 +30,7 @@ import {
   Person,
 } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
-import { toast } from 'react-hot-toast';
+import { toast } from 'react-toastify';
 
 import EmptyState from '@/components/common/EmptyState';
 import { getMySales, getUserSaleStats } from '@/api/propertySale.api';

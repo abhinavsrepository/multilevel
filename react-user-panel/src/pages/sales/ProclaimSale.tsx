@@ -33,7 +33,7 @@ import {
 import { useNavigate } from 'react-router-dom';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
-import { toast } from 'react-hot-toast';
+import { toast } from 'react-toastify';
 
 import { getProperties } from '@/api/property.api';
 import { proclaimSale, calculateProjectedEarnings } from '@/api/propertySale.api';

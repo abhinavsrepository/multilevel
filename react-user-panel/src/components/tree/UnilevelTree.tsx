@@ -23,8 +23,6 @@ import {
   FullscreenExit as ExitFullscreenIcon,
   Home as HomeIcon,
   Refresh as RefreshIcon,
-  ExpandMore as ExpandMoreIcon,
-  ChevronRight as ChevronRightIcon,
   Search as SearchIcon,
   FilterList as FilterIcon,
 } from '@mui/icons-material';
@@ -556,36 +554,6 @@ const UnilevelTree: React.FC<UnilevelTreeProps> = ({
           depthFactor={180}
           collapsible={true}
           shouldCollapseNeighborNodes={false}
-          styles={{
-            links: {
-              stroke: theme.palette.divider,
-              strokeWidth: 2,
-            },
-            nodes: {
-              node: {
-                circle: {
-                  fill: theme.palette.primary.main,
-                  stroke: theme.palette.primary.dark,
-                  strokeWidth: 2,
-                },
-                name: {
-                  stroke: 'none',
-                  fill: theme.palette.text.primary,
-                  fontWeight: 600,
-                },
-                attributes: {
-                  stroke: 'none',
-                  fill: theme.palette.text.secondary,
-                },
-              },
-              leafNode: {
-                circle: {
-                  fill: theme.palette.success.main,
-                  stroke: theme.palette.success.dark,
-                },
-              },
-            },
-          }}
         />
       )}
 

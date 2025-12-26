@@ -86,45 +86,45 @@ export function SelectField<T extends FieldValues>({
               renderValue
                 ? renderValue
                 : (selected) => {
-                    if (!selected || (Array.isArray(selected) && selected.length === 0)) {
-                      return (
-                        <Typography color="text.secondary" sx={{ opacity: 0.6 }}>
-                          {placeholder || `Select ${label}`}
-                        </Typography>
-                      );
-                    }
-
-                    if (multiple && Array.isArray(selected)) {
-                      return (
-                        <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
-                          {selected.map((value) => {
-                            const option = options.find((opt) => opt.value === value);
-                            return (
-                              <Chip
-                                key={value}
-                                label={option?.label || value}
-                                size="small"
-                                sx={{
-                                  height: 24,
-                                  '& .MuiChip-label': {
-                                    px: 1,
-                                  },
-                                }}
-                              />
-                            );
-                          })}
-                        </Box>
-                      );
-                    }
-
-                    const selectedOption = options.find((opt) => opt.value === selected);
+                  if (!selected || (Array.isArray(selected) && selected.length === 0)) {
                     return (
-                      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                        {selectedOption?.icon}
-                        <Typography>{selectedOption?.label || selected}</Typography>
+                      <Typography color="text.secondary" sx={{ opacity: 0.6 }}>
+                        {placeholder || `Select ${label}`}
+                      </Typography>
+                    );
+                  }
+
+                  if (multiple && Array.isArray(selected)) {
+                    return (
+                      <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
+                        {selected.map((value) => {
+                          const option = options.find((opt) => opt.value === value);
+                          return (
+                            <Chip
+                              key={value}
+                              label={option?.label || value}
+                              size="small"
+                              sx={{
+                                height: 24,
+                                '& .MuiChip-label': {
+                                  px: 1,
+                                },
+                              }}
+                            />
+                          );
+                        })}
                       </Box>
                     );
                   }
+
+                  const selectedOption = options.find((opt) => opt.value === (selected as string | number));
+                  return (
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                      {selectedOption?.icon}
+                      <Typography>{selectedOption?.label || selected}</Typography>
+                    </Box>
+                  );
+                }
             }
             onChange={(e) => {
               field.onChange(e);

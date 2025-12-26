@@ -85,7 +85,7 @@ const RankMilestoneMap: React.FC<RankMilestoneMapProps> = ({
                             bgcolor: theme.palette.success.main,
                             borderRadius: 3,
                             zIndex: 1,
-                            width: animate ? calculateProgressWidth(sortedRanks, currentRankIndex, nextRank, currentVolume) : '0%',
+                            width: animate ? calculateProgressWidth(sortedRanks, currentRankIndex, currentVolume, nextRank) : '0%',
                             transition: 'width 2s cubic-bezier(0.17, 0.67, 0.83, 0.67)',
                         }}
                     />
@@ -94,7 +94,6 @@ const RankMilestoneMap: React.FC<RankMilestoneMapProps> = ({
                     {sortedRanks.map((rank, index) => {
                         const isAchieved = index <= currentRankIndex;
                         const isNext = index === currentRankIndex + 1;
-                        const isLocked = index > currentRankIndex + 1;
 
                         return (
                             <Box
@@ -164,11 +163,10 @@ const RankMilestoneMap: React.FC<RankMilestoneMapProps> = ({
 };
 
 // Helper: Calculate width percentage for the progress bar
-function calculateProgressWidth(ranks: Rank[], currentIndex: number, nextRank?: Rank, currentVolume: number) {
+function calculateProgressWidth(ranks: Rank[], currentIndex: number, currentVolume: number, nextRank?: Rank) {
     if (ranks.length <= 1) return '100%';
 
     const totalNodes = ranks.length;
-    const segmentWidth = 100 / totalNodes; // Width of one segment roughly
 
     // Base progress: Completed ranks
     let widthPct = (currentIndex / (totalNodes - 1)) * 100;

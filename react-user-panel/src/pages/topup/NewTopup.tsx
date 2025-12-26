@@ -35,7 +35,7 @@ const NewTopup: React.FC = () => {
                 if (res.success && res.data) {
                     setPackages(res.data);
                 }
-            } catch (error) {
+            } catch (error: any) {
                 console.error('Packages Load Error:', error);
                 if (error.config) {
                     console.error('Failed URL:', error.config.baseURL, error.config.url);

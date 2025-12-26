@@ -19,7 +19,7 @@ export interface Investment {
   totalPaid: number;
   pendingAmount: number;
   commissionStatus: 'PENDING' | 'GENERATED' | 'PAID';
-  status: 'ACTIVE' | 'COMPLETED' | 'CANCELLED' | 'MATURED';
+  status: 'ACTIVE' | 'COMPLETED' | 'CANCELLED' | 'MATURED' | 'PENDING';
   investmentDate: string;
   maturityDate?: string;
 

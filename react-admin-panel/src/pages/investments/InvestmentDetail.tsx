@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Card, Descriptions, Tag, Button, Space, Row, Col, message, Modal, Spin, Divider } from 'antd';
-import { ArrowLeftOutlined, CheckCircleOutlined, CloseCircleOutlined, StopOutlined } from '@ant-design/icons';
-import { investmentApi, Investment } from '@/api/investment.api';
+import { ArrowLeftOutlined, CheckCircleOutlined, CloseCircleOutlined } from '@ant-design/icons';
+import { investmentApi } from '@/api/investmentApi';
+import { Investment } from '@/types/investment.types';
 import dayjs from 'dayjs';
 
 const { confirm } = Modal;
@@ -15,14 +16,14 @@ const InvestmentDetail: React.FC = () => {
 
   useEffect(() => {
     if (id) {
-      fetchInvestment(id);
+      fetchInvestment(parseInt(id, 10)); // Ensure ID is a number
     }
   }, [id]);
 
-  const fetchInvestment = async (investmentId: string) => {
+  const fetchInvestment = async (investmentId: number) => {
     try {
       setLoading(true);
-      const response = await investmentApi.getById(investmentId);
+      const response = await investmentApi.getInvestmentById(investmentId);
       if (response.data.success) {
         setInvestment(response.data.data || null);
       } else {
@@ -41,9 +42,9 @@ const InvestmentDetail: React.FC = () => {
       content: 'Are you sure you want to approve this investment?',
       onOk: async () => {
         try {
-          await investmentApi.approve(id!);
+          await investmentApi.approveInvestment(parseInt(id!, 10));
           message.success('Investment approved successfully');
-          fetchInvestment(id!);
+          fetchInvestment(parseInt(id!, 10));
         } catch (error) {
           message.error('Failed to approve investment');
         }
@@ -71,9 +72,9 @@ const InvestmentDetail: React.FC = () => {
           return Promise.reject();
         }
         try {
-          await investmentApi.reject(id!, reason);
+          await investmentApi.rejectInvestment(parseInt(id!, 10), reason);
           message.success('Investment rejected successfully');
-          fetchInvestment(id!);
+          fetchInvestment(parseInt(id!, 10));
         } catch (error) {
           message.error('Failed to reject investment');
         }
@@ -135,27 +136,27 @@ const InvestmentDetail: React.FC = () => {
               <Descriptions.Item label="Amount">₹{investment.investmentAmount?.toLocaleString()}</Descriptions.Item>
               <Descriptions.Item label="Date">{dayjs(investment.createdAt).format('DD MMM YYYY HH:mm')}</Descriptions.Item>
               <Descriptions.Item label="ROI Earned">₹{investment.roiEarned?.toLocaleString() || 0}</Descriptions.Item>
-              <Descriptions.Item label="Current Value">₹{investment.currentValue?.toLocaleString() || 0}</Descriptions.Item>
-              <Descriptions.Item label="Maturity Date">{investment.expectedMaturityDate ? dayjs(investment.expectedMaturityDate).format('DD MMM YYYY') : '-'}</Descriptions.Item>
+              <Descriptions.Item label="Current Value">₹{investment.currentPropertyValue?.toLocaleString() || 0}</Descriptions.Item>
+              <Descriptions.Item label="Maturity Date">{investment.maturityDate ? dayjs(investment.maturityDate).format('DD MMM YYYY') : '-'}</Descriptions.Item>
             </Descriptions>
           </Col>
 
           <Col span={24}>
             <Divider />
             <Descriptions title="Investor Details" bordered column={{ xxl: 4, xl: 3, lg: 3, md: 3, sm: 2, xs: 1 }}>
-              <Descriptions.Item label="Name">{investment.User?.firstName} {investment.User?.lastName}</Descriptions.Item>
-              <Descriptions.Item label="Username">{investment.User?.username}</Descriptions.Item>
-              <Descriptions.Item label="Email">{investment.User?.email}</Descriptions.Item>
+              <Descriptions.Item label="Name">{investment.user?.fullName} </Descriptions.Item>
+              <Descriptions.Item label="Username">{investment.user?.userId}</Descriptions.Item>
+              <Descriptions.Item label="Email">{investment.user?.email}</Descriptions.Item>
             </Descriptions>
           </Col>
 
           <Col span={24}>
             <Divider />
             <Descriptions title="Property Details" bordered column={{ xxl: 4, xl: 3, lg: 3, md: 3, sm: 2, xs: 1 }}>
-              <Descriptions.Item label="Property">{investment.Property?.title}</Descriptions.Item>
-              <Descriptions.Item label="Property ID">{investment.Property?.propertyId}</Descriptions.Item>
+              <Descriptions.Item label="Property">{investment.property?.title}</Descriptions.Item>
+              <Descriptions.Item label="Property ID">{investment.property?.propertyId}</Descriptions.Item>
               <Descriptions.Item label="Action">
-                <Button type="link" onClick={() => navigate(`/properties/${investment.propertyId}`)}>
+                <Button type="link" onClick={() => navigate(`/properties/${investment.property.propertyId}`)}>
                   View Property
                 </Button>
               </Descriptions.Item>

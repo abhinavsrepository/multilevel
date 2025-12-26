@@ -68,9 +68,8 @@ const IncomeDashboard: React.FC = () => {
   const [dashboard, setDashboard] = useState<IncomeDashboardType | null>(null);
   const [levelOverview, setLevelOverview] = useState<LevelOverview[]>([]);
   const [incomeHistory, setIncomeHistory] = useState<Income[]>([]);
-  const [historyTotal, setHistoryTotal] = useState(0);
   const [tabValue, setTabValue] = useState(0);
-  const [historyPage, setHistoryPage] = useState(1);
+  const [historyPage] = useState(1);
   const [historyFilters, setHistoryFilters] = useState({
     incomeType: '',
     level: '',
@@ -93,8 +92,8 @@ const IncomeDashboard: React.FC = () => {
         getIncomeDashboard(),
         getLevelOverview(),
       ]);
-      setDashboard(dashboardRes.data);
-      setLevelOverview(levelRes.data);
+      setDashboard(dashboardRes.data || null);
+      setLevelOverview(levelRes.data || []);
     } catch (error: any) {
       showSnackbar(error?.response?.data?.message || 'Failed to fetch income data', 'error');
     } finally {
@@ -111,8 +110,9 @@ const IncomeDashboard: React.FC = () => {
         ...(historyFilters.level && { level: parseInt(historyFilters.level) }),
       };
       const response = await getIncomeHistory(params);
-      setIncomeHistory(response.data.data);
-      setHistoryTotal(response.data.total);
+      if (response.data) {
+        setIncomeHistory(response.data.data || []);
+      }
     } catch (error: any) {
       showSnackbar(error?.response?.data?.message || 'Failed to fetch income history', 'error');
     }
@@ -262,7 +262,7 @@ const IncomeDashboard: React.FC = () => {
       {/* Tabs */}
       <Card>
         <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
-          <Tabs value={tabValue} onChange={(e, newValue) => setTabValue(newValue)}>
+          <Tabs value={tabValue} onChange={(_e, newValue) => setTabValue(newValue)}>
             <Tab label="Income by Type" />
             <Tab label="Level Overview" />
             <Tab label="Income History" />

@@ -156,7 +156,7 @@ const Profile: React.FC = () => {
     }
   };
 
-  const handleEditProfile = async (data: any) => {
+  const handleEditProfile = async (_data: any) => {
     // Handle profile update
     await fetchProfileData();
   };
@@ -336,10 +336,6 @@ const Profile: React.FC = () => {
                     >
                       {user.isActive ? 'Active' : 'Inactive'}
                     </span>
-                  </div>
-                  {/* Rank Progress Bar Widget */}
-                  <div className="mt-6 w-full">
-                    <RankProgressWidget />
                   </div>
                 </div>
               </div>

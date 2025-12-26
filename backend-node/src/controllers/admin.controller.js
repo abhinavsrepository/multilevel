@@ -60,16 +60,21 @@ exports.getUserById = async (req, res) => {
             });
         }
 
+        // Convert to plain object to avoid serialization issues
+        const userData = user.toJSON();
+
         res.json({
             success: true,
-            data: user
+            data: userData
         });
     } catch (error) {
         console.error('Get User By ID Error:', error);
+        console.error('Error stack:', error.stack);
         res.status(500).json({
             success: false,
             message: 'Server Error',
-            error: error.message
+            error: error.message,
+            details: process.env.NODE_ENV === 'development' ? error.stack : undefined
         });
     }
 };

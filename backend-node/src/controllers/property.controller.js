@@ -22,7 +22,7 @@ const VISIBLE_STATUSES = ['ACTIVE', 'AVAILABLE', 'BOOKING_OPEN', 'FEW_SLOTS_LEFT
 
 exports.getAllProperties = async (req, res) => {
     try {
-        const { page = 1, limit = 20, status, propertyType, location, minPrice, maxPrice, sortBy = 'createdAt', sortDirection = 'DESC' } = req.query;
+        const { page = 1, limit = 20, status, propertyType, location, minPrice, maxPrice, search, sortBy = 'createdAt', sortDirection = 'DESC' } = req.query;
         const offset = (page - 1) * limit;
 
         const where = {};
@@ -35,12 +35,29 @@ exports.getAllProperties = async (req, res) => {
         }
 
         if (propertyType) where.propertyType = propertyType;
+
+        // Enhanced search: search across multiple fields
+        const searchConditions = [];
         if (location) {
-            where[Op.or] = [
-                { city: { [Op.like]: `%${location}%` } },
-                { state: { [Op.like]: `%${location}%` } }
-            ];
+            searchConditions.push(
+                { city: { [Op.iLike]: `%${location}%` } },
+                { state: { [Op.iLike]: `%${location}%` } }
+            );
         }
+        if (search) {
+            searchConditions.push(
+                { title: { [Op.iLike]: `%${search}%` } },
+                { description: { [Op.iLike]: `%${search}%` } },
+                { city: { [Op.iLike]: `%${search}%` } },
+                { state: { [Op.iLike]: `%${search}%` } },
+                { address: { [Op.iLike]: `%${search}%` } }
+            );
+        }
+
+        if (searchConditions.length > 0) {
+            where[Op.or] = searchConditions;
+        }
+
         if (minPrice || maxPrice) {
             where.basePrice = {};
             if (minPrice) where.basePrice[Op.gte] = minPrice;

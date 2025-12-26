@@ -29,11 +29,13 @@ const AuditLogs: React.FC = () => {
       });
       if (response.data.success) {
         setLogs(response.data.data);
-        setPagination({
-          current: response.data.pagination.page,
-          pageSize: size,
-          total: response.data.pagination.total,
-        });
+        if (response.data.pagination) {
+          setPagination({
+            current: response.data.pagination.currentPage,
+            pageSize: size,
+            total: response.data.pagination.totalItems,
+          });
+        }
       }
     } catch (error) {
       console.error('Failed to fetch audit logs:', error);

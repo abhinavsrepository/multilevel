@@ -11,14 +11,11 @@ import {
   TableRow,
   TablePagination,
   Chip,
-  Button,
   Grid,
   Card,
   CardContent,
   CircularProgress,
   Alert,
-  TextField,
-  MenuItem,
   IconButton,
   Tooltip,
   Stack,
@@ -32,26 +29,10 @@ import {
   TrendingUp,
   CheckCircle,
   HourglassEmpty,
-  Cancel,
-  Download
+  Cancel
 } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
 import { getMyAchievements, BonanzaQualification } from '@/api/bonanza.api';
-
-interface TabPanelProps {
-  children?: React.ReactNode;
-  index: number;
-  value: number;
-}
-
-function TabPanel(props: TabPanelProps) {
-  const { children, value, index, ...other } = props;
-  return (
-    <div role="tabpanel" hidden={value !== index} {...other}>
-      {value === index && <Box sx={{ pt: 3 }}>{children}</Box>}
-    </div>
-  );
-}
 
 const BonanzaHistory: React.FC = () => {
   const [loading, setLoading] = useState(true);
@@ -94,11 +75,6 @@ const BonanzaHistory: React.FC = () => {
 
   const handleChangeRowsPerPage = (event: React.ChangeEvent<HTMLInputElement>) => {
     setRowsPerPage(parseInt(event.target.value, 10));
-    setPage(0);
-  };
-
-  const handleStatusFilterChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setStatusFilter(event.target.value);
     setPage(0);
   };
 
@@ -338,7 +314,7 @@ const BonanzaHistory: React.FC = () => {
                         label={qualification.status}
                         color={getStatusColor(qualification.status)}
                         size="small"
-                        icon={getStatusIcon(qualification.status)}
+                        {...(getStatusIcon(qualification.status) && { icon: getStatusIcon(qualification.status) })}
                       />
                     </TableCell>
                     <TableCell align="center">

@@ -43,14 +43,6 @@ import { useAppDispatch } from '@/redux/store';
 import { register as registerUser } from '@/redux/slices/authSlice';
 import { validateSponsor } from '@/api/auth.api';
 
-interface SponsorInfo {
-  sponsorId: string;
-  name: string;
-  rank?: string;
-  email?: string;
-  isValid: boolean;
-}
-
 const RegisterSimple: React.FC = () => {
   const theme = useTheme();
   const navigate = useNavigate();
@@ -210,8 +202,8 @@ const RegisterSimple: React.FC = () => {
       const result = await dispatch(registerUser(registrationData)).unwrap();
 
       // Store user info for the success dialog
-      setRegisteredUserId(result.user?.userId || result.user?.id || 'N/A');
-      setRegisteredUsername(result.user?.username || formData.email);
+      setRegisteredUserId(result.user?.userId || String(result.user?.id) || 'N/A');
+      setRegisteredUsername(result.user?.userId || formData.email);
 
       // Show success dialog
       setShowSuccessDialog(true);

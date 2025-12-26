@@ -1,5 +1,4 @@
 import React from 'react';
-import { motion } from 'framer-motion';
 import {
   FiX,
   FiCheck,
@@ -18,6 +17,14 @@ interface PropertyComparisonProps {
   onRemoveProperty: (propertyId: number) => void;
   onClose?: () => void;
   className?: string;
+}
+
+interface ComparisonItem {
+  label: string;
+  key: string;
+  icon?: React.ReactElement;
+  formatter?: (value: any) => string;
+  suffix?: string;
 }
 
 const PropertyComparison: React.FC<PropertyComparisonProps> = ({
@@ -49,7 +56,7 @@ const PropertyComparison: React.FC<PropertyComparisonProps> = ({
     return <span>{value}</span>;
   };
 
-  const comparisonRows = [
+  const comparisonRows: Array<{ category: string; items: ComparisonItem[] }> = [
     {
       category: 'Basic Information',
       items: [

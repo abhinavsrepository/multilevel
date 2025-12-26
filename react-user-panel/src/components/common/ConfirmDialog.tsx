@@ -66,7 +66,7 @@ export const useConfirmDialog = () => {
   ): Promise<SweetAlertResult> => {
     const isDark = theme.palette.mode === 'dark';
 
-    const swalOptions: SweetAlertOptions = {
+    const swalOptions = {
       ...getDefaultOptions(isDark),
       title: options.title || 'Are you sure?',
       text: options.message,
@@ -81,7 +81,7 @@ export const useConfirmDialog = () => {
       allowEscapeKey: options.allowEscapeKey !== undefined ? options.allowEscapeKey : true,
       reverseButtons: true,
       ...options,
-    };
+    } as SweetAlertOptions;
 
     if (options.confirmButtonColor) {
       swalOptions.confirmButtonColor = options.confirmButtonColor;

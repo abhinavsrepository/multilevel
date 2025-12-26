@@ -43,7 +43,7 @@ const PendingKYC: React.FC = () => {
       setLoading(true);
       const response = await kycApi.getPendingKYC({
         page,
-        limit: pageSize
+        size: pageSize
       });
 
       if (response.data.success && response.data.data) {
@@ -127,8 +127,8 @@ const PendingKYC: React.FC = () => {
       key: 'user',
       render: (_: any, record: KYCDocument) => (
         <Space direction="vertical" size={0}>
-          <Text strong>{record.user?.firstName} {record.user?.lastName}</Text>
-          <Text type="secondary" style={{ fontSize: '12px' }}>{record.user?.username}</Text>
+          <Text strong>{record.user?.fullName}</Text>
+          <Text type="secondary" style={{ fontSize: '12px' }}>{record.user?.email}</Text>
         </Space>
       ),
     },

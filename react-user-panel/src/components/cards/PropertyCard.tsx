@@ -30,8 +30,8 @@ const PropertyCard: React.FC<PropertyCardProps> = ({
   className = '',
 }) => {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
-  const [isHovered, setIsHovered] = useState(false);
   const [imageError, setImageError] = useState(false);
+  const [isHovered, setIsHovered] = useState(false);
 
   const handlePrevImage = (e: React.MouseEvent) => {
     e.stopPropagation();
@@ -229,7 +229,7 @@ const PropertyCard: React.FC<PropertyCardProps> = ({
           <div className="flex items-center text-gray-600 dark:text-gray-400 text-sm">
             <FiMapPin className="w-4 h-4 mr-1 flex-shrink-0" />
             <span className="truncate">
-              {property.city || property.location?.city || 'Unknown'}, {property.state || property.location?.state || 'Unknown'}
+              {property.location?.city || 'Unknown'}, {property.location?.state || 'Unknown'}
             </span>
           </div>
         </div>
@@ -247,7 +247,7 @@ const PropertyCard: React.FC<PropertyCardProps> = ({
             <div className="flex items-center">
               <FiTrendingUp className="w-4 h-4 text-green-500 mr-1" />
               <p className="text-lg font-bold text-green-600 dark:text-green-400">
-                {property.expectedROI || property.expectedRoiPercent || '0'}%
+                {property.expectedROI || '0'}%
               </p>
             </div>
           </div>
@@ -307,11 +307,11 @@ const PropertyCard: React.FC<PropertyCardProps> = ({
           </div>
           <div className="flex items-center">
             <FiCalendar className="w-3.5 h-3.5 mr-1" />
-            <span>{property.roiTenure || property.roiTenureMonths ? Math.round((property.roiTenure || property.roiTenureMonths) / 12) : 0}Y tenure</span>
+            <span>{property.roiTenure ? Math.round(property.roiTenure / 12) : 0}Y tenure</span>
           </div>
           <div className="flex items-center">
             <FiDollarSign className="w-3.5 h-3.5 mr-1" />
-            <span>{property.annualAppreciation || property.appreciationRateAnnual || 0}% p.a.</span>
+            <span>{property.annualAppreciation || 0}% p.a.</span>
           </div>
         </div>
 

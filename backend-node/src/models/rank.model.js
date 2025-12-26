@@ -54,7 +54,23 @@ module.exports = (sequelize, DataTypes) => {
         },
         benefits: {
             type: DataTypes.JSONB,
-            defaultValue: []
+            defaultValue: [],
+            get() {
+                const value = this.getDataValue('benefits');
+                // Ensure benefits is always an array
+                if (!value) return [];
+                if (Array.isArray(value)) return value;
+                try {
+                    // If it's a string, try to parse it
+                    if (typeof value === 'string') {
+                        const parsed = JSON.parse(value);
+                        return Array.isArray(parsed) ? parsed : [];
+                    }
+                } catch (e) {
+                    console.error('Error parsing benefits:', e);
+                }
+                return [];
+            }
         },
         isActive: {
             type: DataTypes.BOOLEAN,

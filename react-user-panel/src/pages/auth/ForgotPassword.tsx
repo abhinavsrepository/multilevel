@@ -21,6 +21,7 @@ import {
   ArrowBack,
   CheckCircle,
 } from '@mui/icons-material';
+import AuthLayout from '@/layouts/AuthLayout';
 
 // Validation Schema
 const forgotPasswordSchema = yup.object().shape({

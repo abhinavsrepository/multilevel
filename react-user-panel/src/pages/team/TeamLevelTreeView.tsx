@@ -6,7 +6,6 @@ import {
   Button,
   TextField,
   InputAdornment,
-  Chip,
   Card,
   CardContent,
   Grid,
@@ -33,19 +32,14 @@ import {
   ZoomOut as ZoomOutIcon,
   CenterFocusStrong as CenterIcon,
   Lock as LockIcon,
-  LockOpen as LockOpenIcon,
-  ExpandMore as ExpandMoreIcon,
-  ExpandLess as ExpandLessIcon,
   Person as PersonIcon,
   Business as BusinessIcon,
   TrendingUp as TrendingUpIcon,
   Group as GroupIcon,
-  Info as InfoIcon,
 } from '@mui/icons-material';
 import Tree from 'react-d3-tree';
 import { toast } from 'react-toastify';
-import { getLevelTreeView, searchTreeMembers, expandTreeNode } from '@/api/team.api';
-import { useCenteredTree } from '@/hooks/useCenteredTree';
+import { getLevelTreeView, searchTreeMembers } from '@/api/team.api';
 
 interface TreeNodeData {
   name: string;
@@ -91,7 +85,7 @@ const TeamLevelTreeView: React.FC = () => {
   const [searchLoading, setSearchLoading] = useState(false);
   const [zoom, setZoom] = useState(1);
   const [translate, setTranslate] = useState({ x: 0, y: 0 });
-  const [maxLevels, setMaxLevels] = useState(3);
+  const [maxLevels] = useState(3);
   const [expandedNodes, setExpandedNodes] = useState<Set<number>>(new Set());
   const [viewMode, setViewMode] = useState<'tree' | 'heatmap'>('tree');
 
@@ -110,7 +104,7 @@ const TeamLevelTreeView: React.FC = () => {
         setApiData(response.data);
 
         // Transform API data to react-d3-tree format
-        const transformedData = transformNodeToD3Format(response.data.tree, response.data.levelUnlockStatus);
+        const transformedData = transformNodeToD3Format(response.data.tree as APITreeNode, response.data.levelUnlockStatus);
         setTreeData(transformedData);
       } else {
         toast.error('Failed to load tree data');
@@ -509,7 +503,7 @@ const TeamLevelTreeView: React.FC = () => {
               <ToggleButtonGroup
                 value={viewMode}
                 exclusive
-                onChange={(e, newMode) => newMode && setViewMode(newMode)}
+                onChange={(_e, newMode) => newMode && setViewMode(newMode)}
                 size="small"
               >
                 <ToggleButton value="tree">

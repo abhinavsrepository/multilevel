@@ -34,9 +34,19 @@ const PendingApprovals: React.FC = () => {
         size: pageSize
       });
 
-      if (response.data && response.data.content) {
-        setData(response.data.content);
-        setTotal(response.data.totalElements);
+      if (response.data.success && response.data.data) {
+        // Handle paginated response correctly
+        // The API returns PaginatedResponse inside data
+        const paginatedData = response.data.data;
+        // Check if paginatedData has content property (is indeed PaginatedResponse)
+        if ('content' in paginatedData) {
+          setData(paginatedData.content as Investment[]);
+          setTotal(paginatedData.totalElements);
+        } else {
+          // Fallback if data is directly an array
+          setData(Array.isArray(paginatedData) ? paginatedData : []);
+          setTotal(0);
+        }
       } else {
         setData([]);
         setTotal(0);
@@ -102,18 +112,18 @@ const PendingApprovals: React.FC = () => {
     },
     {
       title: 'User',
-      dataIndex: ['User', 'username'],
+      dataIndex: ['user', 'username'],
       key: 'user',
       render: (_: any, record: Investment) => (
         <div>
-          <div>{record.User?.firstName} {record.User?.lastName}</div>
-          <div style={{ fontSize: '12px', color: '#888' }}>{record.User?.username}</div>
+          <div>{record.user?.fullName} </div>
+          <div style={{ fontSize: '12px', color: '#888' }}>{record.user?.email || record.user?.userId}</div>
         </div>
       ),
     },
     {
       title: 'Property',
-      dataIndex: ['Property', 'title'],
+      dataIndex: ['property', 'title'],
       key: 'property',
       render: (text: string) => <div style={{ maxWidth: 200 }} className="text-truncate">{text}</div>,
     },

@@ -9,7 +9,6 @@ import {
   MenuItem,
   InputAdornment,
   useTheme,
-  useMediaQuery,
   Alert,
   Chip,
 } from '@mui/material';
@@ -40,7 +39,6 @@ import type { TeamMember } from '@/types';
 const TeamMembers: React.FC = () => {
   const theme = useTheme();
   const navigate = useNavigate();
-  const isMobile = useMediaQuery(theme.breakpoints.down('md'));
 
   // State
   const [loading, setLoading] = useState(true);
@@ -90,11 +88,11 @@ const TeamMembers: React.FC = () => {
 
         const response = await getTeamMembers(params);
 
-        if (response.success) {
-          setMembers(response.data.data || []);
-          setTotalCount(response.data.total || 0);
+        if (response.success && response.data) {
+          setMembers(response.data.content || []);
+          setTotalCount(response.data.totalElements || 0);
         } else {
-          setError(response.message || 'Failed to fetch team members');
+          setError('Failed to fetch team members');
         }
       } catch (err: any) {
         setError(err.message || 'An error occurred while fetching team members');
@@ -113,7 +111,7 @@ const TeamMembers: React.FC = () => {
     const fetchStats = async () => {
       try {
         const response = await getTeamStats();
-        if (response.success) {
+        if (response.success && response.data) {
           setStats(response.data);
         }
       } catch (err) {
@@ -318,8 +316,6 @@ const TeamMembers: React.FC = () => {
                   >
                     <UserCard
                       user={member}
-                      onViewProfile={(id) => navigate(`/team/members/${id}`)}
-                      onViewTree={(id) => navigate(`/team/tree?userId=${id}`)}
                     />
                   </motion.div>
                 </Grid>

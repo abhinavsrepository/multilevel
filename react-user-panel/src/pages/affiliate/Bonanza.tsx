@@ -15,10 +15,9 @@ import {
 } from '@mui/material';
 import {
   EmojiEvents as TrophyIcon,
-  TrendingUp as TrendingUpIcon,
   CheckCircle as CheckIcon
 } from '@mui/icons-material';
-import { getActiveBonanzas, getMyBonanzaAchievements, Bonanza, BonanzaAchievement } from '../../api/bonanza.api';
+import { getActiveBonanzas, getMyAchievements, Bonanza, BonanzaQualification } from '../../api/bonanza.api';
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -38,7 +37,7 @@ function TabPanel(props: TabPanelProps) {
 const BonanzaPage: React.FC = () => {
   const [tabValue, setTabValue] = useState(0);
   const [activeBonanzas, setActiveBonanzas] = useState<Bonanza[]>([]);
-  const [achievements, setAchievements] = useState<BonanzaAchievement[]>([]);
+  const [achievements, setAchievements] = useState<BonanzaQualification[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -51,14 +50,12 @@ const BonanzaPage: React.FC = () => {
       setLoading(true);
       setError(null);
 
-      const [bonanzasRes, achievementsRes] = await Promise.all([
+      const [bonanzas, achievementsRes] = await Promise.all([
         getActiveBonanzas(),
-        getMyBonanzaAchievements()
+        getMyAchievements()
       ]);
 
-      if (bonanzasRes.success) {
-        setActiveBonanzas(bonanzasRes.data);
-      }
+      setActiveBonanzas(bonanzas);
 
       if (achievementsRes.success) {
         setAchievements(achievementsRes.data);
@@ -70,7 +67,7 @@ const BonanzaPage: React.FC = () => {
     }
   };
 
-  const handleTabChange = (event: React.SyntheticEvent, newValue: number) => {
+  const handleTabChange = (_event: React.SyntheticEvent, newValue: number) => {
     setTabValue(newValue);
   };
 
@@ -145,12 +142,12 @@ const BonanzaPage: React.FC = () => {
                 <Card
                   elevation={3}
                   sx={{
-                    border: bonanza.userProgress?.qualified ? '2px solid #4caf50' : 'none',
+                    border: bonanza.myProgress?.status === 'QUALIFIED' ? '2px solid #4caf50' : 'none',
                     position: 'relative',
                     overflow: 'visible'
                   }}
                 >
-                  {bonanza.userProgress?.qualified && (
+                  {bonanza.myProgress?.status === 'QUALIFIED' && (
                     <Chip
                       icon={<CheckIcon />}
                       label="Qualified!"
@@ -184,10 +181,12 @@ const BonanzaPage: React.FC = () => {
                     <Grid container spacing={2} mb={3}>
                       <Grid item xs={12} sm={4}>
                         <Typography variant="caption" color="text.secondary">
-                          Target Amount
+                          Target
                         </Typography>
                         <Typography variant="h6" fontWeight="bold">
-                          {formatCurrency(bonanza.targetAmount)}
+                          {bonanza.qualificationCriteria.teamVolume ? formatCurrency(bonanza.qualificationCriteria.teamVolume) :
+                           bonanza.qualificationCriteria.salesVolume ? formatCurrency(bonanza.qualificationCriteria.salesVolume) :
+                           bonanza.qualificationCriteria.directReferrals ? `${bonanza.qualificationCriteria.directReferrals} Referrals` : 'See Criteria'}
                         </Typography>
                       </Grid>
                       <Grid item xs={12} sm={4}>
@@ -195,7 +194,7 @@ const BonanzaPage: React.FC = () => {
                           Reward
                         </Typography>
                         <Typography variant="h6" fontWeight="bold" color="primary.main">
-                          {bonanza.reward}
+                          {bonanza.rewardAmount ? formatCurrency(bonanza.rewardAmount) : bonanza.rewardDescription || 'Reward'}
                         </Typography>
                       </Grid>
                       <Grid item xs={12} sm={4}>
@@ -208,19 +207,19 @@ const BonanzaPage: React.FC = () => {
                       </Grid>
                     </Grid>
 
-                    {bonanza.userProgress && (
+                    {bonanza.myProgress && (
                       <Box>
                         <Box display="flex" justifyContent="space-between" mb={1}>
                           <Typography variant="body2" fontWeight="medium">
                             Your Progress
                           </Typography>
                           <Typography variant="body2" fontWeight="bold" color="primary.main">
-                            {bonanza.userProgress.percentage.toFixed(1)}%
+                            {bonanza.myProgress.overallProgress.toFixed(1)}%
                           </Typography>
                         </Box>
                         <LinearProgress
                           variant="determinate"
-                          value={Math.min(bonanza.userProgress.percentage, 100)}
+                          value={Math.min(bonanza.myProgress.overallProgress, 100)}
                           sx={{
                             height: 10,
                             borderRadius: 5,
@@ -228,12 +227,12 @@ const BonanzaPage: React.FC = () => {
                             backgroundColor: 'rgba(0,0,0,0.1)',
                             '& .MuiLinearProgress-bar': {
                               borderRadius: 5,
-                              backgroundColor: bonanza.userProgress.qualified ? '#4caf50' : undefined
+                              backgroundColor: bonanza.myProgress.status === 'QUALIFIED' ? '#4caf50' : undefined
                             }
                           }}
                         />
                         <Typography variant="caption" color="text.secondary">
-                          {formatCurrency(bonanza.userProgress.currentAmount)} / {formatCurrency(bonanza.userProgress.targetAmount)}
+                          {bonanza.myProgress.status} - {bonanza.myProgress.overallProgress.toFixed(0)}% Complete
                         </Typography>
                       </Box>
                     )}
@@ -261,20 +260,23 @@ const BonanzaPage: React.FC = () => {
                         <TrophyIcon color="primary" fontSize="large" />
                         <Box>
                           <Typography variant="h6" fontWeight="bold">
-                            {achievement.description}
+                            {achievement.bonanza.name}
+                          </Typography>
+                          <Typography variant="body2" color="text.secondary" sx={{ mb: 0.5 }}>
+                            {achievement.bonanza.description}
                           </Typography>
                           <Typography variant="caption" color="text.secondary">
-                            Achieved on {formatDate(achievement.createdAt)}
+                            Achieved on {formatDate(achievement.qualifiedDate || achievement.awardedDate || achievement.bonanza.endDate)}
                           </Typography>
                         </Box>
                       </Box>
                       <Box textAlign="right">
                         <Typography variant="h5" fontWeight="bold" color="success.main">
-                          {formatCurrency(achievement.amount)}
+                          {achievement.rewardAmount ? formatCurrency(achievement.rewardAmount) : 'Pending'}
                         </Typography>
                         <Chip
                           label={achievement.status}
-                          color="success"
+                          color={achievement.status === 'AWARDED' ? 'success' : 'warning'}
                           size="small"
                         />
                       </Box>

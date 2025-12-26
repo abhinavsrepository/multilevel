@@ -19,6 +19,7 @@ import {
   ArrowBack,
   CheckCircle,
 } from '@mui/icons-material';
+import AuthLayout from '@/layouts/AuthLayout';
 
 /**
  * OTPVerification Page Component

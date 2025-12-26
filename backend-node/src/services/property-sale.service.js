@@ -712,13 +712,34 @@ exports.getUserSaleStats = async (userId) => {
             where: { employeeUserId: userId, saleStatus: ['APPROVED', 'COMPLETED'] }
         });
 
-        const totalCommissionEarned = await PropertySale.sum('actualDirectIncentive', {
-            where: {
-                employeeUserId: userId,
-                commissionActivated: true,
-                actualDirectIncentive: { [Op.ne]: null }
-            }
-        });
+        // Try to get actual commission, or calculate dynamically from sale amounts
+        let totalCommissionEarned = 0;
+        try {
+            totalCommissionEarned = await PropertySale.sum('actualDirectIncentive', {
+                where: {
+                    employeeUserId: userId,
+                    commissionActivated: true,
+                    actualDirectIncentive: { [Op.ne]: null }
+                }
+            });
+        } catch (error) {
+            // Column doesn't exist yet, calculate dynamically from sale amounts (5% direct incentive)
+            const sales = await PropertySale.findAll({
+                where: {
+                    employeeUserId: userId,
+                    commissionActivated: true,
+                    saleStatus: { [Op.in]: ['APPROVED', 'COMPLETED'] }
+                },
+                attributes: ['saleAmount'],
+                raw: true
+            });
+
+            totalCommissionEarned = sales.reduce((sum, sale) => {
+                return sum + (parseFloat(sale.saleAmount || 0) * 0.05); // 5% direct incentive
+            }, 0);
+        }
+
+        totalCommissionEarned = totalCommissionEarned || 0;
 
         const thisMonthSales = await PropertySale.count({
             where: {

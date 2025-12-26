@@ -75,7 +75,7 @@ const ManualDistribution: React.FC = () => {
                         <InputNumber
                             style={{ width: '100%' }}
                             formatter={value => `₹ ${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
-                            parser={value => value!.replace(/\₹\s?|(,*)/g, '')}
+                            parser={(value) => value ? value.replace(/\₹\s?|(,*)/g, '') as unknown as 1 : 1}
                             min={1}
                         />
                     </Form.Item>

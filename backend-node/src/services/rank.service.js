@@ -60,28 +60,33 @@ const RankService = {
      * Get Volumes for each Direct Leg for 40:60 Rule Analysis.
      */
     getDirectLegVolumes: async (userId) => {
-        const directs = await User.findAll({
-            where: { sponsorUserId: userId },
-            attributes: ['id', 'username', 'firstName', 'lastName']
-        });
-
-        const legVolumes = [];
-
-        for (const direct of directs) {
-            // A leg's volume is the direct user's volume + their entire team's volume
-            const personalVol = await RankService.getUserVolume(direct.id);
-            const teamVol = await RankService.calculateTeamVolume(direct.id);
-            const totalLegVol = parseFloat(personalVol) + parseFloat(teamVol);
-
-            legVolumes.push({
-                userId: direct.id,
-                username: direct.username,
-                name: direct.firstName + ' ' + direct.lastName,
-                volume: totalLegVol
+        try {
+            const directs = await User.findAll({
+                where: { sponsorUserId: userId },
+                attributes: ['id', 'username', 'fullName']
             });
-        }
 
-        return legVolumes;
+            const legVolumes = [];
+
+            for (const direct of directs) {
+                // A leg's volume is the direct user's volume + their entire team's volume
+                const personalVol = await RankService.getUserVolume(direct.id);
+                const teamVol = await RankService.calculateTeamVolume(direct.id);
+                const totalLegVol = parseFloat(personalVol) + parseFloat(teamVol);
+
+                legVolumes.push({
+                    userId: direct.id,
+                    username: direct.username,
+                    name: direct.fullName || direct.username,
+                    volume: totalLegVol
+                });
+            }
+
+            return legVolumes;
+        } catch (error) {
+            console.error('Error getting direct leg volumes:', error);
+            return [];
+        }
     },
 
     /**

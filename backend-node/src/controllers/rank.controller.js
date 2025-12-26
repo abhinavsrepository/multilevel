@@ -243,7 +243,8 @@ exports.getUserRankProgress = catchAsync(async (req, res, next) => {
         overallProgress = activeCriteriaCount > 0 ? (totalPct / activeCriteriaCount) : 0;
         overallProgress = parseFloat(overallProgress.toFixed(1));
 
-        // Guidance
+        // Guidance - Ensure it's always an array
+        guidance = guidance || [];
         if (progress.directReferrals.current < progress.directReferrals.required)
             guidance.push(`Recruit ${progress.directReferrals.required - progress.directReferrals.current} more direct members.`);
 
@@ -346,6 +347,8 @@ exports.getAdminUserRankProgress = catchAsync(async (req, res, next) => {
         overallProgress = activeCriteriaCount > 0 ? (totalPct / activeCriteriaCount) : 0;
         overallProgress = parseFloat(overallProgress.toFixed(1));
 
+        // Ensure guidance is always an array
+        guidance = guidance || [];
         if (progress.directReferrals.current < progress.directReferrals.required) guidance.push(`Needs ${progress.directReferrals.required - progress.directReferrals.current} more direct members.`);
         if (progress.teamInvestment.current < progress.teamInvestment.required) guidance.push(`Needs ${progress.teamInvestment.required - progress.teamInvestment.current} more Team Business.`);
     }

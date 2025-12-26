@@ -92,7 +92,7 @@ const RankProgressWidget: React.FC<Props> = ({ userId }) => {
                         </div>
                     </div>
 
-                    {guidance && guidance.length > 0 && (
+                    {Array.isArray(guidance) && guidance.length > 0 && (
                         <div className="mt-6 bg-blue-50 p-4 rounded-md">
                             <Title level={5} style={{ fontSize: '14px' }}>Recommended Actions to Upgrade</Title>
                             <List
@@ -100,7 +100,7 @@ const RankProgressWidget: React.FC<Props> = ({ userId }) => {
                                 dataSource={guidance}
                                 renderItem={(item: any) => (
                                     <List.Item>
-                                        <Text type="secondary">â€¢ {item}</Text>
+                                        <Text type="secondary">• {item}</Text>
                                     </List.Item>
                                 )}
                             />

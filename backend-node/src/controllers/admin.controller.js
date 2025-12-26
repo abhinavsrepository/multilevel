@@ -990,3 +990,112 @@ exports.distributeLevelIncome = async (req, res) => {
         res.status(500).json({ success: false, message: 'Server Error', error: error.message });
     }
 };
+
+
+// Get Investments (with filters)
+exports.getInvestments = async (req, res) => {
+    try {
+        const { Investment, User, Property } = require('../models');
+        const { status, page = 1, size = 10 } = req.query;
+        const limit = parseInt(size);
+        const offset = (parseInt(page) - 1) * limit;
+
+        const where = {};
+        
+        // Map frontend status to correct database field
+        if (status === 'PENDING') {
+            // Use bookingStatus for pending approvals
+            where.bookingStatus = 'PROVISIONAL';
+        } else if (status) {
+            // For other statuses, use investmentStatus
+            where.investmentStatus = status;
+        }
+
+        const { count, rows } = await Investment.findAndCountAll({
+            where,
+            include: [
+                { model: User, attributes: ['id', 'userId', 'username', 'fullName', 'email', 'mobile'] },
+                { model: Property, attributes: ['id', 'propertyId', 'title', 'location', 'price'] }
+            ],
+            limit,
+            offset,
+            order: [['createdAt', 'DESC']]
+        });
+
+        res.json({
+            success: true,
+            data: rows,
+            pagination: {
+                total: count,
+                page: parseInt(page),
+                size: limit,
+                totalPages: Math.ceil(count / limit)
+            }
+        });
+    } catch (error) {
+        console.error('Get Investments Error:', error);
+        res.status(500).json({ success: false, message: 'Server Error', error: error.message });
+    }
+};
+
+// Approve Investment
+exports.approveInvestment = async (req, res) => {
+    try {
+        const { Investment } = require('../models');
+        const investment = await Investment.findByPk(req.params.id);
+        
+        if (!investment) {
+            return res.status(404).json({ success: false, message: 'Investment not found' });
+        }
+
+        if (investment.bookingStatus !== 'PROVISIONAL') {
+            return res.status(400).json({ success: false, message: 'Investment already processed' });
+        }
+
+        await investment.update({
+            bookingStatus: 'CONFIRMED',
+            investmentStatus: 'ACTIVE'
+        });
+
+        res.json({
+            success: true,
+            message: 'Investment approved successfully',
+            data: investment
+        });
+    } catch (error) {
+        console.error('Approve Investment Error:', error);
+        res.status(500).json({ success: false, message: 'Server Error', error: error.message });
+    }
+};
+
+// Reject Investment
+exports.rejectInvestment = async (req, res) => {
+    try {
+        const { Investment } = require('../models');
+        const { reason } = req.body;
+        const investment = await Investment.findByPk(req.params.id);
+        
+        if (!investment) {
+            return res.status(404).json({ success: false, message: 'Investment not found' });
+        }
+
+        if (investment.bookingStatus !== 'PROVISIONAL') {
+            return res.status(400).json({ success: false, message: 'Investment already processed' });
+        }
+
+        await investment.update({
+            bookingStatus: 'CANCELLED',
+            investmentStatus: 'CANCELLED',
+            remarks: reason || 'Rejected by admin'
+        });
+
+        res.json({
+            success: true,
+            message: 'Investment rejected successfully',
+            data: investment
+        });
+    } catch (error) {
+        console.error('Reject Investment Error:', error);
+        res.status(500).json({ success: false, message: 'Server Error', error: error.message });
+    }
+};

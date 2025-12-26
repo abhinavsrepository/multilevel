@@ -39,8 +39,12 @@ router.get('/payouts/pending', adminController.getPendingPayouts);
 
 router.get('/kyc/pending', adminController.getPendingKyc);
 router.put('/kyc/:id/approve', adminController.approveKyc);
-
 router.put('/kyc/:id/reject', adminController.rejectKyc);
+
+// Investment Routes
+router.get('/investments', adminController.getInvestments);
+router.put('/investments/:id/approve', adminController.approveInvestment);
+router.put('/investments/:id/reject', adminController.rejectInvestment);
 
 // Property Routes
 const adminPropertyController = require('../controllers/admin-property.controller');

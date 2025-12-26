@@ -773,14 +773,15 @@ exports.getPropertyStats = async (req, res) => {
 
 exports.getPropertyRecentInvestments = async (req, res) => {
     try {
-        const { page = 1, size = 10 } = req.query;
-        const offset = (page - 1) * size;
+        const { page = 1, size = 10, pageSize = 10 } = req.query;
+        const limit = parseInt(pageSize || size);
+        const offset = (parseInt(page) - 1) * limit;
 
         const { count, rows } = await Investment.findAndCountAll({
             where: { propertyId: req.params.id },
             include: [{ model: User, as: 'user', attributes: ['id', 'username', 'firstName', 'lastName'] }],
-            limit: parseInt(size),
-            offset: parseInt(offset),
+            limit,
+            offset,
             order: [['createdAt', 'DESC']]
         });
 
@@ -790,11 +791,12 @@ exports.getPropertyRecentInvestments = async (req, res) => {
             pagination: {
                 total: count,
                 page: parseInt(page),
-                pages: Math.ceil(count / size)
+                pages: Math.ceil(count / limit),
+                size: limit
             }
         });
     } catch (error) {
-        console.error(error);
+        console.error('Get Property Investments Error:', error);
         res.status(500).json({ success: false, message: 'Server Error', error: error.message });
     }
 };

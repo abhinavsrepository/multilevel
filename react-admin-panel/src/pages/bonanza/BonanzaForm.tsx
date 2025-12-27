@@ -443,9 +443,9 @@ const BonanzaForm: React.FC = () => {
                                         label="Minimum Club"
                                     >
                                         <Select placeholder="Select minimum club" allowClear>
-                                            <Option value="SILVER">Silver Club</Option>
-                                            <Option value="GOLD">Gold Club</Option>
-                                            <Option value="DIAMOND">Diamond Club</Option>
+                                            <Option value="Rising Stars Club">Rising Stars Club</Option>
+                                            <Option value="Business Leaders Club">Business Leaders Club</Option>
+                                            <Option value="Millionaire CLUB">Millionaire Club</Option>
                                         </Select>
                                     </Form.Item>
                                 </Col>

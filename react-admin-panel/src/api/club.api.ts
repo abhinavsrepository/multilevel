@@ -6,7 +6,7 @@ export interface ClubMember {
   firstName: string;
   lastName: string;
   email: string;
-  clubStatus: 'SILVER' | 'GOLD' | 'DIAMOND';
+  clubStatus: 'Rising Stars Club' | 'Business Leaders Club' | 'Millionaire CLUB';
   clubProgress: {
     group1: number;
     group2: number;
@@ -16,7 +16,7 @@ export interface ClubMember {
 }
 
 export interface ClubStats {
-  club: 'SILVER' | 'GOLD' | 'DIAMOND';
+  club: 'Rising Stars Club' | 'Business Leaders Club' | 'Millionaire CLUB';
   members: number;
 }
 

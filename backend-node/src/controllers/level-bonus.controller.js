@@ -69,11 +69,11 @@ exports.getLevelBonusEligibility = async (req, res) => {
 
         // Calculate Max Unlocked Level
         // 1 Active Direct  = Unlocks Level 1 & 2
-        // 3 Active Directs = Unlocks Level 3
-        // 5 Active Directs = Unlocks All (20)
+        // 2 Active Directs = Unlocks Level 3
+        // 3 Active Directs = Unlocks Level 4-10
         let maxUnlockedLevel = 0;
-        if (activeDirectsCount >= 5) maxUnlockedLevel = 20;
-        else if (activeDirectsCount >= 3) maxUnlockedLevel = 5; // Level 3+
+        if (activeDirectsCount >= 3) maxUnlockedLevel = 10; // Level 4-10
+        else if (activeDirectsCount >= 2) maxUnlockedLevel = 3; // Level 3
         else if (activeDirectsCount >= 1) maxUnlockedLevel = 2; // Level 1 & 2
 
         const eligibilityData = {

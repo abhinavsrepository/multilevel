@@ -25,9 +25,11 @@ exports.getMyClubStatus = async (req, res) => {
                 totalGBV: gbvData.totalGBV,
                 clubProgress: gbvData.clubProgress,
                 thresholds: {
-                    SILVER: 50 * 100000,
-                    GOLD: 200 * 100000,
-                    DIAMOND: 500 * 100000
+                    thresholds: {
+                        'Rising Stars Club': 100 * 100000, // 1 Cr
+                        'Business Leaders Club': 250 * 100000, // 2.5 Cr
+                        'Millionaire CLUB': 500 * 100000 // 5 Cr
+                    }
                 }
             }
         });
@@ -94,10 +96,10 @@ exports.getAllClubMembers = async (req, res) => {
         const clubLevel = req.query.clubLevel;
 
         const whereClause = {
-            clubStatus: { [Op.in]: ['SILVER', 'GOLD', 'DIAMOND'] }
+            clubStatus: { [Op.in]: ['Rising Stars Club', 'Business Leaders Club', 'Millionaire CLUB'] }
         };
 
-        if (clubLevel && ['SILVER', 'GOLD', 'DIAMOND'].includes(clubLevel)) {
+        if (clubLevel && ['Rising Stars Club', 'Business Leaders Club', 'Millionaire CLUB'].includes(clubLevel)) {
             whereClause.clubStatus = clubLevel;
         }
 
@@ -201,7 +203,7 @@ exports.distributeMonthlyRoyalty = async (req, res) => {
  * Helper: Get next club level
  */
 function getNextClubLevel(currentClub) {
-    const hierarchy = ['NONE', 'SILVER', 'GOLD', 'DIAMOND'];
+    const hierarchy = ['NONE', 'Rising Stars Club', 'Business Leaders Club', 'Millionaire CLUB'];
     const currentIndex = hierarchy.indexOf(currentClub);
 
     if (currentIndex === -1 || currentIndex === hierarchy.length - 1) {

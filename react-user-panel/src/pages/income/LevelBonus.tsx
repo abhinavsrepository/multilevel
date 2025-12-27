@@ -132,8 +132,8 @@ const LevelBonus: React.FC = () => {
     // Milestones
     const milestones = [
         { level: '1-2', required: 1, unlocked: (eligibility?.activeDirectsCount || 0) >= 1 },
-        { level: '3-5', required: 3, unlocked: (eligibility?.activeDirectsCount || 0) >= 3 },
-        { level: 'All', required: 5, unlocked: (eligibility?.activeDirectsCount || 0) >= 5 },
+        { level: '3', required: 2, unlocked: (eligibility?.activeDirectsCount || 0) >= 2 },
+        { level: '4-10', required: 3, unlocked: (eligibility?.activeDirectsCount || 0) >= 3 },
     ];
 
     return (

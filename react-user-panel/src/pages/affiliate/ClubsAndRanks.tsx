@@ -41,9 +41,9 @@ const RANKS: RankRequirement[] = [
 ];
 
 const CLUBS = [
-    { name: 'Silver', target: 5000000, label: '50 Lakhs' },
-    { name: 'Gold', target: 20000000, label: '2 Crores' },
-    { name: 'Diamond', target: 50000000, label: '5 Crores' },
+    { name: 'Rising Stars Club', target: 10000000, label: '1 Crore' },
+    { name: 'Business Leaders Club', target: 25000000, label: '2.5 Crores' },
+    { name: 'Millionaire CLUB', target: 50000000, label: '5 Crores' },
 ];
 
 const ClubsAndRanks: React.FC = () => {
@@ -76,9 +76,9 @@ const ClubsAndRanks: React.FC = () => {
 
     // Determine next club target
     const getNextClubTarget = () => {
-        if (clubStatus === 'DIAMOND') return CLUBS[2];
-        if (clubStatus === 'GOLD') return CLUBS[2];
-        if (clubStatus === 'SILVER') return CLUBS[1];
+        if (clubStatus === 'Millionaire CLUB') return CLUBS[2];
+        if (clubStatus === 'Business Leaders Club') return CLUBS[2];
+        if (clubStatus === 'Rising Stars Club') return CLUBS[1];
         return CLUBS[0];
     };
 
@@ -90,139 +90,139 @@ const ClubsAndRanks: React.FC = () => {
 
     if (loading) {
         return (
-      <Box>
+            <Box>
                 <Box display="flex" justifyContent="center" alignItems="center" minHeight="60vh">
                     <CircularProgress />
                 </Box>
-            
-        );
+
+                );
     }
 
-    return (
-      <Box>
-            <Box sx={{ mb: 4 }}>
-                <Typography variant="h4" gutterBottom fontWeight="bold">
-                    Clubs & Ranks
-                </Typography>
-                <Typography variant="body1" color="text.secondary">
-                    Track your journey to the top. Unlock exclusive rewards and royalties.
-                </Typography>
-            </Box>
-
-            {error && (
-                <Alert severity="error" sx={{ mb: 3 }}>
-                    {error}
-                </Alert>
-            )}
-
-            {/* Club Status Tracker */}
-            <Card sx={{ mb: 4 }}>
-                <CardContent>
-                    <Box display="flex" justifyContent="space-between" alignItems="center" mb={2}>
-                        <Typography variant="h6">
-                            Club Qualification Tracker ({target.name} Club Target: {target.label})
+                return (
+                <Box>
+                    <Box sx={{ mb: 4 }}>
+                        <Typography variant="h4" gutterBottom fontWeight="bold">
+                            Clubs & Ranks
                         </Typography>
-                        <Chip
-                            label={`Current Status: ${clubStatus}`}
-                            color={clubStatus !== 'NONE' ? 'success' : 'default'}
-                        />
-                    </Box>
-
-                    <Grid container spacing={3}>
-                        <Grid item xs={12} md={4}>
-                            <Typography variant="subtitle2" gutterBottom>Group 1 (40%)</Typography>
-                            <LinearProgress
-                                variant="determinate"
-                                value={calculateProgress(clubProgress.group1, target.target * 0.4)}
-                                sx={{ height: 10, borderRadius: 5, mb: 1 }}
-                                color="primary"
-                            />
-                            <Typography variant="caption" color="text.secondary">
-                                ₹{clubProgress.group1.toLocaleString()} / ₹{(target.target * 0.4).toLocaleString()}
-                            </Typography>
-                        </Grid>
-                        <Grid item xs={12} md={4}>
-                            <Typography variant="subtitle2" gutterBottom>Group 2 (40%)</Typography>
-                            <LinearProgress
-                                variant="determinate"
-                                value={calculateProgress(clubProgress.group2, target.target * 0.4)}
-                                sx={{ height: 10, borderRadius: 5, mb: 1 }}
-                                color="info"
-                            />
-                            <Typography variant="caption" color="text.secondary">
-                                ₹{clubProgress.group2.toLocaleString()} / ₹{(target.target * 0.4).toLocaleString()}
-                            </Typography>
-                        </Grid>
-                        <Grid item xs={12} md={4}>
-                            <Typography variant="subtitle2" gutterBottom>Group 3 (20%)</Typography>
-                            <LinearProgress
-                                variant="determinate"
-                                value={calculateProgress(clubProgress.group3, target.target * 0.2)}
-                                sx={{ height: 10, borderRadius: 5, mb: 1 }}
-                                color="secondary"
-                            />
-                            <Typography variant="caption" color="text.secondary">
-                                ₹{clubProgress.group3.toLocaleString()} / ₹{(target.target * 0.2).toLocaleString()}
-                            </Typography>
-                        </Grid>
-                    </Grid>
-                    <Box mt={2}>
-                        <Typography variant="body2" color="text.secondary">
-                            * Qualification requires 40:40:20 ratio contribution from your top 3 groups.
+                        <Typography variant="body1" color="text.secondary">
+                            Track your journey to the top. Unlock exclusive rewards and royalties.
                         </Typography>
                     </Box>
-                </CardContent>
-            </Card>
 
-            {/* Ranks & Rewards Table */}
-            <Card>
-                <CardContent>
-                    <Typography variant="h6" gutterBottom>
-                        Ranks & Rewards
-                    </Typography>
-                    <TableContainer component={Paper} elevation={0}>
-                        <Table>
-                            <TableHead>
-                                <TableRow>
-                                    <TableCell>Rank</TableCell>
-                                    <TableCell>Business Requirement</TableCell>
-                                    <TableCell>Reward</TableCell>
-                                    <TableCell>Status</TableCell>
-                                </TableRow>
-                            </TableHead>
-                            <TableBody>
-                                {RANKS.map((rank) => (
-                                    <TableRow
-                                        key={rank.name}
-                                        selected={currentRank === rank.name}
-                                        sx={{
-                                            bgcolor: currentRank === rank.name ? 'action.selected' : 'inherit',
-                                            '&.Mui-selected': { bgcolor: 'rgba(25, 118, 210, 0.08)' }
-                                        }}
-                                    >
-                                        <TableCell>
-                                            <Typography fontWeight="bold" color={rank.name === currentRank ? 'primary' : 'text.primary'}>
-                                                {rank.name}
-                                            </Typography>
-                                        </TableCell>
-                                        <TableCell>{rank.businessRequired}</TableCell>
-                                        <TableCell>{rank.reward}</TableCell>
-                                        <TableCell>
-                                            {currentRank === rank.name ? (
-                                                <Chip label="Current Rank" color="primary" size="small" />
-                                            ) : (
-                                                <Chip label="Locked" variant="outlined" size="small" />
-                                            )}
-                                        </TableCell>
-                                    </TableRow>
-                                ))}
-                            </TableBody>
-                        </Table>
-                    </TableContainer>
-                </CardContent>
-            </Card>
-        
-    );
+                    {error && (
+                        <Alert severity="error" sx={{ mb: 3 }}>
+                            {error}
+                        </Alert>
+                    )}
+
+                    {/* Club Status Tracker */}
+                    <Card sx={{ mb: 4 }}>
+                        <CardContent>
+                            <Box display="flex" justifyContent="space-between" alignItems="center" mb={2}>
+                                <Typography variant="h6">
+                                    Club Qualification Tracker ({target.name} Club Target: {target.label})
+                                </Typography>
+                                <Chip
+                                    label={`Current Status: ${clubStatus}`}
+                                    color={clubStatus !== 'NONE' ? 'success' : 'default'}
+                                />
+                            </Box>
+
+                            <Grid container spacing={3}>
+                                <Grid item xs={12} md={4}>
+                                    <Typography variant="subtitle2" gutterBottom>Group 1 (40%)</Typography>
+                                    <LinearProgress
+                                        variant="determinate"
+                                        value={calculateProgress(clubProgress.group1, target.target * 0.4)}
+                                        sx={{ height: 10, borderRadius: 5, mb: 1 }}
+                                        color="primary"
+                                    />
+                                    <Typography variant="caption" color="text.secondary">
+                                        ₹{clubProgress.group1.toLocaleString()} / ₹{(target.target * 0.4).toLocaleString()}
+                                    </Typography>
+                                </Grid>
+                                <Grid item xs={12} md={4}>
+                                    <Typography variant="subtitle2" gutterBottom>Group 2 (40%)</Typography>
+                                    <LinearProgress
+                                        variant="determinate"
+                                        value={calculateProgress(clubProgress.group2, target.target * 0.4)}
+                                        sx={{ height: 10, borderRadius: 5, mb: 1 }}
+                                        color="info"
+                                    />
+                                    <Typography variant="caption" color="text.secondary">
+                                        ₹{clubProgress.group2.toLocaleString()} / ₹{(target.target * 0.4).toLocaleString()}
+                                    </Typography>
+                                </Grid>
+                                <Grid item xs={12} md={4}>
+                                    <Typography variant="subtitle2" gutterBottom>Group 3 (20%)</Typography>
+                                    <LinearProgress
+                                        variant="determinate"
+                                        value={calculateProgress(clubProgress.group3, target.target * 0.2)}
+                                        sx={{ height: 10, borderRadius: 5, mb: 1 }}
+                                        color="secondary"
+                                    />
+                                    <Typography variant="caption" color="text.secondary">
+                                        ₹{clubProgress.group3.toLocaleString()} / ₹{(target.target * 0.2).toLocaleString()}
+                                    </Typography>
+                                </Grid>
+                            </Grid>
+                            <Box mt={2}>
+                                <Typography variant="body2" color="text.secondary">
+                                    * Qualification requires 40:40:20 ratio contribution from your top 3 groups.
+                                </Typography>
+                            </Box>
+                        </CardContent>
+                    </Card>
+
+                    {/* Ranks & Rewards Table */}
+                    <Card>
+                        <CardContent>
+                            <Typography variant="h6" gutterBottom>
+                                Ranks & Rewards
+                            </Typography>
+                            <TableContainer component={Paper} elevation={0}>
+                                <Table>
+                                    <TableHead>
+                                        <TableRow>
+                                            <TableCell>Rank</TableCell>
+                                            <TableCell>Business Requirement</TableCell>
+                                            <TableCell>Reward</TableCell>
+                                            <TableCell>Status</TableCell>
+                                        </TableRow>
+                                    </TableHead>
+                                    <TableBody>
+                                        {RANKS.map((rank) => (
+                                            <TableRow
+                                                key={rank.name}
+                                                selected={currentRank === rank.name}
+                                                sx={{
+                                                    bgcolor: currentRank === rank.name ? 'action.selected' : 'inherit',
+                                                    '&.Mui-selected': { bgcolor: 'rgba(25, 118, 210, 0.08)' }
+                                                }}
+                                            >
+                                                <TableCell>
+                                                    <Typography fontWeight="bold" color={rank.name === currentRank ? 'primary' : 'text.primary'}>
+                                                        {rank.name}
+                                                    </Typography>
+                                                </TableCell>
+                                                <TableCell>{rank.businessRequired}</TableCell>
+                                                <TableCell>{rank.reward}</TableCell>
+                                                <TableCell>
+                                                    {currentRank === rank.name ? (
+                                                        <Chip label="Current Rank" color="primary" size="small" />
+                                                    ) : (
+                                                        <Chip label="Locked" variant="outlined" size="small" />
+                                                    )}
+                                                </TableCell>
+                                            </TableRow>
+                                        ))}
+                                    </TableBody>
+                                </Table>
+                            </TableContainer>
+                        </CardContent>
+                    </Card>
+
+                    );
 };
 
-export default ClubsAndRanks;
+                    export default ClubsAndRanks;

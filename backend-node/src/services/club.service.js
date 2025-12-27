@@ -33,9 +33,9 @@ class ClubService {
 
         // 2. Define Clubs and Targets
         const clubs = [
-            { name: 'Millionaire Club', target: 10000000 }, // 1 Cr
-            { name: 'Rising Star Club', target: 25000000 }, // 2.5 Cr
-            { name: 'Business Leader Club', target: 50000000 } // 5 Cr
+            { name: 'Rising Stars Club', target: 10000000 }, // 1 Cr
+            { name: 'Business Leaders Club', target: 25000000 }, // 2.5 Cr
+            { name: 'Millionaire CLUB', target: 50000000 } // 5 Cr
         ];
 
         for (const club of clubs) {

@@ -189,7 +189,7 @@ const ProclaimSale: React.FC = () => {
 
     try {
       setUploadingReceipt(true);
-      const response = await apiUpload('/uploads/document', file);
+      const response = await apiUpload('/upload/document', file);
 
       if (response.success && response.data.url) {
         formik.setFieldValue('paymentReceipt', response.data.url);

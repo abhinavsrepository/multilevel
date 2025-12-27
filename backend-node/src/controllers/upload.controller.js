@@ -188,6 +188,67 @@ exports.uploadPropertyImage = async (req, res) => {
 };
 
 /**
+ * Upload generic document to Cloudinary
+ * @route POST /api/upload/document
+ * @access Public/Protected
+ */
+exports.uploadDocument = async (req, res) => {
+    try {
+        if (!req.file) {
+            return res.status(400).json({
+                success: false,
+                message: 'No file uploaded'
+            });
+        }
+
+        // Upload to Cloudinary using stream
+        const uploadStream = cloudinary.uploader.upload_stream(
+            {
+                folder: 'mlm-documents',
+                resource_type: 'auto',
+                flags: 'attachment',
+                transformation: [
+                    { quality: 'auto:good' }
+                ]
+            },
+            (error, result) => {
+                if (error) {
+                    console.error('Cloudinary upload error:', error);
+                    return res.status(500).json({
+                        success: false,
+                        message: 'Failed to upload to Cloudinary',
+                        error: error.message
+                    });
+                }
+
+                res.status(200).json({
+                    success: true,
+                    message: 'Document uploaded successfully',
+                    data: {
+                        url: result.secure_url,
+                        publicId: result.public_id,
+                        filename: req.file.originalname,
+                        originalName: req.file.originalname,
+                        size: req.file.size,
+                        mimetype: req.file.mimetype
+                    }
+                });
+            }
+        );
+
+        // Pipe the buffer to Cloudinary
+        streamifier.createReadStream(req.file.buffer).pipe(uploadStream);
+    } catch (error) {
+        console.error('Document upload error:', error);
+        res.status(500).json({
+            success: false,
+            message: 'Failed to upload document',
+            error: error.message
+        });
+    }
+};
+
+/**
  * Delete uploaded file
  * @route DELETE /api/upload/:filename
  * @access Protected

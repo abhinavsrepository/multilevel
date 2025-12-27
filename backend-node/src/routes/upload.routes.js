@@ -15,6 +15,10 @@ const router = express.Router();
 // Profile photo upload (public - for registration)
 router.post('/profile-photo', profileUpload.single('profilePhoto'), uploadProfilePhoto);
 
+// Generic document upload (public for now, or use protect if needed)
+const { uploadDocument } = require('../controllers/upload.controller');
+router.post('/document', kycUpload.single('file'), uploadDocument);
+
 // ==================== Protected Routes ====================
 
 // KYC document upload (protected)

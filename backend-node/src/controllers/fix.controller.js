@@ -1,4 +1,5 @@
 const { PropertySale, Property, Investment, User, Rank, sequelize } = require('../models');
+// Force redeploy
 
 // Fix Property Sales Table
 exports.fixSchema = async (req, res) => {

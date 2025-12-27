@@ -134,47 +134,8 @@ app.use('/api/v1/fix', fixRoutes);
 // Static files
 app.use('/uploads', express.static(path.join(__dirname, '../uploads')));
 
-// Serve user panel static files
-const userPanelPath = path.join(__dirname, '../../react-user-panel/dist');
-app.use(express.static(userPanelPath));
-
-// Serve admin panel static files under /admin
-const adminPanelPath = path.join(__dirname, '../../react-admin-panel/dist');
-app.use('/admin', express.static(adminPanelPath));
-
-// SPA fallback - serve index.html for all non-API routes
-// This ensures React Router can handle routing on refresh
-// Express 5 requires explicit parameter names, so we use :path*
-app.use((req, res, next) => {
-    // Skip API routes and uploads
-    if (req.path.startsWith('/api') || req.path.startsWith('/uploads') || req.path.startsWith('/health')) {
-        return next();
-    }
-
-    // Serve admin panel index.html for /admin routes
-    if (req.path.startsWith('/admin')) {
-        return res.sendFile(path.join(adminPanelPath, 'index.html'), (err) => {
-            if (err) {
-                logger.error('Error serving admin panel index.html', {
-                    error: err.message,
-                    path: req.path
-                });
-                next(err);
-            }
-        });
-    }
-
-    // Serve user panel index.html for all other routes
-    res.sendFile(path.join(userPanelPath, 'index.html'), (err) => {
-        if (err) {
-            logger.error('Error serving user panel index.html', {
-                error: err.message,
-                path: req.path
-            });
-            next(err);
-        }
-    });
-});
+// Frontend is deployed separately on Render
+// Backend serves only API endpoints
 
 // 404 Handler - must be after all routes
 app.use(notFoundHandler);

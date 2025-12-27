@@ -67,8 +67,8 @@ async function seedRanks() {
 
     try {
         await sequelize.transaction(async (t) => {
-            // Option A: Clear existing ranks (Safe for dev, risky for prod if UserRanks exist)
-            // For implementation phase, we update or create.
+            // Shift existing display orders to avoid unique constraint violations
+            await Rank.increment({ displayOrder: 1000 }, { where: {}, transaction: t });
 
             for (const rankData of ranks) {
                 const [rank, created] = await Rank.findOrCreate({

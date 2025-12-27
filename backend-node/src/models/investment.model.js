@@ -179,8 +179,8 @@ module.exports = (sequelize, DataTypes) => {
     });
 
     Investment.associate = function (models) {
-        Investment.belongsTo(models.User, { foreignKey: 'userId' });
-        Investment.belongsTo(models.Property, { foreignKey: 'propertyId' });
+        Investment.belongsTo(models.User, { foreignKey: 'userId', as: 'user' });
+        Investment.belongsTo(models.Property, { foreignKey: 'propertyId', as: 'property' });
     };
 
     return Investment;

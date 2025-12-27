@@ -33,13 +33,14 @@ interface RankRequirement {
 }
 
 const RANKS: RankRequirement[] = [
+    { name: 'Associate', businessRequired: '0', reward: '-', color: 'default' },
     { name: 'Team Leader', businessRequired: '15 Lakh', reward: 'Android Tablet', color: 'primary' },
-    { name: 'Regional Head', businessRequired: '50 Lakh', reward: 'Motorcycle', color: 'secondary' },
-    { name: 'Zonal Head', businessRequired: '1.5 Crore', reward: 'Sedan Car', color: 'info' },
-    { name: 'National Head', businessRequired: '5 Crore', reward: 'SUV', color: 'success' },
-    { name: 'Vice President', businessRequired: '20 Crore', reward: 'Premium SUV', color: 'warning' },
-    { name: 'Senior Vice President', businessRequired: '50 Crore', reward: 'Luxury Sedan', color: 'error' },
-    { name: 'Brand Ambassador', businessRequired: '100 Crore', reward: 'Luxury Cars', color: 'default' },
+    { name: 'Regional Head', businessRequired: '50 Lakh', reward: 'Electric Scooty', color: 'secondary' },
+    { name: 'Zonal Head', businessRequired: '1.5 Crore', reward: 'Royal Enfield Hunter', color: 'info' },
+    { name: 'General Manager', businessRequired: '5 Crore', reward: 'Maruti Fronx', color: 'warning' },
+    { name: 'VP', businessRequired: '15 Crore', reward: 'XUV 700 / Scorpio', color: 'error' },
+    { name: 'President', businessRequired: '40 Crore', reward: 'Toyota Fortuner', color: 'success' },
+    { name: 'EG Brand Ambassador', businessRequired: '100 Crore', reward: 'BMW / Audi / Mercedes', color: 'secondary' },
 ];
 
 const CLUBS = [

@@ -444,7 +444,7 @@ exports.proclaimSale = async (saleData, associateUserId) => {
             saleType, // PRIMARY_BOOKING or FULL_PAYMENT
             plotSize,
             pricePerSqFt,
-            paymentReceipt, // Mandatory document
+            paymentReceipt, // Optional document (recommended for faster verification)
             buyerDetails, // Buyer information (name, email, mobile, etc.)
             remarks
         } = saleData;
@@ -458,10 +458,6 @@ exports.proclaimSale = async (saleData, associateUserId) => {
         const projectedTSB = (downPayment * 15) / 100;
 
         // Validation
-        if (!paymentReceipt) {
-            throw new Error('Payment receipt is mandatory for verification');
-        }
-
         if (!buyerDetails || !buyerDetails.fullName || !buyerDetails.mobile) {
             throw new Error('Buyer full name and mobile number are required');
         }
@@ -532,10 +528,10 @@ exports.proclaimSale = async (saleData, associateUserId) => {
             commissionActivated: false,
             projectedDirectIncentive,
             projectedTSB,
-            saleDocuments: {
+            saleDocuments: paymentReceipt ? {
                 paymentReceipt,
                 uploadedAt: new Date()
-            },
+            } : null,
             buyerDetails: {
                 fullName: buyerDetails.fullName,
                 email: buyerDetails.email || '',

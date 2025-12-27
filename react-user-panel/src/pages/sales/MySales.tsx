@@ -56,7 +56,7 @@ const MySales: React.FC = () => {
     try {
       setLoading(true);
       setError(null);
-      const params: any = { page: 0, limit: 50 };
+      const params: any = { page: 1, limit: 50 };
       if (statusFilter !== 'ALL') params.status = statusFilter;
       const response = await getMySales(params);
       setSales(response.data || []);

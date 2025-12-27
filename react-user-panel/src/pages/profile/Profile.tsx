@@ -105,7 +105,7 @@ const Profile: React.FC = () => {
         getBankAccounts(),
         getKYCStatus(),
         getActiveSessions(),
-        getLoginHistory({ page: 0, size: 5 }),
+        getLoginHistory({ page: 1, limit: 5 }),
       ]);
 
       setUser(profileRes.data || null);

@@ -16,11 +16,18 @@ import {
  */
 export const getProperties = async (params?: {
   page?: number;
-  size?: number;
+  limit?: number;
+  size?: number; // Deprecated: use limit instead
   sortBy?: string;
   sortDirection?: 'asc' | 'desc';
 } & Partial<PropertyFilters>): Promise<PaginatedResponse<Property>> => {
-  return apiGet<PaginatedResponse<Property>>('/properties', params);
+  // Normalize pagination parameters - backend expects 'limit', not 'size'
+  const normalizedParams = { ...params };
+  if (params?.size && !params?.limit) {
+    normalizedParams.limit = params.size;
+    delete normalizedParams.size;
+  }
+  return apiGet<PaginatedResponse<Property>>('/properties', normalizedParams);
 };
 
 /**
@@ -28,9 +35,16 @@ export const getProperties = async (params?: {
  */
 export const getFeaturedProperties = async (params?: {
   page?: number;
-  size?: number;
+  limit?: number;
+  size?: number; // Deprecated: use limit instead
 }): Promise<PaginatedResponse<Property>> => {
-  return apiGet<PaginatedResponse<Property>>('/properties/featured', params);
+  // Normalize pagination parameters
+  const normalizedParams = { ...params };
+  if (params?.size && !params?.limit) {
+    normalizedParams.limit = params.size;
+    delete normalizedParams.size;
+  }
+  return apiGet<PaginatedResponse<Property>>('/properties/featured', normalizedParams);
 };
 
 /**

@@ -196,7 +196,7 @@ const Settings: React.FC = () => {
    */
   const loadLoginHistory = async () => {
     try {
-      const response = await getLoginHistory({ page: 0, size: 5 });
+      const response = await getLoginHistory({ page: 1, limit: 5 });
       if (response.success && response.data) {
         setLoginHistory(response.data.content || []);
       }

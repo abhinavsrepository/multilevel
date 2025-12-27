@@ -91,7 +91,7 @@ const ReferralTools: React.FC = () => {
 
       const [linkResponse, referralsResponse] = await Promise.all([
         getReferralLink(),
-        getDirectReferrals({ page: 0, size: 10 }),
+        getDirectReferrals({ page: 1, limit: 10 }),
       ]);
 
       setReferralData({

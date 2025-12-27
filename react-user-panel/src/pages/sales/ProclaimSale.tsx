@@ -142,8 +142,8 @@ const ProclaimSale: React.FC = () => {
   const fetchProperties = async () => {
     try {
       setLoadingProperties(true);
-      const response = await getProperties({ page: 0, size: 100 });
-      setProperties(response.data.content || []);
+      const response = await getProperties({ page: 1, limit: 100 });
+      setProperties(response.data || []);
     } catch (error) {
       toast.error('Failed to load properties');
     } finally {
@@ -189,11 +189,7 @@ const ProclaimSale: React.FC = () => {
 
     try {
       setUploadingReceipt(true);
-      const formData = new FormData();
-      formData.append('file', file);
-      formData.append('folder', 'payment-receipts');
-
-      const response = await apiUpload('/uploads/document', formData);
+      const response = await apiUpload('/uploads/document', file);
 
       if (response.success && response.data.url) {
         formik.setFieldValue('paymentReceipt', response.data.url);

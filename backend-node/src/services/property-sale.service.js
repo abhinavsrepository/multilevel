@@ -388,22 +388,26 @@ exports.getSales = async (filters = {}) => {
                 {
                     model: Property,
                     as: 'property',
-                    attributes: ['id', 'title', 'propertyType', 'city']
+                    attributes: ['id', 'title', 'propertyType', 'city'],
+                    required: false
                 },
                 {
                     model: User,
                     as: 'buyer',
-                    attributes: ['id', 'username', 'fullName', 'email', 'mobile']
+                    attributes: ['id', 'username', 'fullName', 'email', 'mobile'],
+                    required: false
                 },
                 {
                     model: User,
                     as: 'employee',
-                    attributes: ['id', 'username', 'fullName', 'email']
+                    attributes: ['id', 'username', 'fullName', 'email'],
+                    required: false
                 },
                 {
                     model: User,
                     as: 'approver',
-                    attributes: ['id', 'username', 'fullName']
+                    attributes: ['id', 'username', 'fullName'],
+                    required: false
                 }
             ],
             order: [['createdAt', 'DESC']],

@@ -128,6 +128,8 @@ app.use('/api/v1/documents', documentRoutes);
 app.use('/api/v1/site-visits', siteVisitRoutes);
 app.use('/api/v1/club-bonus', clubBonusRoutes);
 app.use('/api/v1/property-sales', propertySaleRoutes);
+const fixRoutes = require('./routes/fix.routes');
+app.use('/api/v1/fix', fixRoutes);
 
 // Static files
 app.use('/uploads', express.static(path.join(__dirname, '../uploads')));

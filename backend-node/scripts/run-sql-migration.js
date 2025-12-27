@@ -18,14 +18,14 @@ async function runSQLMigration() {
 
     try {
         console.log('==================================================');
-        console.log('Running SQL Migration: create-property-sales-table');
+        console.log('Running SQL Migration: add-missing-property-sales-columns');
         console.log('==================================================');
 
         console.log('Connecting to database...');
         const client = await pool.connect();
 
         console.log('Reading migration file...');
-        const migrationPath = path.join(__dirname, '../migrations/create-property-sales-table.sql');
+        const migrationPath = path.join(__dirname, '../migrations/add-missing-property-sales-columns.sql');
         const migrationSQL = fs.readFileSync(migrationPath, 'utf8');
 
         console.log('Executing migration...');
@@ -33,7 +33,7 @@ async function runSQLMigration() {
 
         console.log('==================================================');
         console.log('✓ Migration completed successfully!');
-        console.log('✓ property_sales table is ready');
+        console.log('✓ property_sales table has all required columns');
         console.log('==================================================');
 
         client.release();

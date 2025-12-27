@@ -6,8 +6,14 @@ exports.fixSchema = async (req, res) => {
         console.log('Starting Schema Sync...');
 
         // Sync PropertySale table (and Property if needed, but we focus on PropertySale)
-        await PropertySale.sync({ alter: true });
-        console.log('PropertySale table synced.');
+        try {
+            await PropertySale.sync({ alter: true });
+            console.log('PropertySale table synced with alter:true.');
+        } catch (e) {
+            console.warn('PropertySale alter sync failed, trying force:false (create if missing)...', e.message);
+            await PropertySale.sync(); // Default is force: false
+            console.log('PropertySale table synced (basic).');
+        }
 
         // Sync Property table just in case (careful with ENUMs)
         // await Property.sync({ alter: true });

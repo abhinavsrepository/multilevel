@@ -73,7 +73,7 @@ exports.getMyInvestments = async (req, res) => {
 
         const { count, rows } = await Investment.findAndCountAll({
             where: { userId: req.user.id },
-            include: [{ model: Property }],
+            include: [{ model: Property, as: 'property' }],
             limit,
             offset,
             order
@@ -130,7 +130,7 @@ exports.getInvestmentDetails = async (req, res) => {
     try {
         const investment = await Investment.findOne({
             where: { id: req.params.id, userId: req.user.id },
-            include: [{ model: Property }]
+            include: [{ model: Property, as: 'property' }]
         });
 
         if (investment) {

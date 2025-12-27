@@ -427,13 +427,14 @@ const BonanzaForm: React.FC = () => {
                                         label="Minimum Rank"
                                     >
                                         <Select placeholder="Select minimum rank" allowClear>
+                                            <Option value="Associate">Associate</Option>
                                             <Option value="Team Leader">Team Leader</Option>
                                             <Option value="Regional Head">Regional Head</Option>
                                             <Option value="Zonal Head">Zonal Head</Option>
-                                            <Option value="National Head">National Head</Option>
-                                            <Option value="Vice President">Vice President</Option>
-                                            <Option value="Senior Vice President">Senior Vice President</Option>
-                                            <Option value="Brand Ambassador">Brand Ambassador</Option>
+                                            <Option value="General Manager">General Manager</Option>
+                                            <Option value="VP">VP</Option>
+                                            <Option value="President">President</Option>
+                                            <Option value="EG Brand Ambassador">EG Brand Ambassador</Option>
                                         </Select>
                                     </Form.Item>
                                 </Col>

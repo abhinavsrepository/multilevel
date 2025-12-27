@@ -178,7 +178,7 @@ const LevelBonus: React.FC = () => {
                                     />
                                     <CircularProgress
                                         variant="determinate"
-                                        value={Math.min(((eligibility?.activeDirectsCount || 0) / 5) * 100, 100)}
+                                        value={Math.min(((eligibility?.activeDirectsCount || 0) / 3) * 100, 100)}
                                         size={120}
                                         thickness={4}
                                         sx={{

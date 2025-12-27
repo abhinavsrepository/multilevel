@@ -33,11 +33,13 @@ interface RankRequirement {
 }
 
 const RANKS: RankRequirement[] = [
-    { name: 'Associate', businessRequired: '0', reward: '-', color: 'default' },
-    { name: 'Manager', businessRequired: '10 Lakh', reward: 'Recognition', color: 'primary' },
-    { name: 'Area Manager', businessRequired: '50 Lakh', reward: 'Bullet Bike', color: 'secondary' },
-    { name: 'Zonal Head', businessRequired: '3 Crore', reward: 'Car', color: 'info' },
-    { name: 'Director', businessRequired: '10 Crore', reward: 'Fortuner', color: 'warning' },
+    { name: 'Team Leader', businessRequired: '15 Lakh', reward: 'Android Tablet', color: 'primary' },
+    { name: 'Regional Head', businessRequired: '50 Lakh', reward: 'Motorcycle', color: 'secondary' },
+    { name: 'Zonal Head', businessRequired: '1.5 Crore', reward: 'Sedan Car', color: 'info' },
+    { name: 'National Head', businessRequired: '5 Crore', reward: 'SUV', color: 'success' },
+    { name: 'Vice President', businessRequired: '20 Crore', reward: 'Premium SUV', color: 'warning' },
+    { name: 'Senior Vice President', businessRequired: '50 Crore', reward: 'Luxury Sedan', color: 'error' },
+    { name: 'Brand Ambassador', businessRequired: '100 Crore', reward: 'Luxury Cars', color: 'default' },
 ];
 
 const CLUBS = [

@@ -427,13 +427,13 @@ const BonanzaForm: React.FC = () => {
                                         label="Minimum Rank"
                                     >
                                         <Select placeholder="Select minimum rank" allowClear>
-                                            <Option value="STARTER">Starter</Option>
-                                            <Option value="BRONZE">Bronze</Option>
-                                            <Option value="SILVER">Silver</Option>
-                                            <Option value="GOLD">Gold</Option>
-                                            <Option value="PLATINUM">Platinum</Option>
-                                            <Option value="DIAMOND">Diamond</Option>
-                                            <Option value="CROWN">Crown</Option>
+                                            <Option value="Team Leader">Team Leader</Option>
+                                            <Option value="Regional Head">Regional Head</Option>
+                                            <Option value="Zonal Head">Zonal Head</Option>
+                                            <Option value="National Head">National Head</Option>
+                                            <Option value="Vice President">Vice President</Option>
+                                            <Option value="Senior Vice President">Senior Vice President</Option>
+                                            <Option value="Brand Ambassador">Brand Ambassador</Option>
                                         </Select>
                                     </Form.Item>
                                 </Col>
@@ -445,7 +445,7 @@ const BonanzaForm: React.FC = () => {
                                         <Select placeholder="Select minimum club" allowClear>
                                             <Option value="Rising Stars Club">Rising Stars Club</Option>
                                             <Option value="Business Leaders Club">Business Leaders Club</Option>
-                                            <Option value="Millionaire CLUB">Millionaire Club</Option>
+                                            <Option value="Millionaire CLUB">Millionaire CLUB</Option>
                                         </Select>
                                     </Form.Item>
                                 </Col>

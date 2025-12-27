@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Layout, Menu, Avatar, Dropdown, Badge, Space, Switch } from 'antd';
+import { Layout, Menu, Avatar, Dropdown, Badge, Space, Switch, Input } from 'antd';
 import type { MenuProps } from 'antd';
 import {
   DashboardOutlined,
@@ -29,6 +29,7 @@ import { RootState } from '@/redux/store';
 import './DashboardLayout.scss';
 
 const { Header, Sider, Content } = Layout;
+const { Search } = Input;
 
 const DashboardLayout: React.FC = () => {
   const [collapsed, setCollapsed] = useState(false);
@@ -307,6 +308,16 @@ const DashboardLayout: React.FC = () => {
 
           <div className="header-right">
             <Space size="large">
+              <div style={{ width: 300, display: isMobile ? 'none' : 'block' }}>
+                <Search
+                  placeholder="Search users..."
+                  allowClear
+                  onSearch={(value) => {
+                    if (value.trim()) navigate(`/users?search=${encodeURIComponent(value.trim())}`);
+                  }}
+                  style={{ width: '100%' }}
+                />
+              </div>
               <Switch
                 checkedChildren="🌙"
                 unCheckedChildren="☀️"

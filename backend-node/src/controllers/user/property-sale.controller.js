@@ -52,6 +52,7 @@ exports.getMySales = async (req, res, next) => {
         const filters = {
             employeeId,
             status: req.query.status,
+            search: req.query.search,
             startDate: req.query.startDate,
             endDate: req.query.endDate,
             page: req.query.page || 1,
@@ -79,6 +80,7 @@ exports.getMyPurchases = async (req, res, next) => {
         const filters = {
             buyerId,
             status: req.query.status,
+            search: req.query.search,
             startDate: req.query.startDate,
             endDate: req.query.endDate,
             page: req.query.page || 1,
@@ -187,13 +189,6 @@ exports.proclaimSale = async (req, res, next) => {
             return res.status(400).json({
                 success: false,
                 message: 'Property ID, Plot Size, and Price per Sq Ft are required'
-            });
-        }
-
-        if (!saleData.paymentReceipt) {
-            return res.status(400).json({
-                success: false,
-                message: 'Payment receipt is mandatory for verification'
             });
         }
 

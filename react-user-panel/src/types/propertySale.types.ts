@@ -1,5 +1,40 @@
 export type SaleType = 'PRIMARY_BOOKING' | 'FULL_PAYMENT';
 
+export interface ProjectedEarnings {
+  saleAmount: number;
+  downPayment: number;
+  remainingAmount: number;
+  directIncentive: {
+    gross: number;
+    tds: number;
+    net: number;
+    percentage: number;
+  };
+  tsbPool: {
+    gross: number;
+    tds: number;
+    net: number;
+    percentage: number;
+    breakdown: {
+      level1: { percent: number; amount: number; requiredDirects: number };
+      level2: { percent: number; amount: number; requiredDirects: number };
+      level3: { percent: number; amount: number; requiredDirects: number };
+      level4to10: { percent: number; amount: number; requiredDirects: number; levels: number };
+    };
+  };
+  totalEarnings: {
+    gross: number;
+    tds: number;
+    net: number;
+    percentage: number;
+  };
+  notes: {
+    tdsRate: number;
+    saleType: string;
+    commissionBase: string;
+  };
+}
+
 export type SaleStatus = 'PENDING' | 'APPROVED' | 'REJECTED' | 'CANCELLED' | 'COMPLETED';
 
 export interface BuyerDetails {

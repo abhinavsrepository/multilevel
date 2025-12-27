@@ -24,8 +24,8 @@ import {
 import {
   MonetizationOn,
   Receipt,
-  Person,
-  Calculate,
+  // Person,
+  // Calculate,
   Send,
   CheckCircle,
   Info,
@@ -59,7 +59,7 @@ const validationSchema = Yup.object({
     .required('Price per sq ft is required')
     .min(550, 'Minimum price is ₹550/sq ft')
     .max(1499, 'Maximum price is ₹1499/sq ft'),
-  paymentReceipt: Yup.string().required('Payment receipt is mandatory'),
+  paymentReceipt: Yup.string(), // Optional
   buyerDetails: Yup.object({
     fullName: Yup.string().required('Buyer full name is required'),
     mobile: Yup.string()
@@ -143,7 +143,7 @@ const ProclaimSale: React.FC = () => {
     try {
       setLoadingProperties(true);
       const response = await getProperties({ page: 1, limit: 100 });
-      setProperties(response.data || []);
+      setProperties(response.data?.content || []);
     } catch (error) {
       toast.error('Failed to load properties');
     } finally {
@@ -161,7 +161,7 @@ const ProclaimSale: React.FC = () => {
       });
 
       if (response.success) {
-        setProjectedEarnings(response.data);
+        setProjectedEarnings(response.data || null);
       }
     } catch (error) {
       console.error('Failed to calculate earnings:', error);
@@ -217,7 +217,7 @@ const ProclaimSale: React.FC = () => {
       case 1:
         return formik.values.buyerDetails.fullName && formik.values.buyerDetails.mobile;
       case 2:
-        return formik.values.paymentReceipt;
+        return true; // Optional now
       default:
         return true;
     }
@@ -278,7 +278,7 @@ const ProclaimSale: React.FC = () => {
                         ) : (
                           properties.map((property) => (
                             <MenuItem key={property.id} value={property.id}>
-                              {property.title} - {property.city}
+                              {property.title} - {property.location?.city || 'Unknown City'}
                             </MenuItem>
                           ))
                         )}
@@ -294,7 +294,7 @@ const ProclaimSale: React.FC = () => {
                         fullWidth
                         exclusive
                         value={formik.values.saleType}
-                        onChange={(e, value) => value && formik.setFieldValue('saleType', value)}
+                        onChange={(_, value) => value && formik.setFieldValue('saleType', value)}
                         sx={{ mb: 1 }}
                       >
                         {SALE_TYPE_OPTIONS.map((option) => (
@@ -485,7 +485,7 @@ const ProclaimSale: React.FC = () => {
 
                   <Alert severity="warning" sx={{ mb: 3 }}>
                     <Typography variant="body2" sx={{ fontWeight: 600, mb: 1 }}>
-                      Payment receipt is mandatory for admin verification
+                      Payment receipt is optional but recommended for faster verification
                     </Typography>
                     <Typography variant="caption">
                       Accepted formats: JPG, PNG, PDF (Max 5MB)
@@ -612,12 +612,20 @@ const ProclaimSale: React.FC = () => {
                       <Typography variant="subtitle2" color="text.secondary" gutterBottom>
                         Payment Receipt
                       </Typography>
-                      <Chip
-                        icon={<CheckCircle />}
-                        label="Receipt Uploaded"
-                        color="success"
-                        size="small"
-                      />
+                      {formik.values.paymentReceipt ? (
+                        <Chip
+                          icon={<CheckCircle />}
+                          label="Receipt Uploaded"
+                          color="success"
+                          size="small"
+                        />
+                      ) : (
+                        <Chip
+                          label="No Receipt (Optional)"
+                          variant="outlined"
+                          size="small"
+                        />
+                      )}
                     </CardContent>
                   </Card>
 

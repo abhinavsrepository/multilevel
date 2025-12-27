@@ -26,7 +26,9 @@ import {
   DarkMode,
   Login,
   PersonAdd,
+  PersonAdd,
   KeyboardArrowDown,
+  Search,
 } from '@mui/icons-material';
 import { useDispatch, useSelector } from 'react-redux';
 import { toggleThemeMode, selectEffectiveThemeMode } from '../../redux/slices/themeSlice';
@@ -46,6 +48,18 @@ const Navbar: React.FC = () => {
 
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [anchorEl, setAnchorEl] = useState<{ [key: string]: HTMLElement | null }>({});
+  const [searchQuery, setSearchQuery] = useState('');
+  const [searchOpen, setSearchOpen] = useState(false);
+
+  const handleSearchSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (searchQuery.trim()) {
+      navigate(`/properties?search=${encodeURIComponent(searchQuery.trim())}`);
+      setSearchOpen(false);
+      setMobileMenuOpen(false);
+    }
+  };
+
 
   const navLinks: NavLink[] = [
     { label: 'Home', path: '/' },
@@ -233,6 +247,45 @@ const Navbar: React.FC = () => {
 
           {/* Right Section */}
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+            {/* Search Bar - Desktop */}
+            {!isMobile && (
+              <Box
+                component="form"
+                onSubmit={handleSearchSubmit}
+                sx={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  bgcolor: theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.05)',
+                  borderRadius: 20,
+                  px: 2,
+                  py: 0.5,
+                  mr: 1,
+                  border: '1px solid transparent',
+                  '&:focus-within': {
+                    bgcolor: theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.08)',
+                    borderColor: theme.palette.primary.main,
+                  },
+                  transition: 'all 0.3s',
+                }}
+              >
+                <Search sx={{ color: 'text.secondary', mr: 1, fontSize: 20 }} />
+                <input
+                  type="text"
+                  placeholder="Search properties..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  style={{
+                    border: 'none',
+                    outline: 'none',
+                    background: 'transparent',
+                    color: theme.palette.text.primary,
+                    width: '180px',
+                    fontSize: '0.9rem',
+                  }}
+                />
+              </Box>
+            )}
+
             {/* Theme Toggle */}
             <IconButton
               onClick={handleThemeToggle}
@@ -320,6 +373,35 @@ const Navbar: React.FC = () => {
             <IconButton onClick={handleMobileMenuToggle}>
               <CloseIcon />
             </IconButton>
+          </Box>
+
+          {/* Mobile Search */}
+          <Box component="form" onSubmit={handleSearchSubmit} sx={{ px: 2, mb: 2 }}>
+            <Box
+              sx={{
+                display: 'flex',
+                alignItems: 'center',
+                bgcolor: theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.05)',
+                borderRadius: 1,
+                px: 2,
+                py: 1,
+              }}
+            >
+              <Search sx={{ color: 'text.secondary', mr: 1 }} />
+              <input
+                type="text"
+                placeholder="Search..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                style={{
+                  border: 'none',
+                  outline: 'none',
+                  background: 'transparent',
+                  color: theme.palette.text.primary,
+                  width: '100%',
+                }}
+              />
+            </Box>
           </Box>
 
           <List>

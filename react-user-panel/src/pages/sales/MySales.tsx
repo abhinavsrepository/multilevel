@@ -13,21 +13,21 @@ import {
   useTheme,
   Skeleton,
   Alert,
-  InputAdornment,
-  alpha,
+
+  alpha, // Restored
+  InputAdornment, // Added
   CardActionArea,
   Divider,
 } from '@mui/material';
 import {
   Add,
-  Search,
   MonetizationOn,
   HourglassEmpty,
   CheckCircle,
   Cancel,
   Info,
   TrendingUp,
-  Person,
+  Search, // Added
 } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
@@ -46,11 +46,15 @@ const MySales: React.FC = () => {
   const [sales, setSales] = useState<PropertySale[]>([]);
   const [stats, setStats] = useState<SaleStats | null>(null);
   const [statusFilter, setStatusFilter] = useState<string>('ALL');
+  const [searchQuery, setSearchQuery] = useState(''); // Added
 
   useEffect(() => {
-    fetchSales();
+    const timer = setTimeout(() => {
+      fetchSales();
+    }, 500); // Debounce
     fetchStats();
-  }, [statusFilter]);
+    return () => clearTimeout(timer);
+  }, [statusFilter, searchQuery]); // Added searchQuery
 
   const fetchSales = async () => {
     try {
@@ -58,8 +62,9 @@ const MySales: React.FC = () => {
       setError(null);
       const params: any = { page: 1, limit: 50 };
       if (statusFilter !== 'ALL') params.status = statusFilter;
+      if (searchQuery) params.search = searchQuery; // Added
       const response = await getMySales(params);
-      setSales(response.data || []);
+      setSales(response.data?.content || []);
     } catch (err: any) {
       setError(err.response?.data?.message || 'Failed to load sales');
       toast.error('Failed to load sales');
@@ -71,7 +76,7 @@ const MySales: React.FC = () => {
   const fetchStats = async () => {
     try {
       const response = await getUserSaleStats();
-      if (response.success) setStats(response.data);
+      if (response.success) setStats(response.data || null);
     } catch (err) {
       console.error('Failed to load stats:', err);
     }
@@ -173,7 +178,23 @@ const MySales: React.FC = () => {
 
       <Paper sx={{ p: 3, mb: 3 }}>
         <Grid container spacing={2}>
-          <Grid item xs={12} sm={6}>
+          <Grid item xs={12} sm={4}>
+            <TextField
+              fullWidth
+              size="small"
+              placeholder="Search by property or ID..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              InputProps={{
+                startAdornment: (
+                  <InputAdornment position="start">
+                    <Search fontSize="small" color="action" />
+                  </InputAdornment>
+                ),
+              }}
+            />
+          </Grid>
+          <Grid item xs={12} sm={4}>
             <TextField fullWidth select size="small" label="Status" value={statusFilter} onChange={(e) => setStatusFilter(e.target.value)}>
               <MenuItem value="ALL">All Status</MenuItem>
               <MenuItem value="PENDING">Pending</MenuItem>
@@ -181,8 +202,8 @@ const MySales: React.FC = () => {
               <MenuItem value="REJECTED">Rejected</MenuItem>
             </TextField>
           </Grid>
-          <Grid item xs={12} sm={6}>
-            <Chip icon={<Info />} label={`${stats?.thisMonthSales || 0} This Month`} color="primary" variant="outlined" />
+          <Grid item xs={12} sm={4}>
+            <Chip icon={<Info />} label={`${stats?.thisMonthSales || 0} This Month`} color="primary" variant="outlined" sx={{ width: '100%', justifyContent: 'flex-start' }} />
           </Grid>
         </Grid>
       </Paper>

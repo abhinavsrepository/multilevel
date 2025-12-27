@@ -1,5 +1,6 @@
 import { apiGet, apiPost } from './config/axiosConfig';
 import { ApiResponse, PaginatedResponse } from '@/types';
+import { ProjectedEarnings } from '@/types/propertySale.types';
 
 // ==================== Types ====================
 
@@ -24,39 +25,7 @@ export interface ProclaimSaleData {
   remarks?: string;
 }
 
-export interface ProjectedEarnings {
-  saleAmount: number;
-  downPayment: number;
-  remainingAmount: number;
-  directIncentive: {
-    gross: number;
-    tds: number;
-    net: number;
-    percentage: number;
-  };
-  tsbPool: {
-    gross: number;
-    tds: number;
-    net: number;
-    percentage: number;
-    breakdown: {
-      level1: { percent: number; amount: number; requiredDirects: number };
-      level2: { percent: number; amount: number; requiredDirects: number };
-      level3: { percent: number; amount: number; requiredDirects: number };
-      level4to10: { percent: number; amount: number; requiredDirects: number; levels: number };
-    };
-  };
-  totalEarnings: {
-    gross: number;
-    tds: number;
-    net: number;
-  };
-  notes: {
-    tdsRate: number;
-    saleType: string;
-    commissionBase: string;
-  };
-}
+// ProjectedEarnings imported from types
 
 export interface PropertySale {
   id: number;

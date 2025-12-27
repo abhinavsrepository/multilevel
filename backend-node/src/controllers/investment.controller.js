@@ -1,4 +1,4 @@
-const { Investment, Property, User } = require('../models');
+const { Investment, Property, User, sequelize } = require('../models');
 const { Op } = require('sequelize');
 const commissionService = require('../services/commission.service');
 
@@ -52,11 +52,27 @@ exports.createInvestment = async (req, res) => {
 
 exports.getMyInvestments = async (req, res) => {
     try {
-        let { page = 0, size = 10, sortBy = 'createdAt', sortDirection = 'DESC' } = req.query;
+        let { page = 0, size = 10, sortBy = 'createdAt', sortDirection = 'DESC', search, status } = req.query;
 
         // Handle pagination
         const limit = parseInt(size);
         const offset = parseInt(page) * limit;
+
+        // Handle filters
+        const where = { userId: req.user.id };
+
+        if (status && status !== 'ALL') {
+            where.investmentStatus = status;
+        }
+
+        if (search) {
+            where[Op.or] = [
+                { '$property.title$': { [Op.iLike]: `%${search}%` } },
+                { '$property.city$': { [Op.iLike]: `%${search}%` } },
+                // Cast id to string for search if it's numeric input
+                sequelize.where(sequelize.cast(sequelize.col('Investment.id'), 'text'), { [Op.iLike]: `%${search}%` })
+            ];
+        }
 
         // Handle sorting
         let order = [['createdAt', 'DESC']];
@@ -72,7 +88,7 @@ exports.getMyInvestments = async (req, res) => {
         }
 
         const { count, rows } = await Investment.findAndCountAll({
-            where: { userId: req.user.id },
+            where,
             include: [{ model: Property, as: 'property' }],
             limit,
             offset,

@@ -16,6 +16,7 @@ export interface Property {
   annualAppreciation: number;
   rentalYield?: number;
   location: PropertyLocation;
+  city?: string;
   details: PropertyDetails;
   amenities: string[];
   images: string[];

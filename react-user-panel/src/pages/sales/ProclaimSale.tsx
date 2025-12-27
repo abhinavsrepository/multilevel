@@ -20,6 +20,7 @@ import {
   useTheme,
   alpha,
   Chip,
+  Autocomplete,
 } from '@mui/material';
 import {
   MonetizationOn,
@@ -59,7 +60,7 @@ const validationSchema = Yup.object({
     .required('Price per sq ft is required')
     .min(550, 'Minimum price is ₹550/sq ft')
     .max(1499, 'Maximum price is ₹1499/sq ft'),
-  paymentReceipt: Yup.string(), // Optional
+  paymentReceipt: Yup.string().nullable(), // Optional
   buyerDetails: Yup.object({
     fullName: Yup.string().required('Buyer full name is required'),
     mobile: Yup.string()
@@ -143,7 +144,10 @@ const ProclaimSale: React.FC = () => {
     try {
       setLoadingProperties(true);
       const response = await getProperties({ page: 1, limit: 100 });
-      setProperties(response.data?.content || []);
+      // content might be directly in data (backend inconsistency) or in data.content
+      const responseData: any = response.data;
+      const content = Array.isArray(responseData) ? responseData : responseData?.content || [];
+      setProperties(content);
     } catch (error) {
       toast.error('Failed to load properties');
     } finally {
@@ -262,27 +266,32 @@ const ProclaimSale: React.FC = () => {
                   <Grid container spacing={3}>
                     {/* Property Selection */}
                     <Grid item xs={12}>
-                      <TextField
-                        select
-                        fullWidth
-                        label="Select Property"
-                        name="propertyId"
-                        value={formik.values.propertyId || ''}
-                        onChange={formik.handleChange}
-                        error={formik.touched.propertyId && Boolean(formik.errors.propertyId)}
-                        helperText={formik.touched.propertyId && formik.errors.propertyId}
-                        disabled={loadingProperties}
-                      >
-                        {loadingProperties ? (
-                          <MenuItem disabled>Loading properties...</MenuItem>
-                        ) : (
-                          properties.map((property) => (
-                            <MenuItem key={property.id} value={property.id}>
-                              {property.title} - {property.location?.city || 'Unknown City'}
-                            </MenuItem>
-                          ))
+                      <Autocomplete
+                        options={properties}
+                        getOptionLabel={(option) => `${option.title} - ${option.location?.city || 'Unknown City'}`}
+                        loading={loadingProperties}
+                        value={properties.find((p) => p.id === formik.values.propertyId) || null}
+                        onChange={(_, newValue) => {
+                          formik.setFieldValue('propertyId', newValue ? newValue.id : null);
+                        }}
+                        renderInput={(params) => (
+                          <TextField
+                            {...params}
+                            label="Select Property"
+                            error={formik.touched.propertyId && Boolean(formik.errors.propertyId)}
+                            helperText={formik.touched.propertyId && formik.errors.propertyId}
+                            InputProps={{
+                              ...params.InputProps,
+                              endAdornment: (
+                                <React.Fragment>
+                                  {loadingProperties ? <CircularProgress color="inherit" size={20} /> : null}
+                                  {params.InputProps.endAdornment}
+                                </React.Fragment>
+                              ),
+                            }}
+                          />
                         )}
-                      </TextField>
+                      />
                     </Grid>
 
                     {/* Sale Type Toggle */}

@@ -64,7 +64,8 @@ const MySales: React.FC = () => {
       if (statusFilter !== 'ALL') params.status = statusFilter;
       if (searchQuery) params.search = searchQuery; // Added
       const response = await getMySales(params);
-      setSales(response.data?.content || []);
+      const data: any = response.data;
+      setSales(Array.isArray(data) ? data : data?.content || []);
     } catch (err: any) {
       setError(err.response?.data?.message || 'Failed to load sales');
       toast.error('Failed to load sales');
